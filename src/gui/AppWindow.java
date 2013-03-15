@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.EventQueue;
+import java.awt.Window;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
@@ -15,7 +16,6 @@ import javax.swing.JMenuItem;
 public class AppWindow {
 
 	private JFrame frame;
-	private JTextField txtWhat;
 
 	/**
 	 * Launch the application.
@@ -48,21 +48,6 @@ public class AppWindow {
 		frame.setBounds(100, 100, 572, 461);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		JButton btnNewButton = new JButton("Le Button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("You Clicked Me");
-			}
-		});
-		btnNewButton.setBounds(183, 166, 175, 67);
-		frame.getContentPane().add(btnNewButton);
-		
-		txtWhat = new JTextField();
-		txtWhat.setText("What?");
-		txtWhat.setBounds(79, 46, 86, 20);
-		frame.getContentPane().add(txtWhat);
-		txtWhat.setColumns(10);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
