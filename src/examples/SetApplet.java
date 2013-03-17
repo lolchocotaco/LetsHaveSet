@@ -1,4 +1,4 @@
-package gameLogic;
+package examples;
 
 /*
   A Free Software implementation of the Set card game
@@ -1190,6 +1190,7 @@ class SetCard extends Canvas {
 
 
     public boolean isBlank = false;
+
     
     public void paint (Graphics g) {
 	
