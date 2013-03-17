@@ -2,9 +2,7 @@ package gameLogic;
 
 import gameLogic.SetCard;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
 
 /**
