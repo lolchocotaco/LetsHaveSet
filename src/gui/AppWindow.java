@@ -9,7 +9,6 @@ import java.awt.Window;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuBar;
@@ -23,18 +22,13 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
-import java.awt.Color;
 
 public class AppWindow {
 
 	private JFrame frmLetsHaveSet;
 	private JTable table;
 	private JTextField textField;
-	
-	private JFrame frmLogin;
-	private JTextField txtUsername;
-	private JPasswordField txtPassword;
-	private JTextField txtError;
+
 
 	/**
 	 * Create the application.
@@ -118,6 +112,14 @@ public class AppWindow {
 		JMenuItem mntmOpen = new JMenuItem("Open");
 		mnFile.add(mntmOpen);
 		
+		JMenuItem mntmLogout = new JMenuItem("Logout");
+		mntmLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setLogout();
+			}
+		});
+		mnFile.add(mntmLogout);
+		
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
 		
@@ -147,6 +149,10 @@ public class AppWindow {
 		table.setModel(tableModel);
 		int dLength = setGame.deck.size();
 		textField.setText(Integer.toString(dLength));
-		
+	}
+	
+	private void setLogout(){
+		frmLetsHaveSet.dispose();
+		new LoginWindow();
 	}
 }

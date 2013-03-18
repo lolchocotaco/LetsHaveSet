@@ -4,7 +4,6 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.BorderLayout;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
@@ -13,6 +12,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.Desktop;
+import java.net.URI;
 
 public class LoginWindow {
 
@@ -20,6 +21,7 @@ public class LoginWindow {
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	private JTextField txtError;
+	private static final String websiteAddress = "http://sable10.ee.cooper.edu:5080/";
 
 	/**
 	 * Launch the application.
@@ -29,7 +31,6 @@ public class LoginWindow {
 			public void run() {
 				try {
 					LoginWindow window = new LoginWindow();
-					window.frmLogin.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -42,6 +43,7 @@ public class LoginWindow {
 	 */
 	public LoginWindow() {
 		initialize();
+		frmLogin.setVisible(true);
 	}
 
 	/**
@@ -90,6 +92,11 @@ public class LoginWindow {
 		frmLogin.getContentPane().add(btnLogin);
 		
 		JButton btnRegister = new JButton("Register");
+		btnRegister.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				openRegister();
+			}
+		});
 		btnRegister.setBounds(65, 136, 89, 23);
 		frmLogin.getContentPane().add(btnRegister);
 		
@@ -121,4 +128,16 @@ public class LoginWindow {
 			
 		}		
 	}
+	
+	private void openRegister(){
+		 Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+		    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+		        try {
+		    		URI uri = new URI(websiteAddress);
+		            desktop.browse(uri);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+		    }
+		}
 }
