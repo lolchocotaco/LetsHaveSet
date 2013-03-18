@@ -9,6 +9,7 @@ import java.awt.Window;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuBar;
@@ -22,34 +23,25 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
+import java.awt.Color;
 
 public class AppWindow {
 
 	private JFrame frmLetsHaveSet;
 	private JTable table;
 	private JTextField textField;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AppWindow window = new AppWindow();
-					window.frmLetsHaveSet.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
+	private JFrame frmLogin;
+	private JTextField txtUsername;
+	private JPasswordField txtPassword;
+	private JTextField txtError;
 
 	/**
 	 * Create the application.
 	 */
 	public AppWindow() {
 		initialize();
+	    frmLetsHaveSet.setVisible(true);
 	}
 
 	/**`
@@ -131,6 +123,7 @@ public class AppWindow {
 		
 		JMenuItem mntmAbout = new JMenuItem("About");
 		mnHelp.add(mntmAbout);
+		
 	}
 	
 	

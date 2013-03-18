@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.EventQueue;
-import gui.AppWindow;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -110,7 +109,7 @@ public class LoginWindow {
 		String strPassword = passWord.toString();
 		
 		if(userName.equals("username")){
-			AppWindow.main(null);
+			new AppWindow();
 			frmLogin.dispose();
 		}
 		else{
