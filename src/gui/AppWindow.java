@@ -20,6 +20,8 @@ import javax.swing.table.*;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import javax.swing.JTabbedPane;
+import javax.swing.JPanel;
 
 public class AppWindow {
 
@@ -55,46 +57,62 @@ public class AppWindow {
 	 */
 	private void initialize() {
 		frmLetsHaveSet = new JFrame();
+		frmLetsHaveSet.setResizable(false);
 		frmLetsHaveSet.setTitle("Let's Have Set");
-		frmLetsHaveSet.setBounds(100, 100, 572, 461);
+		frmLetsHaveSet.setBounds(100, 100, 800, 600);
 		frmLetsHaveSet.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmLetsHaveSet.getContentPane().setLayout(null);
-	
 		
-		JButton btnClickMeh = new JButton("Click to generate deck");
-		btnClickMeh.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				populateTable();
-			}
-		});
-		btnClickMeh.setBounds(22, 325, 314, 46);
-		frmLetsHaveSet.getContentPane().add(btnClickMeh);
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(12, 13, 772, 527);
+		frmLetsHaveSet.getContentPane().add(tabbedPane);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 64, 532, 248);
-		frmLetsHaveSet.getContentPane().add(scrollPane);
+		JPanel deckList = new JPanel();
+		deckList.setToolTipText("");
+		tabbedPane.addTab("View Deck", null, deckList, null);
+		deckList.setLayout(null);
 		
-		table = new JTable();
-		scrollPane.setViewportView(table);
-		table.setFillsViewportHeight(true);
-		
-		JLabel lblSetDeckGenerator = new JLabel("Set Deck Generator");
-		lblSetDeckGenerator.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 36));
-		lblSetDeckGenerator.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSetDeckGenerator.setBounds(53, 13, 437, 38);
-		frmLetsHaveSet.getContentPane().add(lblSetDeckGenerator);
-		
-		JLabel lblOfCards = new JLabel("# Of Cards:");
-		lblOfCards.setBounds(359, 340, 72, 16);
-		frmLetsHaveSet.getContentPane().add(lblOfCards);
-		
-		textField = new JTextField();
-		textField.setHorizontalAlignment(SwingConstants.CENTER);
-		textField.setEditable(false);
-		textField.setText("0");
-		textField.setBounds(428, 337, 72, 22);
-		frmLetsHaveSet.getContentPane().add(textField);
-		textField.setColumns(10);
+			
+			JButton btnClickMeh = new JButton("Click to generate deck");
+			btnClickMeh.setBounds(41, 442, 314, 46);
+			deckList.add(btnClickMeh);
+			
+			JScrollPane scrollPane = new JScrollPane();
+			scrollPane.setBounds(49, 77, 657, 336);
+			deckList.add(scrollPane);
+			
+			table = new JTable();
+			scrollPane.setViewportView(table);
+			table.setFillsViewportHeight(true);
+			
+			JLabel lblSetDeckGenerator = new JLabel("Set Deck Generator");
+			lblSetDeckGenerator.setBounds(145, 21, 437, 38);
+			deckList.add(lblSetDeckGenerator);
+			lblSetDeckGenerator.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 36));
+			lblSetDeckGenerator.setHorizontalAlignment(SwingConstants.CENTER);
+			
+			JLabel lblOfCards = new JLabel("# Of Cards:");
+			lblOfCards.setBounds(441, 457, 72, 16);
+			deckList.add(lblOfCards);
+			
+			textField = new JTextField();
+			textField.setBounds(510, 454, 72, 22);
+			deckList.add(textField);
+			textField.setHorizontalAlignment(SwingConstants.CENTER);
+			textField.setEditable(false);
+			textField.setText("0");
+			textField.setColumns(10);
+			
+			JPanel deckView = new JPanel();
+			tabbedPane.addTab("See Cards", null, deckView, null);
+			
+			JScrollPane scrollPane_1 = new JScrollPane();
+			deckView.add(scrollPane_1);
+			btnClickMeh.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					populateTable();
+				}
+			});
 		
 		JMenuBar menuBar = new JMenuBar();
 		frmLetsHaveSet.setJMenuBar(menuBar);
@@ -116,7 +134,7 @@ public class AppWindow {
 	}
 	
 	
-	public void populateTable(){
+	private void populateTable(){
 
 		SetDeck setGame = new SetDeck();
 		Object data [][] = new Object[81][4];
