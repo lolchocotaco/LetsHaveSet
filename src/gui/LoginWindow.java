@@ -51,6 +51,7 @@ public class LoginWindow {
 	 */
 	private void initialize() {
 		frmLogin = new JFrame();
+		frmLogin.setResizable(false);
 		frmLogin.setTitle("Login");
 		frmLogin.setBounds(100, 100, 372, 236);
 		frmLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,8 +109,14 @@ public class LoginWindow {
 		txtError.setBounds(78, 44, 198, 22);
 		frmLogin.getContentPane().add(txtError);
 		txtError.setColumns(10);
+		
+		frmLogin.getRootPane().setDefaultButton(btnLogin);
 	}
 	
+	
+	/*
+	 * Class Functions.
+	 */
 	private void checkLogin(){
 		String userName = txtUsername.getText();
 		char[] passWord = txtPassword.getPassword();

@@ -13,6 +13,7 @@ import java.util.Vector;
 public class SetDeck {
 
 	public Vector<SetCard> deck = new Vector<SetCard>(81);
+	public Vector<SetCard> onTable = new Vector<SetCard>();
 	
 	public SetDeck() {
 		Vector<SetCard> cardList = new Vector<SetCard>(81);
