@@ -131,6 +131,15 @@ public class AppWindow {
 			JButton btnNewDeal = new JButton("New Deal");
 			btnNewDeal.setBounds(690, 13, 95, 17);
 			deckView.add(btnNewDeal);
+			
+			JButton btnRmFromTbl = new JButton("Rm from Tbl");
+			btnRmFromTbl.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					rmCard(0);
+				}
+			});
+			btnRmFromTbl.setBounds(690, 57, 95, 17);
+			deckView.add(btnRmFromTbl);
 			btnNewDeal.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					newDeck();
@@ -208,6 +217,10 @@ public class AppWindow {
 		frmLetsHaveSet.dispose();
 		new LoginWindow();
 	}
+	private void rmCard(int loc){
+		setGame.rmTableCard(loc);
+		setGame.setLayout();
+	}
 	/*Draws 12 cards and puts them on the table*/
 	private void displayCards(){
 		setGame.tableView.removeAll();
@@ -229,8 +242,6 @@ public class AppWindow {
 		setGame.tableView.updateUI();
 		setGame.tableView.repaint();
 		setGame.tableView.revalidate();
-		//TODO tell SLmanager to repaint after entities change. 
+		setGame.setLayout();
 	}//End displtableView.ayCards();
-	
-	
 }//End Appwindow

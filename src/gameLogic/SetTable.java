@@ -30,6 +30,7 @@ public class SetTable{
 	
 	public SetTable() {
 		newDeck();
+		tableView.setTweenManager(SLAnimator.createTweenManager());
 	}
 	
 	/*
@@ -61,25 +62,44 @@ public class SetTable{
 	}
 	public int deckSize(){	return deck.size();	}
 	public SetCard getElementAt(int pos){	return deck.elementAt(pos );}
+	public SetCard getTableCard(int pos){ 	return onTable.elementAt(pos);}
+	public SetCard rmTableCard(int pos){	return onTable.remove(pos);}
 	
 	public  void setLayout(){
 		mainCfg = new SLConfig(tableView)
 		.gap(10, 10)
-		.row(1f).col(250).col(1f).col(2f)
-		.beginGrid(0, 0)
-			.row(2f).row(1f).col(1f)
-			.place(0, 0, onTable.elementAt(0))
-			.place(1, 0, onTable.elementAt(1))
-		.endGrid()
-		.beginGrid(0, 1)
-			.row(1f).row(2f).col(1f)
-			.place(0, 0, onTable.elementAt(2))
-			.place(1, 0, onTable.elementAt(3))
-		.endGrid()
-		.place(0, 2, onTable.elementAt(4));
-		tableView.setTweenManager(SLAnimator.createTweenManager());
+		.row(150).row(150).row(150).col(100).col(100).col(100).col(100);
+		
+		for(int c = 0; c<4;c++){
+			for(int r = 0;r<3; r++ ){
+				mainCfg.place(r,c,onTable.elementAt(c*3+r));
+			}
+		}
+//		.place(0, 0, onTable.elementAt(0))
+//		.place(1, 0, onTable.elementAt(1))
+//		.place(2, 0, onTable.elementAt(2))
+//		.place(0, 1, onTable.elementAt(3));
+		
+//		.beginGrid(0, 0)
+//			.row(1f).row(1f).row(1f).col(1f)
+//			.place(0, 0, onTable.elementAt(0))
+//			.place(1, 0, onTable.elementAt(1))
+//			.place(2, 0, onTable.elementAt(2))
+//		.endGrid();
+//		.beginGrid(0, 1)
+//			.row(1f).row(2f).col(1f)
+//			.place(0, 0, onTable.elementAt(2))
+//			.place(1, 0, onTable.elementAt(3))
+//		.endGrid()
+//		.place(0, 2, onTable.elementAt(4));
 		tableView.initialize(mainCfg);
 	}
 	
 	
 }
+
+//for(int c = 0; c<4;c++){
+//for(int r = 0;r<3; r++ ){
+//	mainCfg.place(r,c,onTable.elementAt(c*3+r));
+//}
+//}
