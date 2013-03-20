@@ -2,12 +2,43 @@ package gameLogic;
 
 import java.util.Random;
 
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+
+import aurelienribon.slidinglayout.SLAnimator;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
+
 /**
  * @author Sameer
  * Holds the properties of each card
  *
  */
-public class SetCard implements Comparable<SetCard>{
+public class SetCard extends JPanel implements Comparable<SetCard>{
+	
+	/*
+	 * Panel Properties
+	 */
+	private static final Color FG_COLOR = new Color(0xFFFFFF);
+	private static final Color BG_COLOR = new Color(0x3B5998);
+	private static final Color BORDER_COLOR = new Color(0x000000);
+	private int borderThickness = 2;
+	private boolean hover = false;
+	private boolean actionEnabled = true;
+	private Runnable action;
+	private final JTextArea cardInfo = new JTextArea();
+	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
+	
+	
 	
 	/*
 	 * Card Properties
@@ -20,7 +51,8 @@ public class SetCard implements Comparable<SetCard>{
 
 	/*
 	 * Mapping the integer values to actual strings.
-	 * Probably can be moved outside. 
+	 * Probably can be moved outside.  
+	 * cannot be changed. 
 	 */
     public static final String colorNames [] = {"red", "green", "blue"};
     public static final String numberNames [] = {"one", "two", "three"};
@@ -40,8 +72,58 @@ public class SetCard implements Comparable<SetCard>{
 		shade = sd;
 		selected = false;
 		cardLoc = (int)( Math.random() *81);
-    }
+		setLayout(new BorderLayout());
+		
+		String cardString = "Color: " + colorNames[c] + "\nNumber: " + numberNames[n] + "\nShape: " + shapeNames[sp]+ "\nShade: " +shadeNames[sd];
+		cardInfo.setText(cardString);
+		cardInfo.setEditable(false);
+		cardInfo.setEnabled(false);
+		cardInfo.setBackground(BG_COLOR);
+		add(cardInfo);
+		
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				hover = true;
+				if (actionEnabled) showBorder();
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				hover = false;
+				hideBorder();
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (action != null && actionEnabled) action.run();
+			}
+		});
+    }//End Constructor
     
+    
+	public void setAction(Runnable action) {this.action = action;}
+	public void enableAction() {actionEnabled = true; if (hover) showBorder();}
+	public void disableAction() {actionEnabled = false;}
+    
+	
+	private void showBorder() {
+		tweenManager.killTarget(borderThickness);
+		Tween.to(SetCard.this, Accessor.BORDER_THICKNESS, 0.4f)
+			.target(10)
+			.start(tweenManager);
+	}
+
+	private void hideBorder() {
+		tweenManager.killTarget(borderThickness);
+		Tween.to(SetCard.this, Accessor.BORDER_THICKNESS, 0.4f)
+			.target(2)
+			.start(tweenManager);
+	}
+	
+	
+	
+	
     /*
      * Allows us to use the Collections.sort method. 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -87,4 +169,61 @@ public class SetCard implements Comparable<SetCard>{
     	    return -1;
     	}
     }
+    
+    /*
+     * Animation Stuff
+     */
+    @Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		Graphics2D gg = (Graphics2D) g;
+
+		int w = getWidth();
+		int h = getHeight();
+
+		int t = borderThickness;
+		gg.setColor(BORDER_COLOR);
+		gg.fillRect(0, 0, t, h-1);
+		gg.fillRect(0, 0, w-1, t);
+		gg.fillRect(0, h-1-t, w-1, t);
+		gg.fillRect(w-1-t, 0, t, h-1);
+	}
+    
+    
+    
+    /*Animation 2*/
+   
+	public static class Accessor extends SLAnimator.ComponentAccessor {
+		public static final int BORDER_THICKNESS = 100;
+
+		@Override
+		public int getValues(Component target, int tweenType, float[] returnValues) {
+			SetCard tp = (SetCard) target;
+
+			int ret = super.getValues(target, tweenType, returnValues);
+			if (ret >= 0) return ret;
+
+			switch (tweenType) {
+				case BORDER_THICKNESS: returnValues[0] = tp.borderThickness; return 1;
+				default: return -1;
+			}
+		}
+
+		@Override
+		public void setValues(Component target, int tweenType, float[] newValues) {
+			SetCard tp = (SetCard) target;
+
+			super.setValues(target, tweenType, newValues);
+
+			switch (tweenType) {
+				case BORDER_THICKNESS:
+					tp.borderThickness = Math.round(newValues[0]);
+					tp.repaint();
+					break;
+			}
+		}
+	}
+    
+    
 }

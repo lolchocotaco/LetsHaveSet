@@ -1,7 +1,7 @@
 package gui;
 
 import gameLogic.SetCard;
-import gameLogic.SetDeck;
+import gameLogic.SetTable;
 
 
 import javax.print.attribute.standard.DocumentName;
@@ -33,21 +33,25 @@ import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 
 import aurelienribon.slidinglayout.*;
+import aurelienribon.tweenengine.Tween;
 
 public class AppWindow {
 
 	private JFrame frmLetsHaveSet;
 	private JTable table;
 	private JTextField textField;
-	private SetDeck setGame = new SetDeck();
-	private JPanel cardView = new JPanel();
+	private SetTable setGame = new SetTable();
 	
 	/**
 	 * Create the application.
 	 */
 	public AppWindow() {
+		Tween.registerAccessor(SetCard.class, new SetCard.Accessor());
+		SLAnimator.start();
 		initialize();
+		displayCards();
 		populateTable();
+		setGame.setLayout();
 	    frmLetsHaveSet.setVisible(true);
 	}
 
@@ -116,9 +120,28 @@ public class AppWindow {
 			deckView.setLayout(null);
 			
 
-			cardView.setBounds(12, 13, 771, 519);
-			deckView.add(cardView);
-			cardView.setLayout(null);
+			setGame.tableView.setBounds(12, 13, 641, 523);
+			deckView.add(setGame.tableView);
+			setGame.tableView.setLayout(null);
+			
+			JButton btnDraw = new JButton("Draw");
+			btnDraw.setBounds(690, 33, 95, 17);
+			deckView.add(btnDraw);
+			
+			JButton btnNewDeal = new JButton("New Deal");
+			btnNewDeal.setBounds(690, 13, 95, 17);
+			deckView.add(btnNewDeal);
+			btnNewDeal.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					newDeck();
+				}
+			});
+			btnDraw.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					displayCards();
+					populateTable();
+				}
+			});
 			btnClickMeh.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					newDeck();
@@ -154,18 +177,21 @@ public class AppWindow {
 	}
 
 	private void newDeck(){
-		setGame = new SetDeck();
+		setGame.newDeck();
+		displayCards();
 		populateTable();
+		
 	}
-	
+	/* Filles table with cards currently on the deck*/
 	private void populateTable(){
-		int dLength = setGame.deck.size();
+		int dLength = setGame.deckSize();
 		Object data [][] = new Object[dLength][4];
 		for(int i = 0; i<dLength; i++){
-			data[i][0] = setGame.deck.elementAt(i).getColor();
-			data[i][1] = setGame.deck.elementAt(i).getNumber();
-			data[i][2] = setGame.deck.elementAt(i).getShape();
-			data[i][3] = setGame.deck.elementAt(i).getShade();
+			SetCard tmpCard= setGame.getElementAt(i);
+			data[i][0] = tmpCard.getColor();
+			data[i][1] = tmpCard.getNumber();
+			data[i][2] = tmpCard.getShape();
+			data[i][3] = tmpCard.getShade();
 		}
 		
 		String colName [] = {"Color", "Number", "Shape", "Shade"};
@@ -182,26 +208,16 @@ public class AppWindow {
 		frmLetsHaveSet.dispose();
 		new LoginWindow();
 	}
-	
+	/*Draws 12 cards and puts them on the table*/
 	private void displayCards(){
-
-		
+		setGame.tableView.removeAll();
 		for( int n = 0; n <4; n++){
 			for(int i = 0;  i <3; i++){
-				if (setGame.deck.size()>0){
-					SetCard tCard = setGame.deck.remove(0);
-					setGame.onTable.add(tCard);
+				if (setGame.deckSize()>0){
+					SetCard tCard = setGame.drawCard();
 					
-					JPanel tCardView = new JPanel();
-					tCardView.setBounds(20+n*(100+10), 5+i*(150+15), 100, 150);
-					tCardView.setBorder(BorderFactory.createLineBorder(Color.black));
-					
-					String tCardStat = "Color: " + tCard.getColor() + "\nNumber: " + tCard.getNumber() + "\nShape: " + tCard.getShape() + "\nShade: " + tCard.getShade();
-					JTextArea tCardInfo = new JTextArea(tCardStat);
-					tCardInfo.setEditable(false);
-					tCardInfo.setBackground(null);
-					tCardView.add(tCardInfo);
-					cardView.add(tCardView);
+//					tCard.setBounds(20+n*(100+10), 5+i*(150+15), 100, 150);
+//					setGame.tableView.add(tCard);
 				}
 				else{
 					// TODO Link Panels with Cards in onTable Vector
@@ -210,8 +226,11 @@ public class AppWindow {
 				}			
 			}
 		}
-	}
+		setGame.tableView.updateUI();
+		setGame.tableView.repaint();
+		setGame.tableView.revalidate();
+		//TODO tell SLmanager to repaint after entities change. 
+	}//End displtableView.ayCards();
 	
 	
-	
-}
+}//End Appwindow
