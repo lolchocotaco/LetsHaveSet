@@ -9,8 +9,11 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
@@ -66,19 +69,23 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
      * Sets cardLoc to a random float value
      */
     public SetCard (int c, int n, int sp, int sd) {
+    	
 		color = c;
 		number = n;
 		shape = sp;
 		shade = sd;
 		selected = false;
-		cardLoc = (int)( Math.random() *81);
-		setLayout(new BorderLayout());
+		cardLoc = (int)( random.nextFloat() * 81);
+		setBackground(BG_COLOR);
+//		setLayout(new BorderLayout());
+		
 		
 		String cardString = "Color: " + colorNames[c] + "\nNumber: " + numberNames[n] + "\nShape: " + shapeNames[sp]+ "\nShade: " +shadeNames[sd];
 		cardInfo.setText(cardString);
 		cardInfo.setEditable(false);
 		cardInfo.setEnabled(false);
-		cardInfo.setBackground(BG_COLOR);
+		cardInfo.setBackground(null);
+		cardInfo.setForeground(FG_COLOR);
 		add(cardInfo);
 		
 		addMouseListener(new MouseAdapter() {
@@ -96,9 +103,12 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (action != null && actionEnabled) action.run();
+//				if (action != null && actionEnabled) action.run();
+				System.out.println(cardLoc);
 			}
+			
 		});
+		
     }//End Constructor
     
     
@@ -171,7 +181,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     }
     
     /*
-     * Animation Stuff
+     * Border Animation
      */
     @Override
 	protected void paintComponent(Graphics g) {

@@ -51,7 +51,6 @@ public class AppWindow {
 		initialize();
 		displayCards();
 		populateTable();
-		setGame.setLayout();
 	    frmLetsHaveSet.setVisible(true);
 	}
 
@@ -192,6 +191,7 @@ public class AppWindow {
 		
 	}
 	/* Filles table with cards currently on the deck*/
+	/* Actually a useless function that needs to go */
 	private void populateTable(){
 		int dLength = setGame.deckSize();
 		Object data [][] = new Object[dLength][4];
@@ -218,8 +218,11 @@ public class AppWindow {
 		new LoginWindow();
 	}
 	private void rmCard(int loc){
+		//TODO multi Step Process: Animate, remove/add, reinit layout
 		setGame.rmTableCard(loc);
+		setGame.drawCard();
 		setGame.setLayout();
+		populateTable();
 	}
 	/*Draws 12 cards and puts them on the table*/
 	private void displayCards(){
@@ -227,7 +230,7 @@ public class AppWindow {
 		for( int n = 0; n <4; n++){
 			for(int i = 0;  i <3; i++){
 				if (setGame.deckSize()>0){
-					SetCard tCard = setGame.drawCard();
+					setGame.drawCard();
 					
 //					tCard.setBounds(20+n*(100+10), 5+i*(150+15), 100, 150);
 //					setGame.tableView.add(tCard);
@@ -243,5 +246,5 @@ public class AppWindow {
 		setGame.tableView.repaint();
 		setGame.tableView.revalidate();
 		setGame.setLayout();
-	}//End displtableView.ayCards();
+	}//End displayCards()
 }//End Appwindow
