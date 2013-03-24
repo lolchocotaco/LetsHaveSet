@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.TweenAccessor;
 
 /**
  * @author Sameer
@@ -114,8 +115,8 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	public void setAction(Runnable action) {this.action = action;}
 	public void enableAction() {actionEnabled = true; if (hover) showBorder();}
 	public void disableAction() {actionEnabled = false;}
-    
-	
+
+   
 	private void showBorder() {
 		tweenManager.killTarget(borderThickness);
 		Tween.to(SetCard.this, Accessor.BORDER_THICKNESS, 0.4f)
@@ -232,7 +233,6 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 					break;
 			}
 		}
-	}
-    
+	}   
     
 }

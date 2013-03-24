@@ -21,7 +21,7 @@ public class LoginWindow {
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	private JTextField txtError;
-	private static final String websiteAddress = "http://sable10.ee.cooper.edu:5080/";
+	private static final String websiteAddress = "http://sable10.ee.cooper.edu:5080/account/add.php";
 
 	/**
 	 * Launch the application.

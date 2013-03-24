@@ -1,18 +1,15 @@
 package gameLogic;
 
-import gameLogic.SetCard;
-
 import java.util.Collections;
 import java.util.Vector;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.slidinglayout.SLConfig;
-import aurelienribon.slidinglayout.SLKeyframe;
 import aurelienribon.slidinglayout.SLPanel;
-import aurelienribon.slidinglayout.SLSide;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenAccessor;
+import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Back;
 
 /**
  * @author Sameer
@@ -22,14 +19,10 @@ import aurelienribon.slidinglayout.SLSide;
 public class SetTable{
 
 	/*Animation stuff*/
-	
-	
-	
-	
 	private Vector<SetCard> deck;
 	private Vector<SetCard> onTable = new Vector<SetCard>(15);
 	public SLPanel tableView = new SLPanel();
-	
+	private static final TweenManager tweenManager = SLAnimator.createTweenManager(); 
 	
 	public SetTable() {
 		newDeck();
@@ -104,21 +97,26 @@ public class SetTable{
 			@Override
 			public void run() {
 				disableActions();
-				
 				drawCard();
-				tableView.createTransition()
-					.push(new SLKeyframe(createLayout(row, col), 1.6f)
-//						.setEndSide(SLSide.BOTTOM, onTable.elementAt(1))
-//						.setCallback(new SLKeyframe.Callback() {@Override public void done() {
-//							onTable.elementAt(0).setAction(p1BackAction);
-//							onTable.elementAt(0).enableAction();
-//						}})
-						)
-					.play();
+				//Animation	
+//                Tween.to(super, cardAccessor.SCALE_XY, 0.5f)
+//	                .ease(Back.INOUT)
+//	                .target(2, 2)
+//	                .repeatYoyo(-1, 0.6f)
+//	                .start(tweenManager);
 				
 				tableReplace(row,col);
-//				defaultLayout();
+				enableActions();
 				
+//					.push(new SLKeyframe(createLayout(row, col), 1.6f)
+////						.setEndSide(SLSide.BOTTOM, onTable.elementAt(1))
+////						.setCallback(new SLKeyframe.Callback() {@Override public void done() {
+////							onTable.elementAt(0).setAction(p1BackAction);
+////							onTable.elementAt(0).enableAction();
+////						}})
+//						)
+//					.play();	
+//				defaultLayout();
 //				tableView.createTransition()
 //				.push(new SLKeyframe(defaultLayout(), 1.6f)
 ////					.setEndSide(SLSide.BOTTOM, onTable.elementAt(1))
@@ -128,8 +126,6 @@ public class SetTable{
 ////					}})
 //					)
 //				.play();
-				enableActions();
-				
 			}
 		};
 		return pAction;
@@ -140,12 +136,9 @@ public class SetTable{
 	 * 
 	 */
 	private void tableReplace(int row, int col){
-		System.out.println("Old Size of Table: " + Integer.toString(onTable.size()));
 		SetCard newCard = onTable.remove(12);
-		int vecPos = row*4+3;
+		int vecPos = row*4+col;
 		onTable.setElementAt(newCard, vecPos);
-		System.out.println("Size of Table: " + Integer.toString(onTable.size()));
-		System.out.println("Size of Deck: " + Integer.toString(deck.size()));
 	}
 	
 	
@@ -153,42 +146,42 @@ public class SetTable{
 	 * Generates "new" layout specific to each card clicked. 
 	 * Each card in the grid will have a different "final" layout. 
 	 */
-	private SLConfig createLayout(int row, int col){
-		int rowNum = row/3;
-		System.out.println(rowNum);
-		SLConfig tempLayout = new SLConfig(tableView)
-			.gap(10, 10)
-			.row(150).row(150).row(150).col(100).col(100).col(100).col(100);
-			for(int r = 0; r<3;r++){
-				for(int c = 0;c<4; c++ ){
-					SetCard tblCard = onTable.elementAt(r*4+c);
-					if (rowNum == row){
-						if(r == row && c == col){
-							tblCard = onTable.elementAt(12);
-						}
-						else{
-							tblCard = onTable.elementAt(r*4+c+1);
-						}
-					}
-					tblCard.setAction(animationCreate(r, c));
-					tempLayout.place(r,c,tblCard);
-				}
-			}
-//			.place(0, 0, onTable.elementAt(1))
-//			.place(0, 1, onTable.elementAt(2))
-//			.place(0, 2, onTable.elementAt(3))
-//			.place(0, 3, onTable.elementAt(12))
-//			.place(1, 0, onTable.elementAt(4))
-//			.place(1, 1, onTable.elementAt(5))
-//			.place(1, 2, onTable.elementAt(6))
-//			.place(1, 3, onTable.elementAt(7))
-//			.place(2, 0, onTable.elementAt(8))
-//			.place(2, 1, onTable.elementAt(9))
-//			.place(2, 2, onTable.elementAt(10))
-//			.place(2, 3, onTable.elementAt(11));
-		
-		return tempLayout;
-	}
+//	private SLConfig createLayout(int row, int col){
+//		int rowNum = row/3;
+//		System.out.println(rowNum);
+//		SLConfig tempLayout = new SLConfig(tableView)
+//			.gap(10, 10)
+//			.row(150).row(150).row(150).col(100).col(100).col(100).col(100);
+//			for(int r = 0; r<3;r++){
+//				for(int c = 0;c<4; c++ ){
+//					SetCard tblCard = onTable.elementAt(r*4+c);
+//					if (rowNum == row){
+//						if(r == row && c == col){
+//							tblCard = onTable.elementAt(12);
+//						}
+//						else{
+//							tblCard = onTable.elementAt(r*4+c+1);
+//						}
+//					}
+//					tblCard.setAction(animationCreate(r, c));
+//					tempLayout.place(r,c,tblCard);
+//				}
+//			}
+////			.place(0, 0, onTable.elementAt(1))
+////			.place(0, 1, onTable.elementAt(2))
+////			.place(0, 2, onTable.elementAt(3))
+////			.place(0, 3, onTable.elementAt(12))
+////			.place(1, 0, onTable.elementAt(4))
+////			.place(1, 1, onTable.elementAt(5))
+////			.place(1, 2, onTable.elementAt(6))
+////			.place(1, 3, onTable.elementAt(7))
+////			.place(2, 0, onTable.elementAt(8))
+////			.place(2, 1, onTable.elementAt(9))
+////			.place(2, 2, onTable.elementAt(10))
+////			.place(2, 3, onTable.elementAt(11));
+//		
+//		return tempLayout;
+//	}
 
 	
 	/*Disables actions*/
@@ -203,6 +196,74 @@ public class SetTable{
 			onTable.elementAt(i).enableAction();
 		}
 	}
+	
+	
+//	/**
+//	 * @author Aurelien Ribon | http://www.aurelienribon.com
+//	 */
+//	public class CardAccessor implements TweenAccessor<SetCard> {
+//	        public static final int POS_XY = 1;
+//	        public static final int CPOS_XY = 2;
+//	        public static final int SCALE_XY = 3;
+//	        public static final int ROTATION = 4;
+//	        public static final int OPACITY = 5;
+//	        public static final int TINT = 6;
+//
+//	        @Override
+//	        public int getValues(SetCard target, int tweenType, float[] returnValues) {
+//	                switch (tweenType) {
+////	                        case POS_XY:
+////	                                returnValues[0] = target.getX();
+////	                                returnValues[1] = target.getY();
+////	                                return 2;
+////
+////	                        case CPOS_XY:
+////	                                returnValues[0] = target.getX() + target.getWidth()/2;
+////	                                returnValues[1] = target.getY() + target.getHeight()/2;
+////	                                return 2;
+//
+//	                        case SCALE_XY:
+//	                                returnValues[0] = target.getScaleX();
+//	                                returnValues[1] = target.getScaleY();
+//	                                return 2;
+//
+////	                        case ROTATION: returnValues[0] = target.getRotation(); return 1;
+////	                        case OPACITY: returnValues[0] = target.getColor().a; return 1;
+//
+////	                        case TINT:
+////	                                returnValues[0] = target.getColor().r;
+////	                                returnValues[1] = target.getColor().g;
+////	                                returnValues[2] = target.getColor().b;
+////	                                return 3;
+//
+//	                        default: assert false; return -1;
+//	                }
+//	        }
+//
+//	        @Override
+//	        public void setValues(SetCard target, int tweenType, float[] newValues) {
+//	                switch (tweenType) {
+////	                        case POS_XY: target.setPosition(newValues[0], newValues[1]); break;
+////	                        case CPOS_XY: target.setPosition(newValues[0] - target.getWidth()/2, newValues[1] - target.getHeight()/2); break;
+//	                        case SCALE_XY: target.setScale(newValues[0], newValues[1]); break;
+////	                        case ROTATION: target.setRotation(newValues[0]); break;
+////
+////	                        case OPACITY:
+////	                                Color c = target.getColor();
+////	                                c.set(c.r, c.g, c.b, newValues[0]);
+////	                                target.setColor(c);
+////	                                break;
+////
+////	                        case TINT:
+////	                                c = target.getColor();
+////	                                c.set(newValues[0], newValues[1], newValues[2], c.a);
+////	                                target.setColor(c);
+////	                                break;
+//
+//	                        default: assert false;
+//	                }
+//	        }
+//	}
 	
 }
 
