@@ -35,6 +35,17 @@ import javax.swing.JPanel;
 import aurelienribon.slidinglayout.*;
 import aurelienribon.tweenengine.Tween;
 
+
+/**
+ * @author Sameer
+ * Animation functionality is almost up. Its funky right now. 
+ * Many of the add/remove functionalities of the buttons does not link with the animation method
+ * Need to remove obsolete functions/ interfering functions. 
+ * Animations rely on event listeners on panels. Buttons do nothing. Maybe link the two somehow?
+ *
+ */
+
+
 public class AppWindow {
 
 	private JFrame frmLetsHaveSet;
@@ -193,10 +204,10 @@ public class AppWindow {
 	/* Filles table with cards currently on the deck*/
 	/* Actually a useless function that needs to go */
 	private void populateTable(){
-		int dLength = setGame.deckSize();
+		int dLength = setGame.tableSize();
 		Object data [][] = new Object[dLength][4];
 		for(int i = 0; i<dLength; i++){
-			SetCard tmpCard= setGame.getElementAt(i);
+			SetCard tmpCard= setGame.getTableCard(i);
 			data[i][0] = tmpCard.getColor();
 			data[i][1] = tmpCard.getNumber();
 			data[i][2] = tmpCard.getShape();
@@ -217,11 +228,14 @@ public class AppWindow {
 		frmLetsHaveSet.dispose();
 		new LoginWindow();
 	}
+	
+	/*Removes card from the Table based on pos*/
+	/* not currently implemented with animation. */
 	private void rmCard(int loc){
 		//TODO multi Step Process: Animate, remove/add, reinit layout
 		setGame.rmTableCard(loc);
 		setGame.drawCard();
-		setGame.setLayout();
+		setGame.tableView.initialize(setGame.defaultLayout());
 		populateTable();
 	}
 	/*Draws 12 cards and puts them on the table*/
@@ -245,6 +259,6 @@ public class AppWindow {
 		setGame.tableView.updateUI();
 		setGame.tableView.repaint();
 		setGame.tableView.revalidate();
-		setGame.setLayout();
+		setGame.tableView.initialize(setGame.defaultLayout());
 	}//End displayCards()
 }//End Appwindow

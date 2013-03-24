@@ -103,8 +103,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-//				if (action != null && actionEnabled) action.run();
-				System.out.println(cardLoc);
+				if (action != null && actionEnabled) action.run();
 			}
 			
 		});
