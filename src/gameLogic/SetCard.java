@@ -36,6 +36,9 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	private static final Color BG_COLOR = new Color(0x3B5998);
 	private static final Color BORDER_COLOR = new Color(0x000000);
 	private int borderThickness = 2;
+	private int height = 150;
+	private int width = 100;
+	private float scaleXY = 1;
 	private boolean hover = false;
 	private boolean actionEnabled = true;
 	private Runnable action;
@@ -79,6 +82,17 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		cardLoc = (int)( random.nextFloat() * 81);
 		setBackground(BG_COLOR);
 //		setLayout(new BorderLayout());
+		
+		action = new Runnable() {
+			@Override
+			public void run() {
+				disableAction();
+				grow();
+				enableAction();
+			}
+		};
+		setBounds(0,0,width,height);
+		
 		
 		
 		String cardString = "Color: " + colorNames[c] + "\nNumber: " + numberNames[n] + "\nShape: " + shapeNames[sp]+ "\nShade: " +shadeNames[sd];
@@ -128,6 +142,19 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		tweenManager.killTarget(borderThickness);
 		Tween.to(SetCard.this, Accessor.BORDER_THICKNESS, 0.4f)
 			.target(2)
+			.start(tweenManager);
+	}
+	
+	private void grow(){
+		tweenManager.killTarget(scaleXY);
+//		Tween.to(SetCard.this, Accessor.SCALE_XY, 0.4f)
+//			.target(5)
+//			.start(tweenManager);
+		Tween.to(SetCard.this, Accessor.W, 0.4f)
+			.target(200)
+			.start(tweenManager);
+		Tween.to(SetCard.this, Accessor.H, 0.4f)
+			.target(200)
 			.start(tweenManager);
 	}
 	
@@ -193,20 +220,27 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		int h = getHeight();
 
 		int t = borderThickness;
+		int scale = (int) scaleXY;
 		gg.setColor(BORDER_COLOR);
 		gg.fillRect(0, 0, t, h-1);
 		gg.fillRect(0, 0, w-1, t);
 		gg.fillRect(0, h-1-t, w-1, t);
 		gg.fillRect(w-1-t, 0, t, h-1);
+		//gg.setClip(getX(), getY(), w*scale, h*scale);
 	}
     
-    
+    public float getScaleXY(){
+    	return scaleXY;
+    }
+    public void setScaleXY(float newScale){
+    	scaleXY = newScale;
+    }
     
     /*Animation 2*/
    
 	public static class Accessor extends SLAnimator.ComponentAccessor {
 		public static final int BORDER_THICKNESS = 100;
-		public static final int SCALE_XY = 3;
+		public static final int SCALE_XY = 8;
 
 		@Override
 		public int getValues(Component target, int tweenType, float[] returnValues) {
@@ -220,8 +254,8 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 					returnValues[0] = tp.borderThickness; 
 					return 1;
 				case SCALE_XY:
-					 returnValues[0] = target.getScaleX();
-                     returnValues[1] = target.getScaleY();
+					 returnValues[0] = tp.getScaleXY();
+//                     returnValues[1] = tp.getScaleY();
                      return 2;
 				
 				default: return -1;
@@ -240,7 +274,8 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 					tp.repaint();
 					break;
 				case SCALE_XY:
-					target.setScale(newValues[0], newValues[1]); 
+					tp.setScaleXY(newValues[0]); 
+					tp.repaint();
 					break;
 					
 			}

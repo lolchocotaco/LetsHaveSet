@@ -71,12 +71,16 @@ public class SetTable{
 	public SLConfig defaultLayout(){
 		SLConfig mainCfg = new SLConfig(tableView)
 		.gap(10, 10)
-		.row(150).row(150).row(150).col(100).col(100).col(100).col(100);
+		.row(1f).row(1f).row(1f).col(1f).col(1f).col(1f).col(1f);
+//		.row(150).row(150).row(150).col(100).col(100).col(100).col(100);
+
+
+		
 		
 		for(int r = 0; r<3;r++){
 			for(int c = 0;c<4; c++ ){
 				SetCard tblCard = onTable.elementAt(r*4+c);
-				tblCard.setAction(animationCreate(r, c));
+//				tblCard.setAction(animationCreate(r, c));
 				mainCfg.place(r,c,tblCard);
 			}
 		}
