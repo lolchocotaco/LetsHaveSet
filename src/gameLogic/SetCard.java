@@ -206,6 +206,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
    
 	public static class Accessor extends SLAnimator.ComponentAccessor {
 		public static final int BORDER_THICKNESS = 100;
+		public static final int SCALE_XY = 3;
 
 		@Override
 		public int getValues(Component target, int tweenType, float[] returnValues) {
@@ -215,7 +216,14 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 			if (ret >= 0) return ret;
 
 			switch (tweenType) {
-				case BORDER_THICKNESS: returnValues[0] = tp.borderThickness; return 1;
+				case BORDER_THICKNESS: 
+					returnValues[0] = tp.borderThickness; 
+					return 1;
+				case SCALE_XY:
+					 returnValues[0] = target.getScaleX();
+                     returnValues[1] = target.getScaleY();
+                     return 2;
+				
 				default: return -1;
 			}
 		}
@@ -231,6 +239,10 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 					tp.borderThickness = Math.round(newValues[0]);
 					tp.repaint();
 					break;
+				case SCALE_XY:
+					target.setScale(newValues[0], newValues[1]); 
+					break;
+					
 			}
 		}
 	}   

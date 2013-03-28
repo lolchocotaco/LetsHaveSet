@@ -198,9 +198,7 @@ public class SetTable{
 	}
 	
 	
-//	/**
-//	 * @author Aurelien Ribon | http://www.aurelienribon.com
-//	 */
+
 //	public class CardAccessor implements TweenAccessor<SetCard> {
 //	        public static final int POS_XY = 1;
 //	        public static final int CPOS_XY = 2;
