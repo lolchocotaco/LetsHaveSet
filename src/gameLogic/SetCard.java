@@ -52,6 +52,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	private boolean hover = false;
 	private boolean actionEnabled = true;
 	private Runnable clickAction, unClickAction;
+	private Runnable selectAdd, selectRemove;
 	private final JTextArea cardInfo = new JTextArea();
 	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
 	
@@ -96,6 +97,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		clickAction = new Runnable() {
 			@Override
 			public void run() {
+				selected = true;
 				disableAction();
 				grow();
 				enableAction();
@@ -104,6 +106,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		unClickAction = new Runnable() {
 			@Override
 			public void run() {
+				selected = false;
 				disableAction();
 				shrink();
 				enableAction();
@@ -143,10 +146,15 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (actionEnabled) {
-					if(selected)
+					if(selected){
 						unClickAction.run();
-					else
+						selectRemove.run();
+					}
+					else{
 						clickAction.run();
+						selectAdd.run();
+					}
+					
 				}
 			}
 			
@@ -155,7 +163,8 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     }//End Constructor
     
     
-	public void setAction(Runnable action) {this.clickAction = action;}
+	public void setAction(Runnable action) {this.selectAdd = action;}
+	public void removeAction(Runnable action) {this.selectRemove = action;}
 	public void enableAction() {actionEnabled = true; if (hover) showBorder();}
 	public void disableAction() {actionEnabled = false;}
 
@@ -175,11 +184,11 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	}
 	
 	private void grow(){
-		selected = true;
+		
 		scaleXY = bigScale;
 		Timeline.createSequence()
 			.beginParallel()
-			.push(	Tween.to(SetCard.this, Accessor.XYWH, 0.5f)
+			.push(	Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
 					.targetRelative((1-scaleXY)*width/2, (1-scaleXY)*height/2, (scaleXY-1)*width, (scaleXY-1)*height)
 					.ease(Quad.OUT) )
 			.end()
@@ -187,8 +196,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	}
 	
 	private void shrink(){
-		selected = false;
-		Tween.to(SetCard.this, Accessor.XYWH, 0.5f)
+		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
 			.targetRelative(-(1-scaleXY)*width/2, -(1-scaleXY)*height/2, -(scaleXY-1)*width, -(scaleXY-1)*height)
 			.ease(Quad.OUT)
 			.start(tweenManager);
@@ -273,6 +281,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     
     public void unSelect(){
     	unClickAction.run();
+    	selectRemove.run();
     	hideBorder();
     }
      

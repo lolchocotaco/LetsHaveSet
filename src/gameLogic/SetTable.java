@@ -21,8 +21,9 @@ public class SetTable{
 	/*Animation stuff*/
 	private Vector<SetCard> deck;
 	private Vector<SetCard> onTable = new Vector<SetCard>(15);
+	private Vector<SetCard> selected = new Vector<SetCard>(3);
 	public SLPanel tableView = new SLPanel();
-	private static final TweenManager tweenManager = SLAnimator.createTweenManager(); 
+	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
 	
 	public SetTable() {
 		newDeck();
@@ -81,7 +82,8 @@ public class SetTable{
 		for(int r = 0; r<3;r++){
 			for(int c = 0;c<4; c++ ){
 				SetCard tblCard = onTable.elementAt(r*4+c);
-//				tblCard.setAction(animationCreate(r, c));
+				tblCard.setAction(setSelectAdd(r, c));
+				tblCard.removeAction(setSelectRemove(r,c));
 				mainCfg.place(r,c,tblCard);
 			}
 		}
@@ -96,6 +98,30 @@ public class SetTable{
 	 * Transistions into new layout(without clicked card)
 	 * Replaces the selected card in vector with newly added card to vector. 
 	 */
+	private Runnable setSelectAdd(final int row, final int col){
+		Runnable pAction = new Runnable(){
+			
+			@Override
+			public void run(){
+				//disableActions();
+				selected.add(onTable.elementAt(row*4+col));
+			}
+		};
+		return pAction;
+	}
+	
+	private Runnable setSelectRemove(final int row, final int col){
+		Runnable pAction = new Runnable(){
+			
+			@Override
+			public void run(){
+				//disableActions();
+				selected.remove(onTable.elementAt(row*4+col));
+			}
+		};
+		return pAction;
+	}
+	
 	private Runnable animationCreate( final int row, final int col){
 		Runnable pAction = new Runnable() {
 			
@@ -209,6 +235,8 @@ public class SetTable{
 		}
 	}
 	
+	
+
 	
 
 //	public class CardAccessor implements TweenAccessor<SetCard> {
