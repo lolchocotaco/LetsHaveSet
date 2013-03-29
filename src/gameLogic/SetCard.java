@@ -2,10 +2,14 @@ package gameLogic;
 
 import java.util.Random;
 
+import javax.print.attribute.AttributeSetUtilities;
 import javax.swing.JPanel;
+
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -18,9 +22,12 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import aurelienribon.slidinglayout.SLAnimator;
+import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.TweenAccessor;
+import aurelienribon.tweenengine.equations.Bounce;
+import aurelienribon.tweenengine.equations.Quad;
 
 /**
  * @author Sameer
@@ -35,13 +42,16 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	private static final Color FG_COLOR = new Color(0xFFFFFF);
 	private static final Color BG_COLOR = new Color(0x3B5998);
 	private static final Color BORDER_COLOR = new Color(0x000000);
+	private static final float baseScale = 1f;
+	private static final float bigScale = 1.1f;
 	private int borderThickness = 2;
 	private int height = 150;
 	private int width = 100;
-	private float scaleXY = 1;
+	private float scaleXY = baseScale;
+	private float opacity = 100;
 	private boolean hover = false;
 	private boolean actionEnabled = true;
-	private Runnable action;
+	private Runnable clickAction, unClickAction;
 	private final JTextArea cardInfo = new JTextArea();
 	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
 	
@@ -49,11 +59,11 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	
 	/*
 	 * Card Properties
-	 * cardLock is associated with the posititioning In the deck
+	 * cardLock is associated with the positioning In the deck
 	 * all private
 	 */
 	private int color, number, shade, shape, cardLoc;
-	private boolean selected;
+	private boolean selected = false;
 	private Random random = new Random();
 
 	/*
@@ -83,7 +93,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		setBackground(BG_COLOR);
 //		setLayout(new BorderLayout());
 		
-		action = new Runnable() {
+		clickAction = new Runnable() {
 			@Override
 			public void run() {
 				disableAction();
@@ -91,8 +101,20 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 				enableAction();
 			}
 		};
-		setBounds(0,0,width,height);
-		
+		unClickAction = new Runnable() {
+			@Override
+			public void run() {
+				disableAction();
+				shrink();
+				enableAction();
+			}
+		};
+				
+				
+				
+				
+		setPreferredSize(new Dimension(width,height));
+		setSize(width, height);
 		
 		
 		String cardString = "Color: " + colorNames[c] + "\nNumber: " + numberNames[n] + "\nShape: " + shapeNames[sp]+ "\nShade: " +shadeNames[sd];
@@ -101,6 +123,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		cardInfo.setEnabled(false);
 		cardInfo.setBackground(null);
 		cardInfo.setForeground(FG_COLOR);
+		cardInfo.setVisible(false);
 		add(cardInfo);
 		
 		addMouseListener(new MouseAdapter() {
@@ -113,12 +136,18 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 			@Override
 			public void mouseExited(MouseEvent e) {
 				hover = false;
-				hideBorder();
+				if(!selected)
+					hideBorder();
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (action != null && actionEnabled) action.run();
+				if (actionEnabled) {
+					if(selected)
+						unClickAction.run();
+					else
+						clickAction.run();
+				}
 			}
 			
 		});
@@ -126,7 +155,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     }//End Constructor
     
     
-	public void setAction(Runnable action) {this.action = action;}
+	public void setAction(Runnable action) {this.clickAction = action;}
 	public void enableAction() {actionEnabled = true; if (hover) showBorder();}
 	public void disableAction() {actionEnabled = false;}
 
@@ -146,17 +175,25 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	}
 	
 	private void grow(){
-		tweenManager.killTarget(scaleXY);
-//		Tween.to(SetCard.this, Accessor.SCALE_XY, 0.4f)
-//			.target(5)
-//			.start(tweenManager);
-		Tween.to(SetCard.this, Accessor.W, 0.4f)
-			.target(200)
-			.start(tweenManager);
-		Tween.to(SetCard.this, Accessor.H, 0.4f)
-			.target(200)
+		selected = true;
+		scaleXY = bigScale;
+		Timeline.createSequence()
+			.beginParallel()
+			.push(	Tween.to(SetCard.this, Accessor.XYWH, 0.5f)
+					.targetRelative((1-scaleXY)*width/2, (1-scaleXY)*height/2, (scaleXY-1)*width, (scaleXY-1)*height)
+					.ease(Quad.OUT) )
+			.end()
 			.start(tweenManager);
 	}
+	
+	private void shrink(){
+		selected = false;
+		Tween.to(SetCard.this, Accessor.XYWH, 0.5f)
+			.targetRelative(-(1-scaleXY)*width/2, -(1-scaleXY)*height/2, -(scaleXY-1)*width, -(scaleXY-1)*height)
+			.ease(Quad.OUT)
+			.start(tweenManager);
+		scaleXY = baseScale;
+	}	
 	
 	
 	
@@ -172,7 +209,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
              return 1;
          else
              return -1;
-    	 }
+    }
     
 
     /*      getFunctions     */
@@ -218,29 +255,32 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 
 		int w = getWidth();
 		int h = getHeight();
-
+		
 		int t = borderThickness;
-		int scale = (int) scaleXY;
 		gg.setColor(BORDER_COLOR);
 		gg.fillRect(0, 0, t, h-1);
 		gg.fillRect(0, 0, w-1, t);
 		gg.fillRect(0, h-1-t, w-1, t);
 		gg.fillRect(w-1-t, 0, t, h-1);
-		//gg.setClip(getX(), getY(), w*scale, h*scale);
 	}
     
-    public float getScaleXY(){
-    	return scaleXY;
+    private float getOpacity(){
+    	return opacity;
     }
-    public void setScaleXY(float newScale){
-    	scaleXY = newScale;
+    private void setOpacity(float newVal){
+    	opacity = newVal;
     }
     
+    public void unSelect(){
+    	unClickAction.run();
+    	hideBorder();
+    }
+     
     /*Animation 2*/
    
 	public static class Accessor extends SLAnimator.ComponentAccessor {
 		public static final int BORDER_THICKNESS = 100;
-		public static final int SCALE_XY = 8;
+		public static final int OPACITY = 101;
 
 		@Override
 		public int getValues(Component target, int tweenType, float[] returnValues) {
@@ -253,11 +293,9 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 				case BORDER_THICKNESS: 
 					returnValues[0] = tp.borderThickness; 
 					return 1;
-				case SCALE_XY:
-					 returnValues[0] = tp.getScaleXY();
-//                     returnValues[1] = tp.getScaleY();
-                     return 2;
-				
+				case OPACITY:
+					returnValues[0] = tp.getOpacity();
+					return 1;					
 				default: return -1;
 			}
 		}
@@ -273,10 +311,9 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 					tp.borderThickness = Math.round(newValues[0]);
 					tp.repaint();
 					break;
-				case SCALE_XY:
-					tp.setScaleXY(newValues[0]); 
-					tp.repaint();
-					break;
+				case OPACITY:
+					tp.setOpacity(newValues[0]);
+				default: assert false;
 					
 			}
 		}

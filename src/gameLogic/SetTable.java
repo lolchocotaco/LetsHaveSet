@@ -70,9 +70,10 @@ public class SetTable{
 	 */
 	public SLConfig defaultLayout(){
 		SLConfig mainCfg = new SLConfig(tableView)
-		.gap(10, 10)
-		.row(1f).row(1f).row(1f).col(1f).col(1f).col(1f).col(1f);
-//		.row(150).row(150).row(150).col(100).col(100).col(100).col(100);
+		.gap(20, 20)
+		.row(150).row(150).row(150).col(100).col(100).col(100).col(100).col(100);
+//		.row(1f).row(1f).row(1f).col(1f).col(1f).col(1f).col(1f);
+		
 
 
 		
@@ -198,6 +199,13 @@ public class SetTable{
 	private void enableActions(){
 		for(int i = 0; i<onTable.size(); i++){
 			onTable.elementAt(i).enableAction();
+		}
+	}
+
+	
+	public void clearSelected(){
+		for(int i = 0; i<onTable.size(); i++){
+			onTable.elementAt(i).unSelect();
 		}
 	}
 	

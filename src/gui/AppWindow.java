@@ -150,6 +150,15 @@ public class AppWindow {
 			});
 			btnRmFromTbl.setBounds(690, 57, 95, 17);
 			deckView.add(btnRmFromTbl);
+			
+			JButton btnClearSelected = new JButton("Clear Selected");
+			btnClearSelected.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					setGame.clearSelected();
+				}
+			});
+			btnClearSelected.setBounds(636, 511, 147, 25);
+			deckView.add(btnClearSelected);
 			btnNewDeal.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					newDeck();
