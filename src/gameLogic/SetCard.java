@@ -50,8 +50,8 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	private float scaleXY = baseScale;
 	private float opacity = 100;
 	private boolean hover = false;
-	private boolean actionEnabled = true;
-	private Runnable clickAction, unClickAction;
+	private boolean hoverEnabled = true;
+	private boolean clickEnabled = true;
 	private Runnable selectAdd, selectRemove;
 	private final JTextArea cardInfo = new JTextArea();
 	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
@@ -93,25 +93,6 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		cardLoc = (int)( random.nextFloat() * 81);
 		setBackground(BG_COLOR);
 //		setLayout(new BorderLayout());
-		
-		clickAction = new Runnable() {
-			@Override
-			public void run() {
-				selected = true;
-				disableAction();
-				grow();
-				enableAction();
-			}
-		};
-		unClickAction = new Runnable() {
-			@Override
-			public void run() {
-				selected = false;
-				disableAction();
-				shrink();
-				enableAction();
-			}
-		};
 				
 				
 				
@@ -133,7 +114,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				hover = true;
-				if (actionEnabled) showBorder();
+				if (hoverEnabled) showBorder();
 			}
 
 			@Override
@@ -145,13 +126,13 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (actionEnabled) {
+				if (clickEnabled) {
 					if(selected){
-						unClickAction.run();
+						shrink();
 						selectRemove.run();
 					}
 					else{
-						clickAction.run();
+						grow();
 						selectAdd.run();
 					}
 					
@@ -165,8 +146,10 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     
 	public void setAction(Runnable action) {this.selectAdd = action;}
 	public void removeAction(Runnable action) {this.selectRemove = action;}
-	public void enableAction() {actionEnabled = true; if (hover) showBorder();}
-	public void disableAction() {actionEnabled = false;}
+	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}
+	public void disableHover() {hoverEnabled = false;}
+	public void enableClick() {clickEnabled = true;}
+	public void disableClick(){clickEnabled = false;}
 
    
 	private void showBorder() {
@@ -184,23 +167,25 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	}
 	
 	private void grow(){
-		
+		selected = true;
+		disableClick();
 		scaleXY = bigScale;
-		Timeline.createSequence()
-			.beginParallel()
-			.push(	Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
+		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
 					.targetRelative((1-scaleXY)*width/2, (1-scaleXY)*height/2, (scaleXY-1)*width, (scaleXY-1)*height)
-					.ease(Quad.OUT) )
-			.end()
-			.start(tweenManager);
+					.ease(Quad.OUT) 
+					.start(tweenManager);
+		enableClick();
 	}
 	
 	private void shrink(){
+		selected = false;
+		disableClick();
 		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
 			.targetRelative(-(1-scaleXY)*width/2, -(1-scaleXY)*height/2, -(scaleXY-1)*width, -(scaleXY-1)*height)
 			.ease(Quad.OUT)
 			.start(tweenManager);
 		scaleXY = baseScale;
+		enableClick();
 	}	
 	
 	
@@ -221,21 +206,14 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     
 
     /*      getFunctions     */
-    public String getColor(){
-    	return colorNames[color];
-    }
-    public String getNumber(){
-    	return numberNames[number];
-    }
-    public String getShape(){
-    	return shapeNames[shape];
-    }
-    public String getShade(){
-    	return shadeNames[shade];
-    }
+    public String getColor(){	return colorNames[color];	}
+    public String getNumber(){ 	return numberNames[number]; }
+    public String getShape(){  	return shapeNames[shape];   }
+    public String getShade(){  	return shadeNames[shade];   }
     public String toString(){
     	return "SetCard (" + color + ", " + number + ", " + shape + ", " + shade + ")";
     }
+    
     /*Allows for easy checking of attributes*/
     public int attr (int i) {
     	switch (i) {
@@ -280,7 +258,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     }
     
     public void unSelect(){
-    	unClickAction.run();
+    	shrink();
     	selectRemove.run();
     	hideBorder();
     }

@@ -218,13 +218,13 @@ public class SetTable{
 	/*Disables actions*/
 	private void disableActions() {
 		for(int i = 0; i<onTable.size(); i++){
-			onTable.elementAt(i).disableAction();
+			onTable.elementAt(i).disableClick();
 		}
 	}
 	/*Enables Actions*/
 	private void enableActions(){
 		for(int i = 0; i<onTable.size(); i++){
-			onTable.elementAt(i).enableAction();
+			onTable.elementAt(i).disableClick();
 		}
 	}
 
