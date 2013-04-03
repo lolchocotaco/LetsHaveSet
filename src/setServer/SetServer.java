@@ -36,8 +36,7 @@ public class SetServer {
 		// Runs the client interface server
 		MainServer mainServer = new MainServer(inMessages, outMessages);
 		mainServer.start(); // thread
-		
-		// TODO: Lots of junk here
+
 		// All of the server mechanics are handled by the MainServer and its subclasses,
 		// so that SetServer only has to read from inMessages to get incoming client messages,
 		// and write to outMessages to send them. These queues contain Message objects, which
@@ -67,12 +66,16 @@ public class SetServer {
 						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}
 						// TODO: If table has room, add user to table; If table becomes full, allow "Start"
 						break;
+					case 'E': // Exit Table: E
+						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						// TODO: Take player out of table
+						break;
 					case 'G': // 'Go' (Start game) Signal: G
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
 						// TODO: If all players have selected start game, initiate gameplay; Send card info's
 						break;
 					case 'S': // Set made: S;Card1;Card2;Card3
-						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						if(splitM.length != 4) {System.err.println("Message Length Error!"); break;}
 						// TODO: Validate set; If invalid, ignore; If valid, award points, broadcast changes (lost/new cards)
 						// Also make sure to check for: [No sets possible!] or [Game is over!] 
 						break;
