@@ -49,9 +49,8 @@ import aurelienribon.tweenengine.Tween;
 public class AppWindow {
 
 	private JFrame frmLetsHaveSet;
-	private JTable table;
-	private JTextField textField;
 	private SetTable setGame = new SetTable();
+	private JTable gameList;
 	
 	/**
 	 * Create the application.
@@ -68,6 +67,7 @@ public class AppWindow {
 	/**`
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings("serial")
 	private void initialize() {
 		frmLetsHaveSet = new JFrame();
 		frmLetsHaveSet.setResizable(false);
@@ -79,55 +79,60 @@ public class AppWindow {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(12, 13, 800, 575);
 		frmLetsHaveSet.getContentPane().add(tabbedPane);
-		
-		JPanel deckList = new JPanel();
-		tabbedPane.addTab("View Deck", null, deckList, null);
-		deckList.setLayout(null);
-		
 			
-			JButton btnClickMeh = new JButton("Generate New Deck");
-			btnClickMeh.setBounds(63, 471, 209, 46);
-			deckList.add(btnClickMeh);
+			final JPanel gameLobby = new JPanel();
+			tabbedPane.addTab("Game Lobby", null, gameLobby, null);
+			gameLobby.setLayout(null);
 			
-			JScrollPane scrollPane = new JScrollPane();
-			scrollPane.setBounds(63, 117, 657, 336);
-			deckList.add(scrollPane);
+			JScrollPane scrollPane_1 = new JScrollPane();
+			scrollPane_1.setBounds(50, 50, 700, 400);
+			gameLobby.add(scrollPane_1);
 			
-			table = new JTable();
-			scrollPane.setViewportView(table);
-			table.setFillsViewportHeight(true);
-			
-			JLabel lblSetDeckGenerator = new JLabel("Set Deck Generator");
-			lblSetDeckGenerator.setBounds(147, 13, 437, 38);
-			deckList.add(lblSetDeckGenerator);
-			lblSetDeckGenerator.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 36));
-			lblSetDeckGenerator.setHorizontalAlignment(SwingConstants.CENTER);
-			
-			JLabel lblOfCards = new JLabel("# Of Cards:");
-			lblOfCards.setBounds(625, 486, 72, 16);
-			deckList.add(lblOfCards);
-			
-			textField = new JTextField();
-			textField.setBounds(694, 483, 72, 22);
-			deckList.add(textField);
-			textField.setHorizontalAlignment(SwingConstants.CENTER);
-			textField.setEditable(false);
-			textField.setText("0");
-			textField.setColumns(10);
-			
-			JButton btnClickToRemove = new JButton("Remove Card");
-			btnClickToRemove.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					displayCards();
-					populateTable();
+			gameList = new JTable();
+			gameList.setAutoCreateRowSorter(true);
+			gameList.setModel(new DefaultTableModel(
+				new Object[][] {},
+				new String[] {
+					"Table Number", "Table Name", "Players", "Status"
+				}
+			) {
+				boolean[] columnEditables = new boolean[] {
+					false, false, false, false
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
 				}
 			});
-			btnClickToRemove.setBounds(368, 471, 209, 46);
-			deckList.add(btnClickToRemove);
+			gameList.getColumnModel().getColumn(0).setResizable(false);
+			gameList.getColumnModel().getColumn(0).setPreferredWidth(100);
+			gameList.getColumnModel().getColumn(1).setResizable(false);
+			gameList.getColumnModel().getColumn(1).setPreferredWidth(250);
+			gameList.getColumnModel().getColumn(2).setResizable(false);
+			gameList.getColumnModel().getColumn(2).setPreferredWidth(250);
+			gameList.getColumnModel().getColumn(3).setResizable(false);
+			gameList.getColumnModel().getColumn(3).setPreferredWidth(100);
+			gameList.setFillsViewportHeight(true);
+			scrollPane_1.setViewportView(gameList);
 			
-			JPanel deckView = new JPanel();
+			JButton createTable = new JButton("Create Game\r\n");
+			createTable.setBounds(100, 475, 150, 45);
+			gameLobby.add(createTable);
+			
+			final JPanel deckView = new JPanel();
 			tabbedPane.addTab("See Cards", null, deckView, null);
 			deckView.setLayout(null);
+			deckView.setVisible(false);
+			
+			JButton joinTable = new JButton("Join Table");
+/*			joinTable.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					deckView.setVisible(true);
+					gameLobby.setVisible(false);
+				}
+			});
+*/			joinTable.setBounds(550, 475, 150, 45);
+			gameLobby.add(joinTable);
+			
 			
 
 			setGame.tableView.setBounds(12, 13, 641, 523);
@@ -168,23 +173,6 @@ public class AppWindow {
 			deckView.add(setGame.tableView);
 			setGame.tableView.setLayout(null);
 			
-			JButton btnDraw = new JButton("Draw");
-			btnDraw.setBounds(690, 33, 95, 17);
-			deckView.add(btnDraw);
-			
-			JButton btnNewDeal = new JButton("New Deal");
-			btnNewDeal.setBounds(690, 13, 95, 17);
-			deckView.add(btnNewDeal);
-			
-			JButton btnRmFromTbl = new JButton("Rm from Tbl");
-			btnRmFromTbl.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					rmCard(0);
-				}
-			});
-			btnRmFromTbl.setBounds(690, 57, 95, 17);
-			deckView.add(btnRmFromTbl);
-			
 			JButton btnClearSelected = new JButton("Clear Selected");
 			btnClearSelected.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -193,22 +181,6 @@ public class AppWindow {
 			});
 			btnClearSelected.setBounds(636, 511, 147, 25);
 			deckView.add(btnClearSelected);
-			btnNewDeal.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					newDeck();
-				}
-			});
-			btnDraw.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					displayCards();
-					populateTable();
-				}
-			});
-			btnClickMeh.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					newDeck();
-				}
-			});
 		
 		JMenuBar menuBar = new JMenuBar();
 		frmLetsHaveSet.setJMenuBar(menuBar);
@@ -216,10 +188,7 @@ public class AppWindow {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
-		JMenuItem mntmNew = new JMenuItem("New");
-		mnFile.add(mntmNew);
-		
-		JMenuItem mntmOpen = new JMenuItem("Open");
+		JMenuItem mntmOpen = new JMenuItem("Back to Game Lobby");
 		mnFile.add(mntmOpen);
 		
 		JMenuItem mntmLogout = new JMenuItem("Logout");
@@ -237,18 +206,13 @@ public class AppWindow {
 		mnHelp.add(mntmAbout);
 		
 	}
-
-	private void newDeck(){
-		setGame.newDeck();
-		displayCards();
-		populateTable();
-		
-	}
 	/* Filles table with cards currently on the deck*/
 	/* Actually a useless function that needs to go */
 	public void populateTable(){
 //		int dLength = setGame.tableSize();
 		int dLength = setGame.selectedCards.size();
+		
+		
 		Object data [][] = new Object[dLength][4];
 		for(int i = 0; i<dLength; i++){
 			SetCard tmpCard= setGame.selectedCards.elementAt(i);
@@ -263,24 +227,11 @@ public class AppWindow {
 		
 		DefaultTableModel tableModel = new DefaultTableModel(data,colName);
 		tableModel.fireTableDataChanged();
-		table.setModel(tableModel);
-	
-		textField.setText(Integer.toString(dLength));
 	}
 	
 	private void setLogout(){
 		frmLetsHaveSet.dispose();
 		new LoginWindow();
-	}
-	
-	/*Removes card from the Table based on pos*/
-	/* not currently implemented with animation. */
-	private void rmCard(int loc){
-		//TODO multi Step Process: Animate, remove/add, reinit layout
-		setGame.rmTableCard(loc);
-		setGame.drawCard();
-		setGame.tableView.initialize(setGame.defaultLayout());
-		populateTable();
 	}
 	/*Draws 12 cards and puts them on the table*/
 	private void displayCards(){
