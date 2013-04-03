@@ -3,36 +3,24 @@ package gui;
 import gameLogic.SetCard;
 import gameLogic.SetTable;
 
-
-import javax.print.attribute.standard.DocumentName;
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.Socket;
 
-import javax.swing.BorderFactory;
-import javax.swing.JMenuBar;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.table.*;
-import javax.swing.text.Document;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
-import aurelienribon.slidinglayout.*;
+import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
 
 
@@ -47,21 +35,23 @@ import aurelienribon.tweenengine.Tween;
 
 
 public class AppWindow {
+	
+	private Socket clientSocket = null;
 
-	private JFrame frmLetsHaveSet;
+	public JFrame frmLetsHaveSet;
 	private SetTable setGame = new SetTable();
 	private JTable gameList;
 	
 	/**
 	 * Create the application.
 	 */
-	public AppWindow() {
+	public AppWindow(Socket clientSocket) {
+		this.clientSocket = clientSocket;
 		Tween.registerAccessor(SetCard.class, new SetCard.Accessor());
 		SLAnimator.start();
 		initialize();
 		displayCards();
 		populateTable();
-	    frmLetsHaveSet.setVisible(true);
 	}
 
 	/**`

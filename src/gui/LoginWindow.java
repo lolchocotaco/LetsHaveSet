@@ -1,31 +1,36 @@
 package gui;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.Socket;
 import java.net.URI;
 
-public class LoginWindow {
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
-	private JFrame frmLogin;
+public class LoginWindow {
+	
+	Socket clientSocket = null;
+
+	public JFrame frmLogin;
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	private JTextField txtError;
 	private static final String websiteAddress = "http://sable10.ee.cooper.edu:5080/account/add.php";
-
+	 
 	/**
 	 * Launch the application.
 	 */
+	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -37,13 +42,14 @@ public class LoginWindow {
 			}
 		});
 	}
+	*/
 
 	/**
 	 * Create the application.
 	 */
-	public LoginWindow() {
+	public LoginWindow(Socket clientSocket) {
+		this.clientSocket = clientSocket;
 		initialize();
-		frmLogin.setVisible(true);
 	}
 
 	/**
