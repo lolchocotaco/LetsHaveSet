@@ -22,6 +22,8 @@ public class OutServer extends Thread {
 	
 	public void run() {
 		
+		System.out.println("Out Server running...");
+		
 		while(true) // Always looking for outgoing messages
 		{
 			try {

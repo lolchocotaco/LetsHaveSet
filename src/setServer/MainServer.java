@@ -39,6 +39,8 @@ public class MainServer extends Thread {
 		
 		int numClients = 0; // numClients never goes down (increments on login, does not decrement on logout); This is used for the map
 		
+		System.out.println("Main Server running...");
+		
 		OutServer outServer = new OutServer(socketMap, outMessages);
 		outServer.start(); // Starts OutServer thread
 		

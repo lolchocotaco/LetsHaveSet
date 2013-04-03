@@ -23,6 +23,8 @@ public class SubServer extends Thread {
 	public void run() {
 		String inLine;
 		
+		System.out.println("New client connected, ID: " + clientID);
+		
 		while(true) {
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

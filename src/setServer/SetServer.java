@@ -43,6 +43,49 @@ public class SetServer {
 		// and write to outMessages to send them. These queues contain Message objects, which
 		// simply contain a clientID and a message string.
 		
+		boolean isRunning = true;
+		
+		while(isRunning) // Messages are handled in the order they are received. If each message-handling is fast, there shouldn't be a problem.
+		{
+			try {
+				Message inM = inMessages.take();
+				String [] splitM = inM.message.split("[;]"); // Message parts split by semicolons
+				switch(splitM[0].charAt(0)) {// Switch on first character in message (command character)
+					case 'R': // Register: R;Username;Password
+						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
+						// TODO: Add login information to MySQL
+						break;
+					case 'L': // Login:  L;Username;Password
+						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
+						// TODO: Check MySQL for login information
+						break;
+					case 'T': // Create Table: T;NumPlayers
+						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}
+						// TODO: Create Table with maximum of "NumPlayers"; add user to table
+						break;
+					case 'J': // Join Table: J;TableNum
+						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}
+						// TODO: If table has room, add user to table; If table becomes full, allow "Start"
+						break;
+					case 'G': // 'Go' (Start game) Signal: G
+						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						// TODO: If all players have selected start game, initiate gameplay; Send card info's
+						break;
+					case 'S': // Set made: S;Card1;Card2;Card3
+						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						// TODO: Validate set; If invalid, ignore; If valid, award points, broadcast changes (lost/new cards)
+						// Also make sure to check for: [No sets possible!] or [Game is over!] 
+						break;
+					case 'X': // Mistake made: X
+						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						// TODO: Dock a point from user; Broadcast docked point
+						break;
+				}
+			} catch (InterruptedException e) {
+				// Do nothing?
+			}
+		}
+		
 	}
 	
 	private class User {
