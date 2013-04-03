@@ -131,6 +131,40 @@ public class AppWindow {
 			
 
 			setGame.tableView.setBounds(12, 13, 641, 523);
+			setGame.tableView.addMouseListener(new MouseListener() {
+				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// TODO Auto-generated method stub
+					populateTable();
+					
+				}
+			});
+			
 			deckView.add(setGame.tableView);
 			setGame.tableView.setLayout(null);
 			
@@ -212,11 +246,12 @@ public class AppWindow {
 	}
 	/* Filles table with cards currently on the deck*/
 	/* Actually a useless function that needs to go */
-	private void populateTable(){
-		int dLength = setGame.tableSize();
+	public void populateTable(){
+//		int dLength = setGame.tableSize();
+		int dLength = setGame.selectedCards.size();
 		Object data [][] = new Object[dLength][4];
 		for(int i = 0; i<dLength; i++){
-			SetCard tmpCard= setGame.getTableCard(i);
+			SetCard tmpCard= setGame.selectedCards.elementAt(i);
 			data[i][0] = tmpCard.getColor();
 			data[i][1] = tmpCard.getNumber();
 			data[i][2] = tmpCard.getShape();

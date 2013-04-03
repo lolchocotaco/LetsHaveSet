@@ -93,21 +93,13 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		cardLoc = (int)( random.nextFloat() * 81);
 		setBackground(BG_COLOR);
 //		setLayout(new BorderLayout());
-				
-				
-				
-				
-		setPreferredSize(new Dimension(width,height));
-		setSize(width, height);
-		
-		
+			
 		String cardString = "Color: " + colorNames[c] + "\nNumber: " + numberNames[n] + "\nShape: " + shapeNames[sp]+ "\nShade: " +shadeNames[sd];
 		cardInfo.setText(cardString);
 		cardInfo.setEditable(false);
 		cardInfo.setEnabled(false);
 		cardInfo.setBackground(null);
 		cardInfo.setForeground(FG_COLOR);
-		cardInfo.setVisible(false);
 		add(cardInfo);
 		
 		addMouseListener(new MouseAdapter() {
@@ -128,12 +120,12 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 			public void mouseReleased(MouseEvent e) {
 				if (clickEnabled) {
 					if(selected){
-						shrink();
 						selectRemove.run();
+						shrink();
 					}
 					else{
-						grow();
 						selectAdd.run();
+						grow();
 					}
 					
 				}
@@ -143,6 +135,22 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		
     }//End Constructor
     
+    /*
+     * Allows us to use the Collections.sort method. 
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(SetCard otherCard) {
+    	 if (this.cardLoc == ( otherCard).cardLoc)
+             return 0;
+         else if ((this.cardLoc) > (otherCard).cardLoc)
+             return 1;
+         else
+             return -1;
+    }
+    
+    
+    
+    
     
 	public void setAction(Runnable action) {this.selectAdd = action;}
 	public void removeAction(Runnable action) {this.selectRemove = action;}
@@ -151,6 +159,11 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	public void enableClick() {clickEnabled = true;}
 	public void disableClick(){clickEnabled = false;}
 
+    public void unSelect(){
+    	shrink();
+     	hideBorder();
+    	selectRemove.run();
+    }
    
 	private void showBorder() {
 		tweenManager.killTarget(borderThickness);
@@ -168,6 +181,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	
 	private void grow(){
 		selected = true;
+		showBorder();
 		disableClick();
 		scaleXY = bigScale;
 		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
@@ -188,22 +202,6 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		enableClick();
 	}	
 	
-	
-	
-	
-    /*
-     * Allows us to use the Collections.sort method. 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(SetCard otherCard) {
-    	 if (this.cardLoc == ( otherCard).cardLoc)
-             return 0;
-         else if ((this.cardLoc) > (otherCard).cardLoc)
-             return 1;
-         else
-             return -1;
-    }
-    
 
     /*      getFunctions     */
     public String getColor(){	return colorNames[color];	}
@@ -257,13 +255,10 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     	opacity = newVal;
     }
     
-    public void unSelect(){
-    	shrink();
-    	selectRemove.run();
-    	hideBorder();
-    }
+
+  
      
-    /*Animation 2*/
+    /*Animation Accessors*/
    
 	public static class Accessor extends SLAnimator.ComponentAccessor {
 		public static final int BORDER_THICKNESS = 100;

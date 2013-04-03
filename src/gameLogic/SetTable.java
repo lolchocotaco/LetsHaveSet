@@ -21,7 +21,7 @@ public class SetTable{
 	/*Animation stuff*/
 	private Vector<SetCard> deck;
 	private Vector<SetCard> onTable = new Vector<SetCard>(15);
-	private Vector<SetCard> selected = new Vector<SetCard>(3);
+	public  Vector<SetCard> selectedCards = new Vector<SetCard>(3);
 	public SLPanel tableView = new SLPanel();
 	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
 	
@@ -82,8 +82,8 @@ public class SetTable{
 		for(int r = 0; r<3;r++){
 			for(int c = 0;c<4; c++ ){
 				SetCard tblCard = onTable.elementAt(r*4+c);
-				tblCard.setAction(setSelectAdd(r, c));
-				tblCard.removeAction(setSelectRemove(r,c));
+				tblCard.setAction(selectAction(r, c));
+				tblCard.removeAction(unSelectAction(r,c));
 				mainCfg.place(r,c,tblCard);
 			}
 		}
@@ -98,69 +98,41 @@ public class SetTable{
 	 * Transistions into new layout(without clicked card)
 	 * Replaces the selected card in vector with newly added card to vector. 
 	 */
-	private Runnable setSelectAdd(final int row, final int col){
+	private Runnable selectAction(final int row, final int col){
 		Runnable pAction = new Runnable(){
 			
 			@Override
 			public void run(){
 				//disableActions();
-				selected.add(onTable.elementAt(row*4+col));
+				addSelected(row,col);
 			}
 		};
 		return pAction;
 	}
 	
-	private Runnable setSelectRemove(final int row, final int col){
+	private Runnable unSelectAction(final int row, final int col){
 		Runnable pAction = new Runnable(){
 			
 			@Override
 			public void run(){
 				//disableActions();
-				selected.remove(onTable.elementAt(row*4+col));
+				selectedCards.remove(onTable.elementAt(row*4+col));
 			}
 		};
 		return pAction;
+	}
+
+	public void addSelected(int row, int col){
+		if (selectedCards.size() <3 ){
+			selectedCards.add(onTable.elementAt(row*4+col));
+		}
+		else{
+			clearSelected();
+			selectedCards.add(onTable.elementAt(row*4+col));
+		}
 	}
 	
-	private Runnable animationCreate( final int row, final int col){
-		Runnable pAction = new Runnable() {
-			
-			@Override
-			public void run() {
-				disableActions();
-				drawCard();
-				//Animation	
-//                Tween.to(super, cardAccessor.SCALE_XY, 0.5f)
-//	                .ease(Back.INOUT)
-//	                .target(2, 2)
-//	                .repeatYoyo(-1, 0.6f)
-//	                .start(tweenManager);
-				
-				tableReplace(row,col);
-				enableActions();
-				
-//					.push(new SLKeyframe(createLayout(row, col), 1.6f)
-////						.setEndSide(SLSide.BOTTOM, onTable.elementAt(1))
-////						.setCallback(new SLKeyframe.Callback() {@Override public void done() {
-////							onTable.elementAt(0).setAction(p1BackAction);
-////							onTable.elementAt(0).enableAction();
-////						}})
-//						)
-//					.play();	
-//				defaultLayout();
-//				tableView.createTransition()
-//				.push(new SLKeyframe(defaultLayout(), 1.6f)
-////					.setEndSide(SLSide.BOTTOM, onTable.elementAt(1))
-////					.setCallback(new SLKeyframe.Callback() {@Override public void done() {
-////						onTable.elementAt(0).setAction(p1BackAction);
-////						onTable.elementAt(0).enableAction();
-////					}})
-//					)
-//				.play();
-			}
-		};
-		return pAction;
-	}
+
 	
 	/*
 	 * Adds the last card in onTable vector (index= 12) to the new position. 
@@ -171,6 +143,73 @@ public class SetTable{
 		int vecPos = row*4+col;
 		onTable.setElementAt(newCard, vecPos);
 	}
+	
+	
+	/*Disables actions*/
+	private void disableActions() {
+		for(int i = 0; i<onTable.size(); i++){
+			onTable.elementAt(i).disableClick();
+		}
+	}
+	/*Enables Actions*/
+	private void enableActions(){
+		for(int i = 0; i<onTable.size(); i++){
+			onTable.elementAt(i).disableClick();
+		}
+	}
+
+	
+	public void clearSelected(){
+		for(int i = 0; i<onTable.size(); i++){
+			onTable.elementAt(i).unSelect();
+		}
+	}
+	
+	
+	/*Maybe used some day*/
+	
+	
+//	
+//	private Runnable animationCreate( final int row, final int col){
+//		Runnable pAction = new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				disableActions();
+//				drawCard();
+//				//Animation	
+////                Tween.to(super, cardAccessor.SCALE_XY, 0.5f)
+////	                .ease(Back.INOUT)
+////	                .target(2, 2)
+////	                .repeatYoyo(-1, 0.6f)
+////	                .start(tweenManager);
+//				
+//				tableReplace(row,col);
+//				enableActions();
+//				
+////					.push(new SLKeyframe(createLayout(row, col), 1.6f)
+//////						.setEndSide(SLSide.BOTTOM, onTable.elementAt(1))
+//////						.setCallback(new SLKeyframe.Callback() {@Override public void done() {
+//////							onTable.elementAt(0).setAction(p1BackAction);
+//////							onTable.elementAt(0).enableAction();
+//////						}})
+////						)
+////					.play();	
+////				defaultLayout();
+////				tableView.createTransition()
+////				.push(new SLKeyframe(defaultLayout(), 1.6f)
+//////					.setEndSide(SLSide.BOTTOM, onTable.elementAt(1))
+//////					.setCallback(new SLKeyframe.Callback() {@Override public void done() {
+//////						onTable.elementAt(0).setAction(p1BackAction);
+//////						onTable.elementAt(0).enableAction();
+//////					}})
+////					)
+////				.play();
+//			}
+//		};
+//		return pAction;
+//	}
+	
 	
 	
 	/*
@@ -198,110 +237,10 @@ public class SetTable{
 //					tempLayout.place(r,c,tblCard);
 //				}
 //			}
-////			.place(0, 0, onTable.elementAt(1))
-////			.place(0, 1, onTable.elementAt(2))
-////			.place(0, 2, onTable.elementAt(3))
-////			.place(0, 3, onTable.elementAt(12))
-////			.place(1, 0, onTable.elementAt(4))
-////			.place(1, 1, onTable.elementAt(5))
-////			.place(1, 2, onTable.elementAt(6))
-////			.place(1, 3, onTable.elementAt(7))
-////			.place(2, 0, onTable.elementAt(8))
-////			.place(2, 1, onTable.elementAt(9))
-////			.place(2, 2, onTable.elementAt(10))
-////			.place(2, 3, onTable.elementAt(11));
 //		
 //		return tempLayout;
 //	}
-
 	
-	/*Disables actions*/
-	private void disableActions() {
-		for(int i = 0; i<onTable.size(); i++){
-			onTable.elementAt(i).disableClick();
-		}
-	}
-	/*Enables Actions*/
-	private void enableActions(){
-		for(int i = 0; i<onTable.size(); i++){
-			onTable.elementAt(i).disableClick();
-		}
-	}
-
-	
-	public void clearSelected(){
-		for(int i = 0; i<onTable.size(); i++){
-			onTable.elementAt(i).unSelect();
-		}
-	}
-	
-	
-
-	
-
-//	public class CardAccessor implements TweenAccessor<SetCard> {
-//	        public static final int POS_XY = 1;
-//	        public static final int CPOS_XY = 2;
-//	        public static final int SCALE_XY = 3;
-//	        public static final int ROTATION = 4;
-//	        public static final int OPACITY = 5;
-//	        public static final int TINT = 6;
-//
-//	        @Override
-//	        public int getValues(SetCard target, int tweenType, float[] returnValues) {
-//	                switch (tweenType) {
-////	                        case POS_XY:
-////	                                returnValues[0] = target.getX();
-////	                                returnValues[1] = target.getY();
-////	                                return 2;
-////
-////	                        case CPOS_XY:
-////	                                returnValues[0] = target.getX() + target.getWidth()/2;
-////	                                returnValues[1] = target.getY() + target.getHeight()/2;
-////	                                return 2;
-//
-//	                        case SCALE_XY:
-//	                                returnValues[0] = target.getScaleX();
-//	                                returnValues[1] = target.getScaleY();
-//	                                return 2;
-//
-////	                        case ROTATION: returnValues[0] = target.getRotation(); return 1;
-////	                        case OPACITY: returnValues[0] = target.getColor().a; return 1;
-//
-////	                        case TINT:
-////	                                returnValues[0] = target.getColor().r;
-////	                                returnValues[1] = target.getColor().g;
-////	                                returnValues[2] = target.getColor().b;
-////	                                return 3;
-//
-//	                        default: assert false; return -1;
-//	                }
-//	        }
-//
-//	        @Override
-//	        public void setValues(SetCard target, int tweenType, float[] newValues) {
-//	                switch (tweenType) {
-////	                        case POS_XY: target.setPosition(newValues[0], newValues[1]); break;
-////	                        case CPOS_XY: target.setPosition(newValues[0] - target.getWidth()/2, newValues[1] - target.getHeight()/2); break;
-//	                        case SCALE_XY: target.setScale(newValues[0], newValues[1]); break;
-////	                        case ROTATION: target.setRotation(newValues[0]); break;
-////
-////	                        case OPACITY:
-////	                                Color c = target.getColor();
-////	                                c.set(c.r, c.g, c.b, newValues[0]);
-////	                                target.setColor(c);
-////	                                break;
-////
-////	                        case TINT:
-////	                                c = target.getColor();
-////	                                c.set(newValues[0], newValues[1], newValues[2], c.a);
-////	                                target.setColor(c);
-////	                                break;
-//
-//	                        default: assert false;
-//	                }
-//	        }
-//	}
 	
 }
 
