@@ -1,8 +1,6 @@
-package gameLogic;
+package gui;
 
 
-import gui.AppWindow;
-import gui.LoginWindow;
 
 import java.io.IOException;
 import java.net.Socket;
