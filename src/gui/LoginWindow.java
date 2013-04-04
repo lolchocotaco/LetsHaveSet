@@ -17,8 +17,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class LoginWindow {
-	
-	Socket clientSocket = null;
 
 	public JFrame frmLogin;
 	private JTextField txtUsername;
@@ -47,8 +45,7 @@ public class LoginWindow {
 	/**
 	 * Create the application.
 	 */
-	public LoginWindow(Socket clientSocket) {
-		this.clientSocket = clientSocket;
+	public LoginWindow() {
 		initialize();
 	}
 
@@ -127,7 +124,10 @@ public class LoginWindow {
 		String userName = txtUsername.getText();
 		char[] passWord = txtPassword.getPassword();
 		String strPassword = passWord.toString();
+		String message = "L;" + userName + ";" + strPassword;
+		MainClient.sendMessage(message);
 		
+		/*
 		if(userName.equals("username")){
 			new AppWindow();
 			frmLogin.dispose();
@@ -138,19 +138,33 @@ public class LoginWindow {
 			System.out.println("Password: "+strPassword);
 			txtError.setForeground(new Color(16711680));
 			txtError.setText("Invalid Username/Password");
-			
 		}		
+		*/
 	}
 	
 	private void openRegister(){
-		 Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-		    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-		        try {
-		    		URI uri = new URI(websiteAddress);
-		            desktop.browse(uri);
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-		    }
-		}
+		String userName = txtUsername.getText();
+		char[] passWord = txtPassword.getPassword();
+		String strPassword = passWord.toString();
+		String message = "R;" + userName + ";" + strPassword;
+		MainClient.sendMessage(message);
+		
+		/*
+		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+	        try {
+	    		URI uri = new URI(websiteAddress);
+	            desktop.browse(uri);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    */
+	}
+	
+	public void loginError() {
+		txtError.setForeground(new Color(16711680));
+		txtError.setText("Invalid Username/Password");
+	}
+	
 }

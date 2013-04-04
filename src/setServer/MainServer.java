@@ -59,6 +59,7 @@ public class MainServer extends Thread {
 			Socket clientSocket;
 			try {
 				clientSocket = serverSocket.accept();
+				socketMap.put(numClients, clientSocket);
 				SubServer subServer = new SubServer(numClients++, clientSocket, inMessages);
 				subServer.start();
 			} catch (IOException e) {

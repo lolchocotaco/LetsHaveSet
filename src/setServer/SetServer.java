@@ -53,10 +53,24 @@ public class SetServer {
 					case 'R': // Register: R;Username;Password
 						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
 						// TODO: Add login information to MySQL
+						
+						//////////////////////////////////////////
+						// DEBUG
+						Message out1 = new Message(inM.clientID, "X");
+						outMessages.put(out1);
+						//////////////////////////////////////////
+						
 						break;
 					case 'L': // Login:  L;Username;Password
 						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
 						// TODO: Check MySQL for login information
+						
+						//////////////////////////////////////////
+						// DEBUG
+						Message out2 = new Message(inM.clientID, "I;0");
+						outMessages.put(out2);
+						//////////////////////////////////////////
+						
 						break;
 					case 'T': // Create Table: T;NumPlayers
 						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}

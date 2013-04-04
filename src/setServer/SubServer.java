@@ -36,7 +36,9 @@ public class SubServer extends Thread {
 					// Never gets here (no interrupts?)
 				}
 			} catch (IOException e) {
-				System.err.println("Problem with SubServer Input");
+//				System.err.println("Problem with SubServer Input");
+				System.out.println("Client disconnected, ID: " + clientID);
+				break; // Stop Thread on IOException
 			}
 		}
 		

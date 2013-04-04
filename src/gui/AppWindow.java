@@ -221,7 +221,7 @@ public class AppWindow {
 	
 	private void setLogout(){
 		frmLetsHaveSet.dispose();
-		new LoginWindow();
+//		new LoginWindow();
 	}
 	/*Draws 12 cards and puts them on the table*/
 	private void displayCards(){
