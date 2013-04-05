@@ -184,7 +184,6 @@ public class SetServer {
 						Table tableJ = tableMap.get(userJ.currentTable);
 						if( tableJ != null ) {
 							if(tableJ.numPlayers < tableJ.maxPlayers) {
-								tableJ.numPlayers++;
 								tableJ.addPlayer(inM.clientID);
 								outMessages.put(new Message(-1, "U;" + userJ.currentTable + ";" + tableJ.name + ";" + tableJ.numPlayers + ";" + tableJ.maxPlayers));
 								/////////// TODO: Copy-and-pasted code; can it be consolidated?
@@ -195,6 +194,7 @@ public class SetServer {
 								}
 								////////////
 							} else {
+								userJ.currentTable = -1;
 								outMessages.put(new Message(inM.clientID, "F")); // Table is full
 							}
 						} else {
