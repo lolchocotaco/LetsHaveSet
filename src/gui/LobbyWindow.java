@@ -5,13 +5,20 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class LobbyWindow {
 
 	public JFrame frmLobby;
 	private JTable gameList;
+	private JTextField textField;
 	
 	public LobbyWindow() {
 		initialize();
@@ -26,9 +33,13 @@ public class LobbyWindow {
 		frmLobby = new JFrame();
 		frmLobby.setResizable(false);
 		frmLobby.setTitle("Lobby!!!");
-		frmLobby.setBounds(100, 100, 500, 500);
+		frmLobby.setBounds(100, 100, 800, 500);
 		frmLobby.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmLobby.getContentPane().setLayout(null);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(50, 50, 500, 300);
+		frmLobby.getContentPane().add(scrollPane_1);
 		
 		gameList = new JTable();
 		gameList.setAutoCreateRowSorter(true);
@@ -46,14 +57,45 @@ public class LobbyWindow {
 			}
 		});
 		gameList.getColumnModel().getColumn(0).setResizable(false);
-		gameList.getColumnModel().getColumn(0).setPreferredWidth(100);
+		gameList.getColumnModel().getColumn(0).setPreferredWidth(75);
 		gameList.getColumnModel().getColumn(1).setResizable(false);
-		gameList.getColumnModel().getColumn(1).setPreferredWidth(250);
+		gameList.getColumnModel().getColumn(1).setPreferredWidth(150);
 		gameList.getColumnModel().getColumn(2).setResizable(false);
-		gameList.getColumnModel().getColumn(2).setPreferredWidth(250);
+		gameList.getColumnModel().getColumn(2).setPreferredWidth(75);
 		gameList.getColumnModel().getColumn(3).setResizable(false);
 		gameList.getColumnModel().getColumn(3).setPreferredWidth(100);
 		gameList.setFillsViewportHeight(true);
+		scrollPane_1.setViewportView(gameList);
+		
+		JButton btnNewButton = new JButton("Create Game");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
+		btnNewButton.setBounds(50, 400, 100, 30);
+		frmLobby.getContentPane().add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Join Table");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				MainClient.sendMessage("E");
+			}
+		});
+		btnNewButton_1.setBounds(450, 400, 100, 30);
+		frmLobby.getContentPane().add(btnNewButton_1);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(600, 50, 185, 270);
+		frmLobby.getContentPane().add(scrollPane);
+		
+		JTextArea textArea = new JTextArea();
+		scrollPane.setViewportView(textArea);
+		
+		textField = new JTextField();
+		textField.setBounds(600, 320, 185, 30);
+		frmLobby.getContentPane().add(textField);
+		textField.setColumns(10);
 		
 		////////////////////////////////
 		
@@ -102,5 +144,4 @@ public class LobbyWindow {
 	public void tableIsFull() {
 		JOptionPane.showMessageDialog(frmLobby, "Table is full!");
 	}
-	
 }

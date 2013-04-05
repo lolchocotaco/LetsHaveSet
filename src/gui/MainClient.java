@@ -60,7 +60,7 @@ public class MainClient {
 						break;
 					case 'U': // Table Update: U;12;Hello;3;4
 						if(splitLine.length != 5) {System.err.println("Message Length Error!"); break;}
-						lobbyWindow.updateTable(Integer.parseInt(splitLine[1]), splitLine[2], Integer.parseInt(splitLine[3]), Integer.parseInt(splitLine[4]));
+						lobbyWindow.updateTable(splitLine[1], splitLine[2], splitLine[3], splitLine[4]);
 						break;
 					case 'F': // Table is Full: F
 						if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
@@ -106,7 +106,8 @@ public class MainClient {
 						break;
 				}
 			} catch (IOException e) {
-				System.err.println("Problem with Client Input");
+				System.err.println("Server disconnected!");
+				System.exit(-1);
 			}
 		}
 		

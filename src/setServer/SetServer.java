@@ -65,7 +65,7 @@ public class SetServer {
 						
 						//////////////////////////////////////////
 						// DEBUG
-						Message out2 = new Message(inM.clientID, "I;0");
+						Message out2 = new Message(inM.clientID, "I;3;12;Hello;2;4;13;Test;1;2;14;TheBestTable;3;4");
 						outMessages.put(out2);
 						//////////////////////////////////////////
 						
@@ -81,6 +81,12 @@ public class SetServer {
 					case 'E': // Exit Table: E
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
 						// TODO: Take player out of table
+						
+						//////////////////////////////////////////
+						// DEBUG
+						Message out3 = new Message(inM.clientID, "U;13;Test;2;2");
+						outMessages.put(out3);
+						//////////////////////////////////////////	
 						break;
 					case 'G': // 'Go' (Start game) Signal: G
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
