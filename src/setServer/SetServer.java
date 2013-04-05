@@ -1,7 +1,13 @@
 package setServer;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 
 /*
  * SetServer: 
@@ -21,6 +27,55 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 public class SetServer {
+	
+	private static class User {
+		public String username;
+		public int numWins;
+		public int numLosses;
+		public int currentTable;
+		
+		public User(String username, int numWins, int numLosses, int currentTable) {
+			this.username = username;
+			this.numWins = numWins;
+			this.numLosses = numLosses;
+			this.currentTable = currentTable;
+		}
+	};
+	
+	private static class Table {
+		public String name;
+		public int numPlayers;
+		public int maxPlayers;
+		public Vector<Integer> players;
+		public int numGoPressed;
+		
+		public Table(String name, int numPlayers, int maxPlayers) {
+			this.name = name;
+			this.numPlayers = numPlayers;
+			this.maxPlayers = maxPlayers;
+			this.players = new Vector<Integer>();
+			this.numGoPressed = 0;
+		}
+		
+		public void addPlayer(int userID) {
+			numPlayers++;
+			players.add(userID);
+		}
+		
+		public void removePlayer(int userID) {
+			numPlayers--;
+			players.remove(new Integer(userID));
+		}
+		
+		public String playerString(Map<Object, User> userMap) {
+			String out = "P;" + numPlayers + ";" + maxPlayers;
+			Iterator<Integer> it = players.iterator();
+			while(it.hasNext()) {
+				out += ";" + userMap.get(it.next()).username;
+			}
+			return out;
+		}
+	}
 
 	public static void main(String[] args) {
 		
@@ -29,7 +84,11 @@ public class SetServer {
 		BlockingQueue<Message> outMessages = new LinkedBlockingQueue<Message>();
 		
 		// Map from user id (integer) to User object
-//		Map<Object, User> userMap = new HashMap<Object, User>(); 
+		Map<Object, User> userMap = new HashMap<Object, User>(); 
+		
+		// Map from tableNum to Table object
+		int numTables = 0;
+		Map<Object, Table> tableMap = new HashMap<Object, Table>();
 	
 		// Runs the client interface server
 		MainServer mainServer = new MainServer(inMessages, outMessages);
@@ -50,47 +109,148 @@ public class SetServer {
 				switch(splitM[0].charAt(0)) {// Switch on first character in message (command character)
 					case 'R': // Register: R;Username;Password
 						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
-						// TODO: Add login information to MySQL
 						
-						//////////////////////////////////////////
-						// DEBUG
-						Message out1 = new Message(inM.clientID, "X");
-						outMessages.put(out1);
-						//////////////////////////////////////////
+						/////////////////////////////////////////
+						boolean usernameAlreadyExists = false; //
+						/////////////////////////////////////////
 						
+						if(usernameAlreadyExists) {
+							outMessages.put( new Message(inM.clientID, "X") );
+						} else {
+							////////////////////////////////////////
+							// TODO: Add user/pass combo to MySQL //
+							////////////////////////////////////////
+							
+							User newUser = new User(splitM[1], 0, 0, -1);
+							userMap.put(inM.clientID, newUser);
+							
+							outMessages.put( new Message(inM.clientID, allTableString(tableMap)) );
+						}
 						break;
 					case 'L': // Login:  L;Username;Password
 						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
-						// TODO: Check MySQL for login information
+					
+						//////////////////////////////////////////
+						// TODO: Check user/pass combo in MySQL //
+						//////////////////////////////////////////
+						boolean loginSuccessful = true;
+						int numWins = 0, numLosses = 0;
+						//////////////////////////////////////////
 						
-						//////////////////////////////////////////
-						// DEBUG
-						Message out2 = new Message(inM.clientID, "I;3;12;Hello;2;4;13;Test;1;2;14;TheBestTable;3;4");
-						outMessages.put(out2);
-						//////////////////////////////////////////
+						if(loginSuccessful) {
+							User newUser = new User(splitM[1], numWins, numLosses, -1);
+							userMap.put(inM.clientID, newUser);
+							
+							outMessages.put( new Message(inM.clientID, allTableString(tableMap)) );
+						} else {
+							outMessages.put( new Message(inM.clientID, "X") );
+						}
 						
 						break;
-					case 'T': // Create Table: T;NumPlayers
-						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}
-						// TODO: Create Table with maximum of "NumPlayers"; add user to table
+					case 'T': // Create Table: T;Name;NumPlayers
+						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
+						
+						User userT = userMap.get(inM.clientID);
+						if(userT.currentTable >= 0) {
+							outMessages.put(new Message(inM.clientID, "A"));
+							break;
+						}
+						
+						userT.currentTable = numTables;
+						
+						Table newTable = new Table(splitM[1], 0, Integer.parseInt(splitM[2]));
+						newTable.addPlayer(inM.clientID);
+						
+						// Give client "Table Made" message
+						outMessages.put(new Message(inM.clientID, newTable.playerString(userMap)));
+						// Broadcast new table update
+						outMessages.put(new Message(-1, "U;" + numTables + ";" + newTable.name + ";" + newTable.numPlayers + ";" + newTable.maxPlayers));
+						
+						tableMap.put(numTables, newTable);
+						numTables++;
+						
 						break;
 					case 'J': // Join Table: J;TableNum
 						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}
-						// TODO: If table has room, add user to table; If table becomes full, allow "Start"
+						
+						User userJ = userMap.get(inM.clientID);
+						if(userJ.currentTable >= 0) {
+							outMessages.put(new Message(inM.clientID, "A"));
+							break;
+						}
+						
+						userJ.currentTable = Integer.parseInt(splitM[1]);
+						
+						Table tableJ = tableMap.get(userJ.currentTable);
+						if( tableJ != null ) {
+							if(tableJ.numPlayers < tableJ.maxPlayers) {
+								tableJ.numPlayers++;
+								tableJ.addPlayer(inM.clientID);
+								outMessages.put(new Message(-1, "U;" + userJ.currentTable + ";" + tableJ.name + ";" + tableJ.numPlayers + ";" + tableJ.maxPlayers));
+								/////////// TODO: Copy-and-pasted code; can it be consolidated?
+								String outString = tableJ.playerString(userMap);
+								Iterator<Integer> it = tableJ.players.iterator();
+								while(it.hasNext()) {
+									outMessages.put(new Message(it.next(), outString)); // Send message to each player at table
+								}
+								////////////
+							} else {
+								outMessages.put(new Message(inM.clientID, "F")); // Table is full
+							}
+						} else {
+							System.err.println("Table requested that does not exist!");
+							userJ.currentTable = -1;
+							outMessages.put(new Message(inM.clientID, "F")); // Pretend table is full
+						}
+						
 						break;
 					case 'E': // Exit Table: E
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
-						// TODO: Take player out of table
 						
-						//////////////////////////////////////////
-						// DEBUG
-						Message out3 = new Message(inM.clientID, "U;13;Test;2;2");
-						outMessages.put(out3);
-						//////////////////////////////////////////	
+						User userE = userMap.get(inM.clientID);
+						if(userE.currentTable < 0) { // User exited non-existent table
+							System.err.println("User exited non-existent table!");
+							outMessages.put(new Message(inM.clientID, "E")); 
+							break;
+						}
+						
+						Table tableE = tableMap.get(userE.currentTable);
+						outMessages.put(new Message(inM.clientID, "E"));
+						
+						if( tableE != null ) {
+							tableE.removePlayer(inM.clientID);
+							outMessages.put(new Message(-1, "U;" + userE.currentTable + ";" + tableE.name + ";" + tableE.numPlayers + ";" + tableE.maxPlayers));
+							if(tableE.numPlayers > 0) {
+								/////////
+								String outString = tableE.playerString(userMap);
+								Iterator<Integer> it = tableE.players.iterator();
+								while(it.hasNext()) {
+									outMessages.put(new Message(it.next(), outString)); // Send message to each player at table
+								}
+								/////////
+							} else {
+								tableMap.remove(userE.currentTable);
+							}
+							
+						} else {
+							System.err.println("Player exited non-existant table!");
+						}
+						userE.currentTable = -1;
+						
 						break;
 					case 'G': // 'Go' (Start game) Signal: G
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
-						// TODO: If all players have selected start game, initiate gameplay; Send card info's
+						
+						Table tableG = tableMap.get(Integer.parseInt(splitM[1]));
+						if( tableG != null ) {
+							tableG.numGoPressed++;
+							if(tableG.numGoPressed == tableG.maxPlayers) { 
+								// TODO: Start the damn game!!!
+							}
+						} else {
+							System.err.println("Player exited non-existant table!");
+						}
+						
 						break;
 					case 'S': // Set made: S;Card1;Card2;Card3
 						if(splitM.length != 4) {System.err.println("Message Length Error!"); break;}
@@ -109,13 +269,16 @@ public class SetServer {
 		
 	}
 	
-	/*
-	private class User {
-		public String username;
-		public int numWins;
-		public int numLosses;
-		public int currentTable;
-	};
-	*/
+	private static String allTableString(Map<Object, Table> tableMap) {
+		String out = "I;" + tableMap.size();
+		Iterator<Entry<Object, Table>> it = tableMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Object, Table> entry = (Map.Entry<Object, Table>) it.next();
+			int tableNum = (Integer) entry.getKey();
+			Table curTable = (Table) entry.getValue();
+			out += ";" + tableNum + ";" + curTable.name + ";" + curTable.numPlayers + ";" + curTable.maxPlayers;
+		}
+		return out;
+	}
 
 }

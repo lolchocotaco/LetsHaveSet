@@ -1,24 +1,30 @@
 package gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.table.DefaultTableModel;
 
 public class LobbyWindow {
 
 	public JFrame frmLobby;
 	private JTable gameList;
 	private JTextField textField;
+	private JTextField tableNameField;
+	private JSpinner spinner;
 	
 	public LobbyWindow() {
 		initialize();
@@ -26,19 +32,16 @@ public class LobbyWindow {
 	
 	@SuppressWarnings("serial")
 	private void initialize() {
-		// TODO: initialize
-		
-		////////////////////////////////
-		// DEBUG
+
 		frmLobby = new JFrame();
 		frmLobby.setResizable(false);
-		frmLobby.setTitle("Lobby!!!");
+		frmLobby.setTitle("Game Lobby");
 		frmLobby.setBounds(100, 100, 800, 500);
 		frmLobby.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmLobby.getContentPane().setLayout(null);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(50, 50, 500, 300);
+		scrollPane_1.setBounds(50, 50, 500, 325);
 		frmLobby.getContentPane().add(scrollPane_1);
 		
 		gameList = new JTable();
@@ -70,43 +73,64 @@ public class LobbyWindow {
 		JButton btnNewButton = new JButton("Create Game");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				createGame();
 			}
 		});
-		btnNewButton.setBounds(50, 400, 100, 30);
+		btnNewButton.setBounds(340, 386, 100, 44);
 		frmLobby.getContentPane().add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Join Table");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				MainClient.sendMessage("E");
+				joinTable();
 			}
 		});
-		btnNewButton_1.setBounds(450, 400, 100, 30);
+		btnNewButton_1.setBounds(450, 386, 100, 44);
 		frmLobby.getContentPane().add(btnNewButton_1);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(600, 50, 185, 270);
+		scrollPane.setBounds(575, 50, 200, 350);
 		frmLobby.getContentPane().add(scrollPane);
 		
 		JTextArea textArea = new JTextArea();
+		textArea.setEnabled(false);
+		textArea.setEditable(false);
 		scrollPane.setViewportView(textArea);
 		
 		textField = new JTextField();
-		textField.setBounds(600, 320, 185, 30);
+		textField.setBounds(575, 400, 200, 30);
 		frmLobby.getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		////////////////////////////////
+		tableNameField = new JTextField();
+		tableNameField.setBounds(50, 405, 175, 20);
+		frmLobby.getContentPane().add(tableNameField);
+		tableNameField.setColumns(10);
+		
+		SpinnerModel sm = new SpinnerNumberModel(2, 2, 5, 1); // Inital, Min, Max, Step
+		spinner = new JSpinner(sm);
+		spinner.setBounds(250, 405, 70, 20);
+		frmLobby.getContentPane().add(spinner);
+		
+		JLabel lblTableName = new JLabel("Table Name");
+		lblTableName.setBounds(112, 385, 70, 14);
+		frmLobby.getContentPane().add(lblTableName);
+		
+		JLabel lblTablePlayers = new JLabel("Table Players");
+		lblTablePlayers.setBounds(252, 385, 70, 14);
+		frmLobby.getContentPane().add(lblTablePlayers);
 		
 	}
 	
-	private void createTable() {
-		
+	private void createGame() {
+		String tableName = tableNameField.getText();
+		int maxPlayers = (Integer) spinner.getValue();
+		MainClient.sendMessage("T;" + tableName + ";" + maxPlayers);
 	}
 	
 	private void joinTable() {
-		
+		int tableNum = Integer.parseInt( (String) gameList.getValueAt(gameList.getSelectedRow(), 0) );
+		MainClient.sendMessage("J;" + tableNum);
 	}
 	
 	public void addTable(String tableNum, String tableName, String numPlayers, String maxPlayers) {
@@ -119,6 +143,7 @@ public class LobbyWindow {
 		( (DefaultTableModel) gameList.getModel() ).addRow(new Object[]{tableNum, tableName, numPlayers + "/" + maxPlayers, status});
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void updateTable(String tableNum, String tableName, String numPlayers, String maxPlayers) {
 		int i = 0;
 		DefaultTableModel TM = ( (DefaultTableModel) gameList.getModel() );
@@ -128,20 +153,28 @@ public class LobbyWindow {
 	      Vector<String> v = it.next();
 	      if(Integer.parseInt(tableNum) == Integer.parseInt(v.elementAt(0))) {
 	    	  TM.removeRow(i);
-	    	  String status;
-		  		if(Integer.parseInt(numPlayers) < Integer.parseInt(maxPlayers)) {
-		  			status = "Open";
-		  		} else {
-		  			status = "Full";
-		  		}
-	    	  TM.insertRow(i, new Object[]{tableNum, tableName, numPlayers + "/" + maxPlayers, status});
+	    	  if(Integer.parseInt(numPlayers) > 0) { // If the table still exists
+		    	  String status;
+			  		if(Integer.parseInt(numPlayers) < Integer.parseInt(maxPlayers)) {
+			  			status = "Open";
+			  		} else {
+			  			status = "Full";
+			  		}
+		    	  TM.insertRow(i, new Object[]{tableNum, tableName, numPlayers + "/" + maxPlayers, status});
+	    	  }
 	    	  return;
 	      }
 	      i++;
 	    }
+	    // If the function has not returned, then the table is new
+	    this.addTable(tableNum, tableName, numPlayers, maxPlayers);
 	}
 	
 	public void tableIsFull() {
 		JOptionPane.showMessageDialog(frmLobby, "Table is full!");
+	}
+	
+	public void alreadyAtTable() {
+		JOptionPane.showMessageDialog(frmLobby, "You are already at a table!");
 	}
 }
