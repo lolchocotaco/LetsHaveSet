@@ -1,13 +1,9 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.Socket;
-import java.net.URI;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,7 +18,7 @@ public class LoginWindow {
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	private JTextField txtError;
-	private static final String websiteAddress = "http://sable10.ee.cooper.edu:5080/account/add.php";
+//	private static final String websiteAddress = "http://sable10.ee.cooper.edu:5080/account/add.php";
 	 
 	/**
 	 * Launch the application.

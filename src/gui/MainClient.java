@@ -55,7 +55,7 @@ public class MainClient {
 						for(int tableNum = 0; tableNum < numTables; tableNum++)
 						{
 							int ind = 2 + 4*tableNum;
-							lobbyWindow.addTable(Integer.parseInt(splitLine[ind]), splitLine[ind+1], Integer.parseInt(splitLine[ind+2]), Integer.parseInt(splitLine[ind+3]));
+							lobbyWindow.addTable(splitLine[ind], splitLine[ind+1], splitLine[ind+2], splitLine[ind+3]);
 						}
 						break;
 					case 'U': // Table Update: U;12;Hello;3;4
@@ -73,7 +73,7 @@ public class MainClient {
 							lobbyWindow.frmLobby.setVisible(false);
 							tableWindow.frmTable.setVisible(true);
 						}
-						lobbyWindow.updatePlayers(splitLine);
+						tableWindow.updatePlayers(splitLine);
 						break;
 					case 'T': // Table Cards:  T;12;01;02;03;04;05;06;07;08;09;10;11;12
 						if(splitLine.length < 1) {System.err.println("Message Length Error!"); break;}

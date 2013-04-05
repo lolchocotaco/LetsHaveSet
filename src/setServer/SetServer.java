@@ -1,7 +1,5 @@
 package setServer;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -31,7 +29,7 @@ public class SetServer {
 		BlockingQueue<Message> outMessages = new LinkedBlockingQueue<Message>();
 		
 		// Map from user id (integer) to User object
-		Map<Object, User> userMap = new HashMap<Object, User>(); 
+//		Map<Object, User> userMap = new HashMap<Object, User>(); 
 	
 		// Runs the client interface server
 		MainServer mainServer = new MainServer(inMessages, outMessages);
@@ -105,11 +103,13 @@ public class SetServer {
 		
 	}
 	
+	/*
 	private class User {
 		public String username;
 		public int numWins;
 		public int numLosses;
 		public int currentTable;
 	};
+	*/
 
 }
