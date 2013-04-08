@@ -82,19 +82,19 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     /*
      * Constructor
      * Sets cardLoc to a random float value
-     */
-    public SetCard (int c, int n, int sp, int sd) {
-    	
-		color = c;
-		number = n;
-		shape = sp;
-		shade = sd;
+     */                                                                                             
+    public SetCard (int color, int number, int shape, int shade) {                                  
+    	                                                                                            
+		this.color = color;                                                                         
+		this.number = number;                                                                       
+		this.shape = shape;                                                                         
+		this.shade = shade;                                                                         
 		selected = false;
-		cardLoc = (int)( random.nextFloat() * 81);
+		cardLoc = (int)( random.nextInt());
 		setBackground(BG_COLOR);
 //		setLayout(new BorderLayout());
 			
-		String cardString = "Color: " + colorNames[c] + "\nNumber: " + numberNames[n] + "\nShape: " + shapeNames[sp]+ "\nShade: " +shadeNames[sd];
+		String cardString = "Color: " + colorNames[color] + "\nNumber: " + numberNames[number] + "\nShape: " + shapeNames[shape]+ "\nShade: " +shadeNames[shade];
 		cardInfo.setText(cardString);
 		cardInfo.setEditable(false);
 		cardInfo.setEnabled(false);
@@ -148,9 +148,9 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
              return -1;
     }
     
-    
-    
-    
+    public int getCardNum() {
+		return (27*color + 9*number + 3*shape + shade);
+	}
     
 	public void setAction(Runnable action) {this.selectAdd = action;}
 	public void removeAction(Runnable action) {this.selectRemove = action;}

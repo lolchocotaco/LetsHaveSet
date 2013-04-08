@@ -12,12 +12,14 @@ import java.net.UnknownHostException;
 public class MainClient {
 	
 	static Socket clientSocket = null;
+	static DataOutputStream out = null;
 	
 	public static void main(String[] args) {
 		
 		try {
 //			clientSocket = new Socket("sable10.ee.cooper.edu", 5342);
 			clientSocket = new Socket("127.0.0.1",5342);
+			out = new DataOutputStream(clientSocket.getOutputStream());
 		} catch (UnknownHostException e) {
 			System.err.println("Unknown Host Exception thrown!");
 			System.exit(-1);
@@ -134,7 +136,6 @@ public class MainClient {
 	
 	public static void sendMessage(String message) {
 		try {
-			DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
 			out.writeBytes(message + '\n');
 		} catch (IOException e) {
 			System.err.println("Error sending message!");

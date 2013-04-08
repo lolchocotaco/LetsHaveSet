@@ -28,7 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class SetServer {
 	
-	private static class User {
+	public static class User {
 		public String username;
 		public int numWins;
 		public int numLosses;
@@ -59,12 +59,12 @@ public class SetServer {
 		
 		public void addPlayer(int userID) {
 			numPlayers++;
-			players.add(userID);
+			players.addElement(userID);
 		}
 		
 		public void removePlayer(int userID) {
 			numPlayers--;
-			players.remove(new Integer(userID));
+			players.removeElement(userID);
 		}
 		
 		public String playerString(Map<Object, User> userMap) {
@@ -236,6 +236,40 @@ public class SetServer {
 							System.err.println("Player exited non-existant table!");
 						}
 						userE.currentTable = -1;
+						
+						break;
+					case 'D': // Disconnect: D
+						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						
+						mainServer.socketMap.remove(inM.clientID);
+						
+						User userD = userMap.get(inM.clientID);
+						if(userD.currentTable < 0) { // User not at table
+							userMap.remove(inM.clientID);
+							break;
+						}
+						
+						Table tableD = tableMap.get(userD.currentTable);
+						
+						if( tableD != null ) {
+							tableD.removePlayer(inM.clientID);
+							outMessages.put(new Message(-1, "U;" + userD.currentTable + ";" + tableD.name + ";" + tableD.numPlayers + ";" + tableD.maxPlayers));
+							if(tableD.numPlayers > 0) {
+								/////////
+								String outString = tableD.playerString(userMap);
+								Iterator<Integer> it = tableD.players.iterator();
+								while(it.hasNext()) {
+									outMessages.put(new Message(it.next(), outString)); // Send message to each player at table
+								}
+								/////////
+							} else {
+								tableMap.remove(userD.currentTable);
+							}
+						} else {
+							System.err.println("Disconnect Table Error!");
+						}
+						
+						userMap.remove(inM.clientID);
 						
 						break;
 					case 'G': // 'Go' (Start game) Signal: G

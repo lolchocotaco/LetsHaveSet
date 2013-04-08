@@ -113,11 +113,11 @@ public class LobbyWindow {
 		frmLobby.getContentPane().add(spinner);
 		
 		JLabel lblTableName = new JLabel("Table Name");
-		lblTableName.setBounds(112, 385, 70, 14);
+		lblTableName.setBounds(91, 387, 100, 14);
 		frmLobby.getContentPane().add(lblTableName);
 		
 		JLabel lblTablePlayers = new JLabel("Table Players");
-		lblTablePlayers.setBounds(252, 385, 70, 14);
+		lblTablePlayers.setBounds(232, 387, 100, 14);
 		frmLobby.getContentPane().add(lblTablePlayers);
 		
 	}

@@ -25,21 +25,41 @@ public class SubServer extends Thread {
 		
 		System.out.println("New client connected, ID: " + clientID);
 		
-		while(true) {
-			try {
-				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				inLine = in.readLine();
-				Message inM = new Message(clientID, inLine);
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			while(true) {
 				try {
-					inMessages.put(inM);
-				} catch (InterruptedException e) {
-					// Never gets here (no interrupts?)
+					inLine = in.readLine();
+					if(inLine != null)
+					{
+						Message inM = new Message(clientID, inLine);
+						try {
+							inMessages.put(inM);
+						} catch (InterruptedException e) {
+							// Never gets here (no interrupts?)
+						}
+					} else {
+						System.out.println("Client disconnected, ID: " + clientID);
+						try {
+							inMessages.put(new Message(clientID, "D"));
+						} catch (InterruptedException e) {
+							System.err.println("Disconnect Error!");
+						}
+						return;
+					}
+				} catch (IOException e) {
+//					System.err.println("Problem with SubServer Input");
+					System.out.println("Client disconnected, ID: " + clientID);
+					try {
+						inMessages.put(new Message(clientID, "D"));
+					} catch (InterruptedException e1) {
+						System.err.println("Disconnect Error!");
+					}
+					return; // Stop Thread on IOException
 				}
-			} catch (IOException e) {
-//				System.err.println("Problem with SubServer Input");
-				System.out.println("Client disconnected, ID: " + clientID);
-				break; // Stop Thread on IOException
 			}
+		} catch (IOException e1) {
+			System.err.println("Problem with client connection!");
 		}
 		
 	}
