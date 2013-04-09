@@ -1,32 +1,19 @@
 package gameLogic;
 
-import java.util.Random;
-
-import javax.print.attribute.AttributeSetUtilities;
-import javax.swing.JPanel;
-
-import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.Random;
 
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 
 import aurelienribon.slidinglayout.SLAnimator;
-import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
-import aurelienribon.tweenengine.TweenAccessor;
-import aurelienribon.tweenengine.equations.Bounce;
 import aurelienribon.tweenengine.equations.Quad;
 
 /**
@@ -34,6 +21,7 @@ import aurelienribon.tweenengine.equations.Quad;
  * Holds the properties of each card
  *
  */
+@SuppressWarnings("serial")
 public class SetCard extends JPanel implements Comparable<SetCard>{
 	
 	/*

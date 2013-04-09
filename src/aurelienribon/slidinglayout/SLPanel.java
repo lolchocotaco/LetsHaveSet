@@ -1,6 +1,8 @@
 package aurelienribon.slidinglayout;
 
 import aurelienribon.tweenengine.TweenManager;
+
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -96,4 +98,5 @@ public class SLPanel extends JLayeredPane {
 	public SLTransition createTransition() {
 		return new SLTransition(this, tweenManager);
 	}
+
 }

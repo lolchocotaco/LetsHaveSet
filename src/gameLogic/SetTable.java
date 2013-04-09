@@ -23,11 +23,11 @@ public class SetTable{
 	private Vector<SetCard> onTable = new Vector<SetCard>(15);
 	public  Vector<SetCard> selectedCards = new Vector<SetCard>(3);
 	public SLPanel tableView = new SLPanel();
-	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
+	private static final TweenManager SLtweenManager = SLAnimator.createTweenManager();
 	
 	public SetTable() {
 		newDeck();
-		tableView.setTweenManager(SLAnimator.createTweenManager());
+		tableView.setTweenManager(SLtweenManager);
 	}
 	
 	/*

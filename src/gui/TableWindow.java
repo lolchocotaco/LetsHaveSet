@@ -1,16 +1,20 @@
 package gui;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import gameLogic.SetTable;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class TableWindow {
 
 	public JFrame frmTable;
+	private SetTable setTable =new SetTable();
 	
 	public TableWindow() {
 		initialize();
@@ -27,8 +31,7 @@ public class TableWindow {
 		
 		JLabel lblThisWindowMay = new JLabel("THIS WINDOW MAY\r\n NEED MORE WORK");
 		lblThisWindowMay.setFont(new Font("Tahoma", Font.BOLD, 36));
-		lblThisWindowMay.setBounds(35, 145, 750, 150);
-		frmTable.getContentPane().add(lblThisWindowMay);
+		lblThisWindowMay.setBounds(0, 145, 750, 150);
 		
 		JButton btnNewButton = new JButton("EXIT TABLE");
 		btnNewButton.setBounds(625, 380, 130, 60);
@@ -38,6 +41,12 @@ public class TableWindow {
 			}
 		});
 		frmTable.getContentPane().add(btnNewButton);
+
+		setTable.tableView.setBorder(BorderFactory.createBevelBorder(1));
+		setTable.tableView.add(lblThisWindowMay);
+		setTable.tableView.setBounds(10, 10, 600, 450);
+		setTable.tableView.setLayout(null);
+		frmTable.getContentPane().add(setTable.tableView);
 		
 	}
 	
