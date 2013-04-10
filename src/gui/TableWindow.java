@@ -14,10 +14,9 @@ import javax.swing.JLabel;
 public class TableWindow {
 
 	public JFrame frmTable;
-	private SetTable setTable = null;
+	private SetTable setTable =new SetTable();
 	
 	public TableWindow() {
-		setTable = new SetTable();
 		initialize();
 	}
 	
