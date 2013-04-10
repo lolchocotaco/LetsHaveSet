@@ -121,6 +121,10 @@ public class MainClient {
 								lobbyWindow.frmLobby.setVisible(true);
 							}
 							break;
+						case 'C': //Chat: C;Username;Message
+							if(splitLine.length != 3) {System.err.println("Message Length Error!"); break;}
+							lobbyWindow.newChat(splitLine[1], splitLine[2]);
+							break;
 					}
 				} catch (IOException e) {
 					System.err.println("Server disconnected!");

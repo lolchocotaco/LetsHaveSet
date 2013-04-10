@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -23,6 +25,7 @@ public class LobbyWindow {
 	public JFrame frmLobby;
 	private JTable gameList;
 	private JTextField textField;
+	private JTextArea chatWindow;
 	private JTextField tableNameField;
 	private JSpinner spinner;
 	
@@ -92,15 +95,30 @@ public class LobbyWindow {
 		scrollPane.setBounds(575, 50, 200, 350);
 		frmLobby.getContentPane().add(scrollPane);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setEnabled(false);
-		textArea.setEditable(false);
-		scrollPane.setViewportView(textArea);
+		chatWindow = new JTextArea();
+		chatWindow.setEditable(false);
+		chatWindow.setEnabled(false);
+		scrollPane.setViewportView(chatWindow);
 		
 		textField = new JTextField();
 		textField.setBounds(575, 400, 200, 30);
+		textField.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				// TODO Auto-generated method stub
+				if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+                   sendChat();
+                }
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			@Override
+			public void keyTyped(KeyEvent e) {}
+		});
+		
 		frmLobby.getContentPane().add(textField);
 		textField.setColumns(10);
+		
 		
 		tableNameField = new JTextField();
 		tableNameField.setBounds(50, 405, 175, 20);
@@ -124,13 +142,21 @@ public class LobbyWindow {
 	
 	private void createGame() {
 		String tableName = tableNameField.getText();
-		int maxPlayers = (Integer) spinner.getValue();
-		MainClient.sendMessage("T;" + tableName + ";" + maxPlayers);
+		if(tableName.contains(";")){
+			invalidChar();
+		} else{
+			int maxPlayers = (Integer) spinner.getValue();
+			MainClient.sendMessage("T;" + tableName + ";" + maxPlayers);
+		}
 	}
 	
 	private void joinTable() {
-		int tableNum = Integer.parseInt( (String) gameList.getValueAt(gameList.getSelectedRow(), 0) );
-		MainClient.sendMessage("J;" + tableNum);
+		if(gameList.getSelectedRow() != -1) {
+			int tableNum = Integer.parseInt( (String) gameList.getValueAt(gameList.getSelectedRow(), 0) );
+			MainClient.sendMessage("J;" + tableNum);
+		} else {
+			selectATable();			
+		}
 	}
 	
 	public void addTable(String tableNum, String tableName, String numPlayers, String maxPlayers) {
@@ -170,11 +196,32 @@ public class LobbyWindow {
 	    this.addTable(tableNum, tableName, numPlayers, maxPlayers);
 	}
 	
+	public void newChat(String user, String chat) {
+		chatWindow.append(user + ": " + chat + "\n");
+	}
+	
+	public void sendChat() {
+		String txt = textField.getText();
+		if(txt.contains(";")) {
+			JOptionPane.showMessageDialog(frmLobby, "Cannot send message with \";\" in it.");
+		} else if(txt != null) {
+			MainClient.sendMessage("C;" + txt);
+			textField.setText(null);
+		}
+	}
+	
+	public void selectATable() {
+		JOptionPane.showMessageDialog(frmLobby, "Please select a table to join!");
+	}
+	
 	public void tableIsFull() {
 		JOptionPane.showMessageDialog(frmLobby, "Table is full!");
 	}
 	
 	public void alreadyAtTable() {
 		JOptionPane.showMessageDialog(frmLobby, "You are already at a table!");
+	}
+	public void invalidChar() {
+		JOptionPane.showMessageDialog(frmLobby, "\";\" is not a valid character!");
 	}
 }
