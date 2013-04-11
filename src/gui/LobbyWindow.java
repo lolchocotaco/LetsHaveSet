@@ -204,7 +204,7 @@ public class LobbyWindow {
 		String txt = textField.getText();
 		if(txt.contains(";")) {
 			JOptionPane.showMessageDialog(frmLobby, "Cannot send message with \";\" in it.");
-		} else if(txt != null) {
+		} else if(!txt.isEmpty()) {
 			MainClient.sendMessage("C;" + txt);
 			textField.setText(null);
 		}
