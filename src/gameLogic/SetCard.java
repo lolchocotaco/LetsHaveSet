@@ -136,7 +136,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     }
     
     public int getCardNum() {
-		return (27*color + 9*number + 3*shape + shade);
+		return (1000*color + 100*number + 10*shape + shade);
 	}
     
 	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}

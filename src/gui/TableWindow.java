@@ -70,12 +70,13 @@ public class TableWindow {
 		// TODO 
 	}
 
-	public void tableCards(String[] splitLine) { // splitLine: T;12;01;02;03;04;05;06;07;08;09;10;11;12
+	public void tableCards(String[] splitLine) { // splitLine: T;12;00;01;02;10;11;12;20;21;22;100;101;102
 		// TODO 
 		int cardNum = 0;
 		for( int i =0; i< Integer.parseInt(splitLine[1]); i++){
 			cardNum = Integer.parseInt(splitLine[i+2]);
 			setTable.addToTable(cardNum);
+			System.out.println(cardNum);
 		}
 		setTable.tableView.removeAll();
 		setTable.tableView.updateUI();

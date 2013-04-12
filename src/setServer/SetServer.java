@@ -303,7 +303,7 @@ public class SetServer {
 						break;
 					case 'N': //T;12;01;02;03;04;05;06;07;08;09;10;11;12
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
-						outMessages.put(new Message(inM.clientID, "T;12;01;02;03;04;05;06;07;08;09;10;11;12"));
+						outMessages.put(new Message(inM.clientID, "T;12;00;01;02;10;11;12;20;21;22;100;101;102"));
 						break;
 						
 				}
