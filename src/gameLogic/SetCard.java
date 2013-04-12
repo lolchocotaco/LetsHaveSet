@@ -40,7 +40,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	private boolean hover = false;
 	private boolean hoverEnabled = true;
 	private boolean clickEnabled = true;
-	private Runnable selectAdd, selectRemove;
+//	private Runnable selectAdd, selectRemove;
 	private final JTextArea cardInfo = new JTextArea();
 	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
 	
@@ -80,7 +80,6 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		selected = false;
 		cardLoc = (int)( random.nextInt());
 		setBackground(BG_COLOR);
-//		setLayout(new BorderLayout());
 			
 		String cardString = "Color: " + colorNames[color] + "\nNumber: " + numberNames[number] + "\nShape: " + shapeNames[shape]+ "\nShade: " +shadeNames[shade];
 		cardInfo.setText(cardString);
@@ -108,11 +107,11 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 			public void mouseReleased(MouseEvent e) {
 				if (clickEnabled) {
 					if(selected){
-						selectRemove.run();
+						selectRemove();
 						shrink();
 					}
 					else{
-						selectAdd.run();
+						selectAdd();
 						grow();
 					}
 					
@@ -140,8 +139,6 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		return (27*color + 9*number + 3*shape + shade);
 	}
     
-	public void setAction(Runnable action) {this.selectAdd = action;}
-	public void removeAction(Runnable action) {this.selectRemove = action;}
 	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}
 	public void disableHover() {hoverEnabled = false;}
 	public void enableClick() {clickEnabled = true;}
@@ -150,7 +147,15 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     public void unSelect(){
     	shrink();
      	hideBorder();
-    	selectRemove.run();
+    	selectRemove();
+    }
+    
+    /* Add self to selected cards vector if selected*/
+    public void selectAdd(){
+    	SetTable.addSelected(this);
+    }
+    public void selectRemove(){
+    	SetTable.rmSelected(this);
     }
    
 	private void showBorder() {

@@ -30,7 +30,7 @@ import aurelienribon.tweenengine.Tween;
  * Many of the add/remove functionalities of the buttons does not link with the animation method
  * Need to remove obsolete functions/ interfering functions. 
  * Animations rely on event listeners on panels. Buttons do nothing. Maybe link the two somehow?
- *
+ * Everything is disappearing from this file. slowly. 
  */
 
 
@@ -226,21 +226,6 @@ public class AppWindow {
 	/*Draws 12 cards and puts them on the table*/
 	private void displayCards(){
 		setGame.tableView.removeAll();
-		for( int n = 0; n <4; n++){
-			for(int i = 0;  i <3; i++){
-				if (setGame.deckSize()>0){
-					setGame.drawCard();
-					
-//					tCard.setBounds(20+n*(100+10), 5+i*(150+15), 100, 150);
-//					setGame.tableView.add(tCard);
-				}
-				else{
-					// TODO Link Panels with Cards in onTable Vector
-					// TODO Figure out Tween for annimations. 
-					// TODO Game Logic
-				}			
-			}
-		}
 		setGame.tableView.updateUI();
 		setGame.tableView.repaint();
 		setGame.tableView.revalidate();

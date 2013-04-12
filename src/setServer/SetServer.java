@@ -296,12 +296,16 @@ public class SetServer {
 						// TODO: Dock a point from user; Broadcast docked point
 						break;
 					case 'C': //Chat sent: C;Message
-						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}
-						
+						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}					
 						User userC = userMap.get(inM.clientID);
-						
 						outMessages.put(new Message(-1, "C;" + userC.username + ";" + splitM[1]));
 						break;
+						
+					case 'N': //T;12;01;02;03;04;05;06;07;08;09;10;11;12
+						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						outMessages.put(new Message(inM.clientID, "T;12;01;02;03;04;05;06;07;08;09;10;11;12"));
+						break;
+						
 				}
 			} catch (InterruptedException e) {
 				// Do nothing?
