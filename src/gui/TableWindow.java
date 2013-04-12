@@ -77,7 +77,6 @@ public class TableWindow {
 			cardNum = Integer.parseInt(splitLine[i+2]);
 			setTable.addToTable(cardNum);
 		}
-		
 		setTable.tableView.removeAll();
 		setTable.tableView.updateUI();
 		setTable.tableView.repaint();
@@ -90,7 +89,12 @@ public class TableWindow {
 	}
 
 	public void setMade(String playerName, int C1, int C2, int C3) {
-		
+		//TODO
+	}
+	
+	public static void sendSet( int C1, int C2, int C3){
+		//TODO
+		MainClient.sendMessage("S;"+ C1+ ";"+ C2 + ";" + C3);
 	}
 
 	public void newCards(int C1, int C2, int C3) {

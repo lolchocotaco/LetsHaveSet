@@ -290,6 +290,7 @@ public class SetServer {
 						if(splitM.length != 4) {System.err.println("Message Length Error!"); break;}
 						// TODO: Validate set; If invalid, ignore; If valid, award points, broadcast changes (lost/new cards)
 						// Also make sure to check for: [No sets possible!] or [Game is over!] 
+						System.out.println(splitM[1]+" " +splitM[2]+ " "+splitM[3]);
 						break;
 					case 'X': // Mistake made: X
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
@@ -300,7 +301,6 @@ public class SetServer {
 						User userC = userMap.get(inM.clientID);
 						outMessages.put(new Message(-1, "C;" + userC.username + ";" + splitM[1]));
 						break;
-						
 					case 'N': //T;12;01;02;03;04;05;06;07;08;09;10;11;12
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
 						outMessages.put(new Message(inM.clientID, "T;12;01;02;03;04;05;06;07;08;09;10;11;12"));

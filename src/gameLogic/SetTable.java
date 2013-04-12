@@ -1,5 +1,7 @@
 package gameLogic;
 
+import gui.TableWindow;
+
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -34,8 +36,7 @@ public class SetTable{
 	/*
 	 * Deck Functions:
 	 * Creates New deck, clears on table vector
-	 * Get deckSize
-	 * getElementAt
+	 * Get deckSize	
 	 */
 	public void  newDeck(){
 		deck = new HashMap<Integer,SetCard>(81);
@@ -54,7 +55,7 @@ public class SetTable{
 //        Collections.sort(deck);
 	}
 	
-	/*Adds deck card to on table Vector*/
+	/*Adds deck card to ontable Vector removes from deck*/
 	public void addToTable(int cardNum){
 		onTable.add(deck.get(cardNum));
 		deck.remove(cardNum);
@@ -70,7 +71,6 @@ public class SetTable{
 	/*
 	 * Returns the default layout of 3x4 grid. 
 	 * Sets the appropriate action for associated grid location. 
-	 * 
 	 */
 	public SLConfig defaultLayout(){
 		SLConfig mainCfg = new SLConfig(tableView)
@@ -85,19 +85,25 @@ public class SetTable{
 		return mainCfg;
 	}
 	
+	/* Selecting operations */
 	public static void addSelected(SetCard setCard){
-		if (selectedCards.size() <3 ){
+		if (selectedCards.size() == 2){
 			selectedCards.add(setCard);
-		} else{
-			//Check for set 
+			//Send to server to check for set
+			TableWindow.sendSet(SetTable.selectedCards.elementAt(0).getCardNum(), SetTable.selectedCards.elementAt(1).getCardNum(), SetTable.selectedCards.elementAt(2).getCardNum());
+		}
+		else if (selectedCards.size() <3 ){
+			selectedCards.add(setCard);
+		} 
+		else{
 			clearSelected();
 			selectedCards.add(setCard);
 		}
 	}
+	
 	public static void rmSelected(SetCard setCard){
 		selectedCards.remove(setCard);
 	}
-	
 	
 	public static void clearSelected(){
 		for(int i = 0; i<onTable.size(); i++){
