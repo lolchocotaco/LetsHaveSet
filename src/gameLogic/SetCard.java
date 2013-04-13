@@ -70,7 +70,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     /*
      * Constructor
      * Sets cardLoc to a random float value
-     */                                                                                             
+     */ 
     public SetCard (int color, int number, int shape, int shade) {                                  
     	                                                                                            
 		this.color = color;                                                                         
@@ -122,6 +122,19 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		
     }//End Constructor
     
+    public SetCard ( int cardNum){
+    	this.color = getNthDigit(cardNum,3,4);
+    	this.number = getNthDigit(cardNum,3,3);
+    	this.shape = getNthDigit(cardNum,3,2);
+    	this.shade = getNthDigit(cardNum,3,1);
+    }
+    
+    
+    public int getNthDigit(int number, int base, int n) {    
+    	  return (int) ((number / Math.pow(base, n - 1)) % base);
+    }
+    
+    
     /*
      * Allows us to use the Collections.sort method. 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -135,8 +148,9 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
              return -1;
     }
     
+    /*CardNum: [Color][Number][Shape][Shape]  */
     public int getCardNum() {
-		return (1000*color + 100*number + 10*shape + shade);
+		return (27*color + 9*number + 3*shape + shade);
 	}
     
 	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}
