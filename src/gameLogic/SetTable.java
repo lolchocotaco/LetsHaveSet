@@ -2,7 +2,6 @@ package gameLogic;
 
 import gui.TableWindow;
 
-import java.util.HashMap;
 import java.util.Vector;
 
 import aurelienribon.slidinglayout.SLAnimator;
@@ -12,13 +11,16 @@ import aurelienribon.tweenengine.TweenManager;
 
 /**
  * @author Sameer
- * Creates the deck and allows for shuffling
- * Probably useless to have an entire class for the deck. Probably can be combined with the setCard class, but left separate for clarity. 
+ * Client sided setTable does the following:
+ * 		-Generates and manages cards given by server.
+ * 		-Keeps track of selected cards
+ * 		-Animates cards
  */
 public class SetTable{
 
 	// Deck vector is not needed //
-	private HashMap<Integer, SetCard> deck = null;
+	
+//	private HashMap<Integer, SetCard> deck = null;
 	private static Vector<SetCard> onTable = null;
 	public static  Vector<SetCard> selectedCards = null;
 	public SLPanel tableView = null;
@@ -28,7 +30,7 @@ public class SetTable{
 		onTable = new Vector<SetCard>(15);
 		selectedCards = new Vector<SetCard>(3);
 		tableView = new SLPanel();
-		newDeck();
+//		newDeck();
 		SLtweenManager = SLAnimator.createTweenManager();
 		tableView.setTweenManager(SLtweenManager);
 	}
@@ -37,36 +39,41 @@ public class SetTable{
 	 * Deck Functions:
 	 * Creates New deck, clears on table vector
 	 * Get deckSize	
+	 * No need in client
 	 */
-	public void  newDeck(){
-		deck = new HashMap<Integer,SetCard>(81);
-		onTable = new Vector<SetCard>();
-		SetCard tmpCard = null;
-        for (int number=0; number<3; number++) {
-            for (int symbol=0; symbol<3; symbol++) {
-                for (int shading=0; shading<3; shading++) {
-                    for (int color=0; color<3; color++) {
-                    	tmpCard = new SetCard(number, symbol, shading, color);
-                    	deck.put(tmpCard.getCardNum(), tmpCard);
-                    }
-                }
-            }
-        }
-//        Collections.sort(deck);
-	}
+//	public void  newDeck(){
+//		deck = new HashMap<Integer,SetCard>(81);
+//		onTable = new Vector<SetCard>();
+//		SetCard tmpCard = null;
+//        for (int number=0; number<3; number++) {
+//            for (int symbol=0; symbol<3; symbol++) {
+//                for (int shading=0; shading<3; shading++) {
+//                    for (int color=0; color<3; color++) {
+//                    	tmpCard = new SetCard(number, symbol, shading, color);
+//                    	deck.put(tmpCard.getCardNum(), tmpCard);
+//                    }
+//                }
+//            }
+//        }
+////        Collections.sort(deck);
+//	}
+	
 	
 	/*Adds deck card to ontable Vector removes from deck*/
 	public void addToTable(int cardNum){
-		onTable.add(deck.get(cardNum));
-		deck.remove(cardNum);
+//		onTable.add(deck.get(cardNum));
+		onTable.add(new SetCard(cardNum));
+//		deck.remove(cardNum);
 	}
 	
 	/*Getter Functions*/
-	public int deckSize()	{	return deck.size();	}
+//	public int deckSize()	{	return deck.size();	}
+//	public SetCard getCardNum(int cardNum){ return deck.get(cardNum); }
+	
 	public int tableSize() 	{ return onTable.size();}
 	public SetCard getTableCard(int pos){ 	return onTable.elementAt(pos);	}
 	public SetCard rmTableCard(int pos){	return onTable.remove(pos);}
-	public SetCard getCardNum(int cardNum){ return deck.get(cardNum); }
+	
 	
 	/*
 	 * Returns the default layout of 3x4 grid. 
@@ -114,7 +121,7 @@ public class SetTable{
 	
 	/*
 	 * Adds the last card in onTable vector (index= 12) to the new position. 
-	 * 
+	 * Unused at the moment
 	 */
 	@SuppressWarnings("unused")
 	private void tableReplace(int row, int col){

@@ -67,6 +67,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     public static final String attributeNames [][] = {colorNames, numberNames, shapeNames, shadeNames};
     public static final String attributes [] = {"color", "number", "shape", "shade"};
 
+   
     /*
      * Constructor
      * Sets cardLoc to a random float value
@@ -118,22 +119,63 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 				}
 			}
 			
-		});
+		}); //End Mouse Listener
 		
     }//End Constructor
     
+    //Alternate Constructor
     public SetCard ( int cardNum){
     	this.color = getNthDigit(cardNum,3,4);
     	this.number = getNthDigit(cardNum,3,3);
     	this.shape = getNthDigit(cardNum,3,2);
     	this.shade = getNthDigit(cardNum,3,1);
-    }
-    
+    	selected = false;
+    	setBackground(BG_COLOR);
+    	
+    	String cardString = "Color: " + colorNames[color] + "\nNumber: " + numberNames[number] + "\nShape: " + shapeNames[shape]+ "\nShade: " +shadeNames[shade];
+		cardInfo.setText(cardString);
+		cardInfo.setEditable(false);
+		cardInfo.setEnabled(false);
+		cardInfo.setBackground(null);
+		cardInfo.setForeground(FG_COLOR);
+		add(cardInfo);
+		
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				hover = true;
+				if (hoverEnabled) showBorder();
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				hover = false;
+				if(!selected)
+					hideBorder();
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (clickEnabled) {
+					if(selected){
+						selectRemove();
+						shrink();
+					} else{
+						selectAdd();
+						grow();
+					}	
+				}
+			}
+		}); //End Mouse Listener
+    }//End Alt Constructor
     
     public int getNthDigit(int number, int base, int n) {    
     	  return (int) ((number / Math.pow(base, n - 1)) % base);
     }
     
+    public int getCardNum() {
+		return (27*color + 9*number + 3*shape + shade);
+	}
     
     /*
      * Allows us to use the Collections.sort method. 
@@ -148,10 +190,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
              return -1;
     }
     
-    /*CardNum: [Color][Number][Shape][Shape]  */
-    public int getCardNum() {
-		return (27*color + 9*number + 3*shape + shade);
-	}
+
     
 	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}
 	public void disableHover() {hoverEnabled = false;}
@@ -236,7 +275,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     }
     
     /*
-     * Border Animation
+     * Drawing SetCard
      */
     @Override
 	protected void paintComponent(Graphics g) {
