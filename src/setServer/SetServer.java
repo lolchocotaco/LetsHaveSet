@@ -47,6 +47,7 @@ public class SetServer {
 		public int numPlayers;
 		public int maxPlayers;
 		public Vector<Integer> players;
+		public Vector<Integer> votedPlayers;
 		public int numGoPressed;
 		
 		public Table(String name, int numPlayers, int maxPlayers) {
@@ -54,6 +55,7 @@ public class SetServer {
 			this.numPlayers = numPlayers;
 			this.maxPlayers = maxPlayers;
 			this.players = new Vector<Integer>();
+			this.votedPlayers = new Vector<Integer>();
 			this.numGoPressed = 0;
 		}
 		
@@ -65,6 +67,9 @@ public class SetServer {
 		public void removePlayer(int userID) {
 			numPlayers--;
 			players.removeElement(userID);
+			if(votedPlayers.contains(userID) ){
+				votedPlayers.removeElement(userID);
+			}
 		}
 		
 		public String playerString(Map<Object, User> userMap) {
@@ -274,17 +279,23 @@ public class SetServer {
 						break;
 					case 'G': // 'Go' (Start game) Signal: G
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
-						
-						Table tableG = tableMap.get(Integer.parseInt(splitM[1]));
+						User userG = userMap.get(inM.clientID);
+						Table tableG = tableMap.get(userG.currentTable);
 						if( tableG != null ) {
-							tableG.numGoPressed++;
-							if(tableG.numGoPressed == tableG.maxPlayers) { 
-								// TODO: Start the damn game!!!
+							if( !tableG.votedPlayers.contains(inM.clientID) ){
+								tableG.numGoPressed++;
+								tableG.votedPlayers.add(inM.clientID);
 							}
-						} else {
-							System.err.println("Player exited non-existant table!");
+							System.out.println(tableG.numGoPressed);
+							if(tableG.numGoPressed == tableG.maxPlayers) { 
+								// TODO: Start the damn game!!!;
+								Iterator<Integer> it = tableG.players.iterator();
+								String cardOrder = "T;12;01;02;03;04;05;06;07;08;09;10;11;12";
+								while(it.hasNext()) {
+									outMessages.put(new Message(it.next(), cardOrder)); // send Cards to everyone
+								}
+							}
 						}
-						
 						break;
 					case 'S': // Set made: S;Card1;Card2;Card3
 						if(splitM.length != 4) {System.err.println("Message Length Error!"); break;}
@@ -301,11 +312,6 @@ public class SetServer {
 						User userC = userMap.get(inM.clientID);
 						outMessages.put(new Message(-1, "C;" + userC.username + ";" + splitM[1]));
 						break;
-					case 'N': //T;12;01;02;03;04;05;06;07;08;09;10;11;12  ALT: T;12;00;01;02;10;11;12;20;21;22;100;101;102
-						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
-						outMessages.put(new Message(inM.clientID, "T;12;01;02;03;04;05;06;07;08;09;10;11;12"));
-						break;
-						
 				}
 			} catch (InterruptedException e) {
 				// Do nothing?

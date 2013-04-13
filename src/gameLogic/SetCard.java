@@ -42,7 +42,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	private boolean clickEnabled = true;
 //	private Runnable selectAdd, selectRemove;
 	private final JTextArea cardInfo = new JTextArea();
-	private static final TweenManager tweenManager = SLAnimator.createTweenManager();
+	private static TweenManager tweenManager = null;
 	
 	
 	
@@ -73,7 +73,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
      * Sets cardLoc to a random float value
      */ 
     public SetCard (int color, int number, int shape, int shade) {                                  
-    	                                                                                            
+    	tweenManager =  SLAnimator.createTweenManager();                                                          
 		this.color = color;                                                                         
 		this.number = number;                                                                       
 		this.shape = shape;                                                                         
@@ -120,11 +120,11 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 			}
 			
 		}); //End Mouse Listener
-		
     }//End Constructor
     
     //Alternate Constructor
     public SetCard ( int cardNum){
+    	tweenManager = SLAnimator.createTweenManager();
     	this.color = getNthDigit(cardNum,3,4);
     	this.number = getNthDigit(cardNum,3,3);
     	this.shape = getNthDigit(cardNum,3,2);
@@ -172,7 +172,6 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     public int getNthDigit(int number, int base, int n) {    
     	  return (int) ((number / Math.pow(base, n - 1)) % base);
     }
-    
     public int getCardNum() {
 		return (27*color + 9*number + 3*shape + shade);
 	}
@@ -189,9 +188,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
          else
              return -1;
     }
-    
-
-    
+        
 	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}
 	public void disableHover() {hoverEnabled = false;}
 	public void enableClick() {clickEnabled = true;}
