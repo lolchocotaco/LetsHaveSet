@@ -11,7 +11,7 @@ public class JDBCLogin {
  
   public static void main(String[] argv) throws SQLException {
  
-	System.out.println("-------- NIGGAS TESTING ------------");
+	System.out.println("-------- Login Testing------------");
 	String user="Vasily";
 	String plaintextpwd ="eeonly";
 	MessageDigest m=null;
