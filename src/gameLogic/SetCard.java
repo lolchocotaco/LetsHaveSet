@@ -123,6 +123,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     }//End Constructor
     
     //Alternate Constructor
+    // Random Comment
     public SetCard ( int cardNum){
     	tweenManager = SLAnimator.createTweenManager();
     	this.color = getNthDigit(cardNum,3,4);
