@@ -1,7 +1,7 @@
 LetsHaveSet
 ===========
 
-# An online SET game.
+## An online SET game.
 Contains: 
 * Set Server
 * Set Client
