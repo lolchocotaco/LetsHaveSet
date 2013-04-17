@@ -1,5 +1,4 @@
 package setServer;
-
 import java.math.BigInteger;
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -11,8 +10,11 @@ public class JDBCLogin {
  
   public static void main(String[] argv) throws SQLException {
  
-	System.out.println("-------- Login Testing------------");
-	String user="Vasily";
+	System.out.println("-------- DB TESTING ------------");
+	boolean Register=false;
+	boolean Won=true;
+	boolean Played=false;
+	String user="Vagisil";
 	String plaintextpwd ="eeonly";
 	MessageDigest m=null;
 	try {
@@ -40,6 +42,7 @@ public class JDBCLogin {
 	}
 	Connection connection = null;
 	Statement stmt = null;
+	//Statement stmt2 = null;
 	ResultSet usertable = null;
  
 	try {
@@ -52,27 +55,49 @@ public class JDBCLogin {
 		return;
 	}	
 	stmt = connection.createStatement();
-	usertable=stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+user+"'");
-	if (!usertable.next()){
-		System.out.println("User not found");
+	if(Played){
+		if(Won){
+			stmt.executeUpdate("UPDATE `users` SET `wins`=wins+1 WHERE `username`='"+user+"';");
+			stmt.executeUpdate("UPDATE `users` SET `games`=games+1 WHERE `username`='"+user+"';");
+		}
+		else{
+			stmt.executeUpdate("UPDATE `users` SET `games`=games+1 WHERE `username`='"+user+"';");
+		}
 	}
-	else {
-	      String usert = null;
-	      String passt = null;
-	      usert = usertable.getString("username");
-	      passt = usertable.getString("password");
-	      //System.out.println("User: " + usert + "    Password: "+ passt);
-	      if (passwd.equals(passt)){
-		      System.out.println("Username/Password matches, Login confirmed");
-	      }
-	      else{
-	    	  System.out.println("Username/Password does not match");
-	      }
-	    }
+	else{
+		if (!Register){
+			usertable=stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+user+"'");
+			if (!usertable.next()){
+				System.out.println("User not found");
+			}
+			else {
+				String usert = null;
+				String passt = null;
+				usert = usertable.getString("username");
+				passt = usertable.getString("password");
+				//System.out.println("User: " + usert + "    Password: "+ passt);
+				if (passwd.equals(passt)){
+					System.out.println("Username/Password matches, Login confirmed");
+				}
+				else{
+					System.out.println("Username/Password does not match");
+				}
+			}
+		}
+		else {
+			usertable=stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+user+"'");
+			if (usertable.next()){
+				System.out.println("User already exists");
+			}
+			else{;
+			stmt.executeUpdate("INSERT INTO users (username, password) VALUES ('"+user+"', '"+passwd+"');");	
+			System.out.println("User created");
+			}
+		}
+	}
 	stmt.close();
 	connection.close();
 
   }
 
 }
-
