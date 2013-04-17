@@ -192,9 +192,21 @@ public class LoginWindow {
 	    */
 	}
 	
-	public void loginError() {
+	public void loginError(String Case) {
 		txtError.setForeground(new Color(16711680));
-		txtError.setText("Invalid Username/Password");
+		switch(Case.charAt(0)){
+			case 'L':
+				txtError.setText("Invalid Username/Password");
+				break;
+			case 'R':
+				txtError.setText("Username Already Exists");
+				break;
+			default:		
+				break;
+		}
+					
+		
+		
 	}
 	
 }

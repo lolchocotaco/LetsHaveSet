@@ -47,9 +47,9 @@ public class MainClient {
 					inLine = in.readLine();
 					String [] splitLine = inLine.split("[;]"); // Message parts split by semicolons
 					switch(splitLine[0].charAt(0)) {// Switch on first character in message (command character)
-						case 'X': // Login/Register Error: X
-							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
-							loginWindow.loginError();
+						case 'X': // Login/Register Error: X;L or X;R
+							if(splitLine.length != 2) {System.err.println("Message Length Error!"); break;}
+							loginWindow.loginError(splitLine[1]);
 							break;
 						case 'I': // Table Information: I;3;12;Hello;2;4;13;Test;1;2;14;TheBestTable;3;4
 							if(splitLine.length < 2) {System.err.println("Message Length Error!"); break;}

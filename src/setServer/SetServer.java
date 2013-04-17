@@ -132,7 +132,7 @@ public class SetServer {
 						stmt = connection.createStatement();
 						usertable=stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+splitM[1]+"';");
 						if (usertable.next()){
-							outMessages.put( new Message(inM.clientID, "X") );
+							outMessages.put( new Message(inM.clientID, "X;R") );
 							System.out.println("User already exists");
 						}
 
@@ -169,10 +169,8 @@ public class SetServer {
 							//System.out.println("User: " + usert + "    Password: "+ passt);
 							if (splitM[2].equals(passt)){
 								loginSuccessful=true;
-								System.out.println("Username/Password matches, Login confirmed");
 							}
 							else{
-								System.out.println("Username/Password does not match");
 							}	
 						}
 						int numWins = 0, numLosses = 0;
@@ -184,7 +182,7 @@ public class SetServer {
 							
 							outMessages.put( new Message(inM.clientID, allTableString(tableMap)) );
 						} else {
-							outMessages.put( new Message(inM.clientID, "X") );
+							outMessages.put( new Message(inM.clientID, "X;L") );
 						}
 						stmt.close();
 						connection.close();
