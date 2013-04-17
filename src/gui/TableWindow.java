@@ -50,15 +50,15 @@ public class TableWindow {
 		lblStartGame.setFont(new Font("Sans", Font.BOLD, 36));
 		lblStartGame.setBounds(50, 145, 750, 150);
 		
-		JButton btnNewButton = new JButton("EXIT TABLE");
-		btnNewButton.setBounds(634, 470, 130, 60);
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnExit = new JButton("EXIT TABLE");
+		btnExit.setBounds(634, 470, 130, 60);
+		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				MainClient.sendMessage("E");
 			}
 		});
 		
-		frmTable.getContentPane().add(btnNewButton);
+		frmTable.getContentPane().add(btnExit);
 
 		setTable.tableView.setBorder(BorderFactory.createBevelBorder(1));
 		setTable.tableView.add(lblStartGame);
@@ -90,17 +90,18 @@ public class TableWindow {
 		tablePanel.add(playerList,BorderLayout.CENTER);
 		tablePanel.add(tableHeader, BorderLayout.NORTH);
 		
-		JButton btnNewButton_1 = new JButton("Ready!");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		final JButton btnReady = new JButton("Ready!");
+		btnReady.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(!didVote){
 					MainClient.sendMessage("G");
 					didVote = true;
+					btnReady.setEnabled(false);
 				}
 			}
 		});
-		btnNewButton_1.setBounds(634, 436, 130, 23);
-		frmTable.getContentPane().add(btnNewButton_1);
+		btnReady.setBounds(634, 436, 130, 23);
+		frmTable.getContentPane().add(btnReady);
 		
 	}
 	
