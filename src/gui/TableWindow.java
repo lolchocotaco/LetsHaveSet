@@ -71,6 +71,7 @@ public class TableWindow {
 		frmTable.getContentPane().add(tablePanel);
 		
 		playerList = new JTable();
+		playerList.setEnabled(false);
 		playerList.setBounds(0, 0, 150, 175);
 		
 		JTableHeader tableHeader = playerList.getTableHeader();
@@ -80,7 +81,7 @@ public class TableWindow {
 			new String[] {"Player", "Points" })
 		{
 			boolean[] columnEditables = new boolean[] {
-				false, false, false, false
+				false, false
 			};
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
@@ -97,6 +98,8 @@ public class TableWindow {
 					MainClient.sendMessage("G");
 					didVote = true;
 					btnReady.setEnabled(false);
+					btnReady.setText("Waiting");
+					lblStartGame.setText("Waiting for Players...");
 				}
 			}
 		});

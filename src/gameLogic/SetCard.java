@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -22,7 +21,7 @@ import aurelienribon.tweenengine.equations.Quad;
  *
  */
 @SuppressWarnings("serial")
-public class SetCard extends JPanel implements Comparable<SetCard>{
+public class SetCard extends JPanel{
 	
 	/*
 	 * Panel Properties
@@ -51,79 +50,20 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	 * cardLock is associated with the positioning In the deck
 	 * all private
 	 */
-	private int color, number, shade, shape, cardLoc;
+	private int color, number, shade, shape;
 	private boolean selected = false;
-	private Random random = new Random();
 
-	/*
-	 * Mapping the integer values to actual strings.
-	 * Probably can be moved outside.  
-	 * cannot be changed. 
-	 */
+	// Probably only for testing ////////
     public static final String colorNames [] = {"red", "green", "blue"};
     public static final String numberNames [] = {"one", "two", "three"};
     public static final String shapeNames [] = {"diamond", "oval", "squiggle"};
     public static final String shadeNames [] = {"hollow", "shaded", "solid"};
     public static final String attributeNames [][] = {colorNames, numberNames, shapeNames, shadeNames};
     public static final String attributes [] = {"color", "number", "shape", "shade"};
+    /////////////////
 
-   
-    /*
-     * Constructor
-     * Sets cardLoc to a random float value
-     */ 
-    public SetCard (int color, int number, int shape, int shade) {                                  
-    	tweenManager =  SLAnimator.createTweenManager();                                                          
-		this.color = color;                                                                         
-		this.number = number;                                                                       
-		this.shape = shape;                                                                         
-		this.shade = shade;                                                                         
-		selected = false;
-		cardLoc = (int)( random.nextInt());
-		setBackground(BG_COLOR);
-			
-		String cardString = "Color: " + colorNames[color] + "\nNumber: " + numberNames[number] + "\nShape: " + shapeNames[shape]+ "\nShade: " +shadeNames[shade];
-		cardInfo.setText(cardString);
-		cardInfo.setEditable(false);
-		cardInfo.setEnabled(false);
-		cardInfo.setBackground(null);
-		cardInfo.setForeground(FG_COLOR);
-		add(cardInfo);
-		
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				hover = true;
-				if (hoverEnabled) showBorder();
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				hover = false;
-				if(!selected)
-					hideBorder();
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				if (clickEnabled) {
-					if(selected){
-						selectRemove();
-						shrink();
-					}
-					else{
-						selectAdd();
-						grow();
-					}
-					
-				}
-			}
-			
-		}); //End Mouse Listener
-    }//End Constructor
     
     //Alternate Constructor
-    // Random Comment
     public SetCard ( int cardNum){
     	tweenManager = SLAnimator.createTweenManager();
     	this.color = getNthDigit(cardNum,3,4);
@@ -133,13 +73,15 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     	selected = false;
     	setBackground(BG_COLOR);
     	
+    	//Only for testing  //////////////////
     	String cardString = "Color: " + colorNames[color] + "\nNumber: " + numberNames[number] + "\nShape: " + shapeNames[shape]+ "\nShade: " +shadeNames[shade];
-		cardInfo.setText(cardString);
+    	cardInfo.setText(cardString);
 		cardInfo.setEditable(false);
 		cardInfo.setEnabled(false);
 		cardInfo.setBackground(null);
 		cardInfo.setForeground(FG_COLOR);
 		add(cardInfo);
+		/////////////
 		
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -177,19 +119,32 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		return (27*color + 9*number + 3*shape + shade);
 	}
     
-    /*
-     * Allows us to use the Collections.sort method. 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(SetCard otherCard) {
-    	 if (this.cardLoc == ( otherCard).cardLoc)
-             return 0;
-         else if ((this.cardLoc) > (otherCard).cardLoc)
-             return 1;
-         else
-             return -1;
+
+    /*      getFunctions     */
+    public String getColor(){	return colorNames[color];	}
+    public String getNumber(){ 	return numberNames[number]; }
+    public String getShape(){  	return shapeNames[shape];   }
+    public String getShade(){  	return shadeNames[shade];   }
+    public String toString(){
+    	return "SetCard (" + color + ", " + number + ", " + shape + ", " + shade + ")";
     }
-        
+    
+    /*Allows for easy checking of attributes*/
+    public int attr (int i) {
+    	switch (i) {
+    	case 0:
+    	    return color;
+    	case 1:
+    	    return number;
+    	case 2:
+    	    return shape;
+    	case 3:
+    	    return shade;
+    	default:
+    	    return -1;
+    	}
+    }
+    
 	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}
 	public void disableHover() {hoverEnabled = false;}
 	public void enableClick() {clickEnabled = true;}
@@ -245,33 +200,7 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 		scaleXY = baseScale;
 		enableClick();
 	}	
-	
-
-    /*      getFunctions     */
-    public String getColor(){	return colorNames[color];	}
-    public String getNumber(){ 	return numberNames[number]; }
-    public String getShape(){  	return shapeNames[shape];   }
-    public String getShade(){  	return shadeNames[shade];   }
-    public String toString(){
-    	return "SetCard (" + color + ", " + number + ", " + shape + ", " + shade + ")";
-    }
-    
-    /*Allows for easy checking of attributes*/
-    public int attr (int i) {
-    	switch (i) {
-    	case 0:
-    	    return color;
-    	case 1:
-    	    return number;
-    	case 2:
-    	    return shape;
-    	case 3:
-    	    return shade;
-    	default:
-    	    return -1;
-    	}
-    }
-    
+	    
     /*
      * Drawing SetCard
      */
@@ -298,12 +227,8 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
     private void setOpacity(float newVal){
     	opacity = newVal;
     }
-    
-
-  
-     
-    /*Animation Accessors*/
    
+    /*Animation Accessors*/
 	public static class Accessor extends SLAnimator.ComponentAccessor {
 		public static final int BORDER_THICKNESS = 100;
 		public static final int OPACITY = 101;
@@ -346,3 +271,79 @@ public class SetCard extends JPanel implements Comparable<SetCard>{
 	}   
     
 }
+
+
+
+
+
+//
+///*
+//* Old Constructor 
+//* Sets cardLoc to a random float value
+//*/ 
+//public SetCard (int color, int number, int shape, int shade) {                                  
+//	tweenManager =  SLAnimator.createTweenManager();                                                          
+//	this.color = color;                                                                         
+//	this.number = number;                                                                       
+//	this.shape = shape;                                                                         
+//	this.shade = shade;                                                                         
+//	selected = false;
+//	cardLoc = (int)( random.nextInt());
+//	setBackground(BG_COLOR);
+//		
+//	String cardString = "Color: " + colorNames[color] + "\nNumber: " + numberNames[number] + "\nShape: " + shapeNames[shape]+ "\nShade: " +shadeNames[shade];
+//	cardInfo.setText(cardString);
+//	cardInfo.setEditable(false);
+//	cardInfo.setEnabled(false);
+//	cardInfo.setBackground(null);
+//	cardInfo.setForeground(FG_COLOR);
+//	add(cardInfo);
+//	
+//	addMouseListener(new MouseAdapter() {
+//		@Override
+//		public void mouseEntered(MouseEvent e) {
+//			hover = true;
+//			if (hoverEnabled) showBorder();
+//		}
+//
+//		@Override
+//		public void mouseExited(MouseEvent e) {
+//			hover = false;
+//			if(!selected)
+//				hideBorder();
+//		}
+//
+//		@Override
+//		public void mouseReleased(MouseEvent e) {
+//			if (clickEnabled) {
+//				if(selected){
+//					selectRemove();
+//					shrink();
+//				}
+//				else{
+//					selectAdd();
+//					grow();
+//				}
+//				
+//			}
+//		}
+//		
+//	}); //End Mouse Listener
+//}//End Constructor
+//
+//
+///*
+// * Allows us to use the Collections.sort method. 
+// * @see java.lang.Comparable#compareTo(java.lang.Object)
+// */
+//public int compareTo(SetCard otherCard) {
+//	 if (this.cardLoc == ( otherCard).cardLoc)
+//         return 0;
+//     else if ((this.cardLoc) > (otherCard).cardLoc)
+//         return 1;
+//     else
+//         return -1;
+//}
+    
+
+
