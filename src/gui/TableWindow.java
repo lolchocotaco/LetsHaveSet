@@ -168,14 +168,13 @@ public class TableWindow {
 	
 	
 	public void hideTable(){
-		setTable = new SetTable();
-		didVote = false;
-		initialize();
 		frmTable.setVisible(false);
 	}
 	
 	public void showTable(){
-
+		setTable = new SetTable();
+		didVote = false;
+		initialize();
 		frmTable.setVisible(true);
 	}
 

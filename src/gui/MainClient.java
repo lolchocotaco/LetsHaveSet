@@ -81,7 +81,6 @@ public class MainClient {
 							{
 								tableWindow.hideTable();
 								lobbyWindow.frmLobby.setVisible(true);
-
 							}
 							break;
 						case 'P': // PlayersdidVotedidVote at Table: P;3;4;Nico;Sameer;Vasily

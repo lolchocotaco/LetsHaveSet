@@ -159,7 +159,6 @@ public class SetServer {
 						}	
 						stmt = connection.createStatement();
 						boolean loginSuccessful=false;
-						System.out.println("SELECT * FROM `users` WHERE `username` =  '"+splitM[1]+"';");
 						usertable = stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+splitM[1]+"';");
 						if (!usertable.next()){
 							System.out.println("User not found");
@@ -167,8 +166,6 @@ public class SetServer {
 						else{
 							String passt = null;
 							passt = usertable.getString("password");
-							System.out.println(passt);
-							System.out.println(splitM[2]);
 							//System.out.println("User: " + usert + "    Password: "+ passt);
 							if (splitM[2].equals(passt)){
 								loginSuccessful=true;
