@@ -7,6 +7,11 @@ import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 
 /*
@@ -82,7 +87,7 @@ public class SetServer {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		
 		// BlockingQueue receives all client messages, allows reads only when non-empty, and supports threads
 		BlockingQueue<Message> inMessages = new LinkedBlockingQueue<Message>();
@@ -105,6 +110,11 @@ public class SetServer {
 		// simply contain a clientID and a message string.
 		
 		boolean isRunning = true;
+		Connection connection = null;
+		Statement stmt = null;
+		ResultSet usertable = null;
+	 
+		
 		
 		while(isRunning) // Messages are handled in the order they are received. If each message-handling is fast, there shouldn't be a problem.
 		{
@@ -114,31 +124,65 @@ public class SetServer {
 				switch(splitM[0].charAt(0)) {// Switch on first character in message (command character)
 					case 'R': // Register: R;Username;Password
 						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
-						
-						/////////////////////////////////////////
-						boolean usernameAlreadyExists = false; //
-						/////////////////////////////////////////
-						
-						if(usernameAlreadyExists) {
+					 
+						try {
+							connection = DriverManager
+							.getConnection("jdbc:mysql://199.98.20.119:3306/set","java", "eeonly1");
+					 
+						} catch (SQLException e) {
+							System.out.println("Connection Failed!");
+							e.printStackTrace();
+							return;
+						}	
+						stmt = connection.createStatement();
+						usertable=stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+splitM[1]+"';");
+						if (usertable.next()){
 							outMessages.put( new Message(inM.clientID, "X") );
-						} else {
-							////////////////////////////////////////
-							// TODO: Add user/pass combo to MySQL //
-							////////////////////////////////////////
-							
-							User newUser = new User(splitM[1], 0, 0, -1);
-							userMap.put(inM.clientID, newUser);
-							
-							outMessages.put( new Message(inM.clientID, allTableString(tableMap)) );
+							System.out.println("User already exists");
 						}
+
+						 else {
+							 stmt.executeUpdate("INSERT INTO users (username, password) VALUES ('"+splitM[1]+"', '"+splitM[2]+"');");	
+							 System.out.println("User created");
+							 User newUser = new User(splitM[1], 0, 0, -1);
+							 userMap.put(inM.clientID, newUser);
+							 outMessages.put( new Message(inM.clientID, allTableString(tableMap)) );
+						}
+						stmt.close();
+						connection.close();
 						break;
 					case 'L': // Login:  L;Username;Password
 						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}
-					
-						//////////////////////////////////////////
-						// TODO: Check user/pass combo in MySQL //
-						//////////////////////////////////////////
-						boolean loginSuccessful = true;
+						try {
+							connection = DriverManager
+							.getConnection("jdbc:mysql://199.98.20.119:3306/set","java", "eeonly1");
+					 
+						} catch (SQLException e) {
+							System.out.println("Connection Failed!");
+							e.printStackTrace();
+							return;
+						}	
+						stmt = connection.createStatement();
+						boolean loginSuccessful=false;
+						System.out.println("SELECT * FROM `users` WHERE `username` =  '"+splitM[1]+"';");
+						usertable = stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+splitM[1]+"';");
+						if (!usertable.next()){
+							System.out.println("User not found");
+						}
+						else{
+							String passt = null;
+							passt = usertable.getString("password");
+							System.out.println(passt);
+							System.out.println(splitM[2]);
+							//System.out.println("User: " + usert + "    Password: "+ passt);
+							if (splitM[2].equals(passt)){
+								loginSuccessful=true;
+								System.out.println("Username/Password matches, Login confirmed");
+							}
+							else{
+								System.out.println("Username/Password does not match");
+							}	
+						}
 						int numWins = 0, numLosses = 0;
 						//////////////////////////////////////////
 						
@@ -150,7 +194,8 @@ public class SetServer {
 						} else {
 							outMessages.put( new Message(inM.clientID, "X") );
 						}
-						
+						stmt.close();
+						connection.close();
 						break;
 					case 'T': // Create Table: T;Name;NumPlayers
 						if(splitM.length != 3) {System.err.println("Message Length Error!"); break;}

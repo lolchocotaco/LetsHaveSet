@@ -14,8 +14,8 @@ public class JDBCLogin {
 	boolean Register=false;
 	boolean Won=true;
 	boolean Played=false;
-	String user="Vagisil";
-	String plaintextpwd ="eeonly";
+	String user="username";
+	String plaintextpwd ="";
 	MessageDigest m=null;
 	try {
 		m = MessageDigest.getInstance("MD5");

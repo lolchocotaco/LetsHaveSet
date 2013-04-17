@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -118,9 +121,25 @@ public class LoginWindow {
 	 */
 	private void checkLogin(){
 		String userName = txtUsername.getText();
+//		String strPassword= txtPassword.getText();
 		char[] passWord = txtPassword.getPassword();
-		String strPassword = passWord.toString();
-		String message = "L;" + userName + ";" + strPassword;
+		String strPassword = String.valueOf(passWord);
+		//System.out.println(strPassword);
+		MessageDigest m=null;
+		try {
+			m = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e1) {
+			e1.printStackTrace();
+		}
+		m.reset();
+		m.update(strPassword.getBytes());
+		byte[] digest = m.digest();
+		BigInteger bigInt = new BigInteger(1,digest);
+		String hashtext = bigInt.toString(16);
+		while(hashtext.length() < 32 ){
+		  hashtext = "0"+hashtext;
+		}
+		String message = "L;" + userName + ";" + hashtext;
 		MainClient.sendMessage(message);
 		
 		/*
@@ -141,8 +160,23 @@ public class LoginWindow {
 	private void openRegister(){
 		String userName = txtUsername.getText();
 		char[] passWord = txtPassword.getPassword();
-		String strPassword = passWord.toString();
-		String message = "R;" + userName + ";" + strPassword;
+		String strPassword = String.valueOf(passWord);
+		//System.out.println(strPassword);
+		MessageDigest m=null;
+		try {
+			m = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e1) {
+			e1.printStackTrace();
+		}
+		m.reset();
+		m.update(strPassword.getBytes());
+		byte[] digest = m.digest();
+		BigInteger bigInt = new BigInteger(1,digest);
+		String hashtext = bigInt.toString(16);
+		while(hashtext.length() < 32 ){
+		  hashtext = "0"+hashtext;
+		}
+		String message = "R;" + userName + ";" + hashtext;
 		MainClient.sendMessage(message);
 		
 		/*
