@@ -67,7 +67,7 @@ public class MainClient {
 							if(splitLine.length != 5) {System.err.println("Message Length Error!"); break;}
 							lobbyWindow.updateTable(splitLine[1], splitLine[2], splitLine[3], splitLine[4]);
 							break;
-						case 'F': // Table is Full: F
+						case 'F': // Table is didVoteFull: F
 							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
 							lobbyWindow.tableIsFull();
 							break;
@@ -79,16 +79,17 @@ public class MainClient {
 							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
 							if(tableWindow.frmTable.isVisible())
 							{
-								tableWindow.frmTable.setVisible(false);
+								tableWindow.hideTable();
 								lobbyWindow.frmLobby.setVisible(true);
+
 							}
 							break;
-						case 'P': // Players at Table: P;3;4;Nico;Sameer;Vasily
+						case 'P': // PlayersdidVotedidVote at Table: P;3;4;Nico;Sameer;Vasily
 							if(splitLine.length < 4) {System.err.println("Message Length Error!"); break;}
 							if(lobbyWindow.frmLobby.isVisible())
 							{
 								lobbyWindow.frmLobby.setVisible(false);
-								tableWindow.frmTable.setVisible(true);
+								tableWindow.showTable();
 							}
 							tableWindow.updatePlayers(splitLine);
 							break;
@@ -136,6 +137,7 @@ public class MainClient {
 			System.exit(-1);
 		}
 		
+		
 	}
 	
 	public static void sendMessage(String message) {
@@ -145,5 +147,6 @@ public class MainClient {
 			System.err.println("Error sending message!");
 		}
 	}
+	
 
 }

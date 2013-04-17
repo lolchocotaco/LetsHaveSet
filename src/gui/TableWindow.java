@@ -27,6 +27,7 @@ public class TableWindow {
 	private JTable playerList;
 	private JPanel tablePanel;
 	private JLabel lblStartGame;
+	private boolean didVote = false;
 	
 	public TableWindow() {
 		setTable = new SetTable();
@@ -56,6 +57,7 @@ public class TableWindow {
 				MainClient.sendMessage("E");
 			}
 		});
+		
 		frmTable.getContentPane().add(btnNewButton);
 
 		setTable.tableView.setBorder(BorderFactory.createBevelBorder(1));
@@ -91,7 +93,10 @@ public class TableWindow {
 		JButton btnNewButton_1 = new JButton("Ready!");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				MainClient.sendMessage("G");
+				if(!didVote){
+					MainClient.sendMessage("G");
+					didVote = true;
+				}
 			}
 		});
 		btnNewButton_1.setBounds(634, 436, 130, 23);
@@ -160,4 +165,19 @@ public class TableWindow {
 	public void gameOver() {
 		// TODO 
 	}
+	
+	
+	public void hideTable(){
+		setTable = new SetTable();
+		didVote = false;
+		initialize();
+		frmTable.setVisible(false);
+	}
+	
+	public void showTable(){
+
+		frmTable.setVisible(true);
+	}
+
+
 }

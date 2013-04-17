@@ -52,7 +52,6 @@ public class SetServer {
 		public int numPlayers;
 		public int maxPlayers;
 		public Vector<Integer> players;
-		public Vector<Integer> votedPlayers;
 		public int numGoPressed;
 		
 		public Table(String name, int numPlayers, int maxPlayers) {
@@ -60,7 +59,6 @@ public class SetServer {
 			this.numPlayers = numPlayers;
 			this.maxPlayers = maxPlayers;
 			this.players = new Vector<Integer>();
-			this.votedPlayers = new Vector<Integer>();
 			this.numGoPressed = 0;
 		}
 		
@@ -72,9 +70,6 @@ public class SetServer {
 		public void removePlayer(int userID) {
 			numPlayers--;
 			players.removeElement(userID);
-			if(votedPlayers.contains(userID) ){
-				votedPlayers.removeElement(userID);
-			}
 		}
 		
 		public String playerString(Map<Object, User> userMap) {
@@ -327,11 +322,7 @@ public class SetServer {
 						User userG = userMap.get(inM.clientID);
 						Table tableG = tableMap.get(userG.currentTable);
 						if( tableG != null ) {
-							if( !tableG.votedPlayers.contains(inM.clientID) ){
-								tableG.numGoPressed++;
-								tableG.votedPlayers.add(inM.clientID);
-							}
-							System.out.println(tableG.numGoPressed);
+							tableG.numGoPressed++;
 							if(tableG.numGoPressed == tableG.maxPlayers) { 
 								// TODO: Start the damn game!!!;
 								Iterator<Integer> it = tableG.players.iterator();
