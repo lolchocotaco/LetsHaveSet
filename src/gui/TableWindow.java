@@ -146,9 +146,13 @@ public class TableWindow {
 
 	//Parses incoming message and adds cards to the board
 	public void tableCards(String[] splitLine) { // splitLine: T;12;00;01;02;10;11;12;20;21;22;100;101;102
-		lblStartGame.setText("Enjoy your game!");
+		lblStartGame.setText("Enjoy your game! 3");
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(700);
+			lblStartGame.setText("Enjoy your game! 2");
+			Thread.sleep(700);
+			lblStartGame.setText("Enjoy your game! 1");
+			Thread.sleep(600);
 		} catch (InterruptedException e) {
 			//do nothing
 		}
