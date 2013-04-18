@@ -125,7 +125,7 @@ public class LobbyWindow {
 		frmLobby.getContentPane().add(tableNameField);
 		tableNameField.setColumns(10);
 		
-		SpinnerModel sm = new SpinnerNumberModel(2, 2, 5, 1); // Inital, Min, Max, Step
+		SpinnerModel sm = new SpinnerNumberModel(2, 1, 5, 1); // Inital, Min, Max, Step
 		spinner = new JSpinner(sm);
 		spinner.setBounds(250, 405, 70, 20);
 		frmLobby.getContentPane().add(spinner);

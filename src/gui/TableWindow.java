@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import setServer.Message;
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
 
@@ -29,11 +32,28 @@ public class TableWindow {
 	private JLabel lblStartGame;
 	private boolean didVote = false;
 	
+	private BlockingQueue<Message> guiMessages = null;
+	
 	public TableWindow() {
 		setTable = new SetTable();
+		guiMessages = new LinkedBlockingQueue<Message>();
 		Tween.registerAccessor(SetCard.class, new SetCard.Accessor());
 		SLAnimator.start();
 		initialize();
+	}
+	
+	public class GUIThread extends Thread {
+		
+		BlockingQueue<Message> guiMessages = null;
+		
+		public GUIThread(BlockingQueue<Message> guiMessages) {
+			super("GUIThread");
+			this.guiMessages = guiMessages;
+		}
+		
+		public void run() {
+			
+		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -106,15 +126,17 @@ public class TableWindow {
 		btnReady.setBounds(634, 436, 130, 23);
 		frmTable.getContentPane().add(btnReady);
 		
+		GUIThread guiThread = new GUIThread(guiMessages);
+		guiThread.start();
+		
 	}
 	
-	public void updatePlayers(String[] splitLine) { // splitLine: P;3;4;Nico;Sameer;Vasily
-		// TODO 
+	public void updatePlayers(String[] splitLine) { // splitLine: P;3;4;Nico;0;Sameer;0;Vasily;0
 		int numPlayers = Integer.parseInt(splitLine[1]);
 		Object data [][] = new Object[numPlayers][4];
 		for(int i = 0; i<numPlayers; i++){
-			data[i][0] = splitLine[i+3];
-			data[i][1] = 0;
+			data[i][0] = splitLine[2*i+3];
+			data[i][1] = splitLine[2*i+4];
 		}
 		String colName [] = {"Player", "Points"};
 		DefaultTableModel tm = new DefaultTableModel(data,colName);
@@ -124,13 +146,11 @@ public class TableWindow {
 
 	//Parses incoming message and adds cards to the board
 	public void tableCards(String[] splitLine) { // splitLine: T;12;00;01;02;10;11;12;20;21;22;100;101;102
-		//TODO put start game information
 		lblStartGame.setText("Enjoy your game!");
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//do nothing
 		}
 		lblStartGame.setVisible(false);
 		int cardNum = 0;
@@ -145,21 +165,20 @@ public class TableWindow {
 		setTable.tableView.initialize(setTable.defaultLayout());			
 	}
 
-	public void dockPoint(String playerName) {
-		// TODO 
-	}
-
-	public void setMade(String playerName, int C1, int C2, int C3) {
+	public void setMade(int C1, int C2, int C3) {
 		//TODO
 	}
 	
+	public void youMadeASet() {
+		// TODO
+	}
+	
 	public static void sendSet( int C1, int C2, int C3){
-		//TODO
 		MainClient.sendMessage("S;"+ C1+ ";"+ C2 + ";" + C3);
 	}
 
 	public void newCards(int C1, int C2, int C3) {
-		// TODO 
+		//TODO 
 	}
 
 	public void noSets() {

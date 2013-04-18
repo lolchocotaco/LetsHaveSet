@@ -75,7 +75,7 @@ public class JDBCLogin {
 				String passt = null;
 				usert = usertable.getString("username");
 				passt = usertable.getString("password");
-				//System.out.println("User: " + usert + "    Password: "+ passt);
+				System.out.println("User: " + usert + "    Password: "+ passt);
 				if (passwd.equals(passt)){
 					System.out.println("Username/Password matches, Login confirmed");
 				}

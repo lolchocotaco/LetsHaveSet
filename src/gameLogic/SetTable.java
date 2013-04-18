@@ -1,5 +1,6 @@
 package gameLogic;
 
+import gui.MainClient;
 import gui.TableWindow;
 
 import java.util.Vector;
@@ -68,10 +69,12 @@ public class SetTable{
 				TableWindow.sendSet(selectedCards.elementAt(0).getCardNum(), selectedCards.elementAt(1).getCardNum(),selectedCards.elementAt(2).getCardNum());
 			}
 			else{
-				System.out.println("Not A Set");
+				MainClient.sendMessage("X");
+				// TODO: Notify player of incorrect selection
+				clearSelected();
 			}
 		}
-		else if (selectedCards.size() <3 ){
+		else if (selectedCards.size() < 2 ){
 			selectedCards.add(setCard);
 		} 
 		else{

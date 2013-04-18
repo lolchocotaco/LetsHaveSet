@@ -339,7 +339,7 @@ public class SetCard extends JPanel{
 //public int compareTo(SetCard otherCard) {
 //	 if (this.cardLoc == ( otherCard).cardLoc)
 //         return 0;
-//     else if ((this.cardLoc) > (otherCard).cardLoc)
+//     else if ((this.cardNum) > (otherCard).cardNum)
 //         return 1;
 //     else
 //         return -1;

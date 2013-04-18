@@ -85,6 +85,8 @@ public class MainClient {
 							break;
 						case 'P': // PlayersdidVotedidVote at Table: P;3;4;Nico;Sameer;Vasily
 							if(splitLine.length < 4) {System.err.println("Message Length Error!"); break;}
+							int numPlayers = Integer.parseInt(splitLine[1]);
+							if(splitLine.length != 3+2*numPlayers) {System.err.println("Message Length Error!"); break;}
 							if(lobbyWindow.frmLobby.isVisible())
 							{
 								lobbyWindow.frmLobby.setVisible(false);
@@ -96,13 +98,13 @@ public class MainClient {
 							if(splitLine.length < 1) {System.err.println("Message Length Error!"); break;}
 							tableWindow.tableCards(splitLine);
 							break;
-						case 'D': // Docked Point:  D;Nico
-							if(splitLine.length != 2) {System.err.println("Message Length Error!"); break;}
-							tableWindow.dockPoint(splitLine[1]);
+						case 'S': // Set made:  S;03;21;76
+							if(splitLine.length != 4) {System.err.println("Message Length Error!"); break;}
+							tableWindow.setMade(Integer.parseInt(splitLine[1]), Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
 							break;
-						case 'S': // Set made:  S;Nico;03;21;76
-							if(splitLine.length != 5) {System.err.println("Message Length Error!"); break;}
-							tableWindow.setMade(splitLine[1], Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]), Integer.parseInt(splitLine[4]));
+						case 'Y': // You made a set!: Y
+							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
+							tableWindow.youMadeASet();
 							break;
 						case 'N': // New Cards: N;01;02;03
 							if(splitLine.length != 4) {System.err.println("Message Length Error!"); break;}
