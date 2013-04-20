@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -97,7 +98,8 @@ public class LobbyWindow {
 		
 		chatWindow = new JTextArea();
 		chatWindow.setEditable(false);
-		chatWindow.setEnabled(false);
+		//chatWindow.setEnabled(false);
+		chatWindow.setForeground(Color.blue);
 		scrollPane.setViewportView(chatWindow);
 		
 		textField = new JTextField();

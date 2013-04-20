@@ -59,7 +59,7 @@ public class LoginWindow {
 		frmLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmLogin.getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Let's Have Set");
+		JLabel lblNewLabel = new JLabel("Let's Have Sets");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 26));
 		lblNewLabel.setBounds(58, 11, 231, 22);
