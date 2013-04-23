@@ -97,8 +97,10 @@ public class SetTable{
 	}
 	
 	public static void clearSelected(){
-		for(int i = 0; i<onTable.size(); i++){
-			onTable.elementAt(i).unSelect();
+//		for(int i = 0; i<selectedCards.size(); i++){
+		while(selectedCards.size()!= 0 ){
+			System.out.println(selectedCards.elementAt(0).toString());
+			selectedCards.elementAt(0).unSelect();		
 		}
 	}
 

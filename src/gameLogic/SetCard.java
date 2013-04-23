@@ -162,9 +162,9 @@ public class SetCard extends JPanel{
 	public void disableClick(){clickEnabled = false;}
 
     public void unSelect(){
-    	shrink();
      	hideBorder();
-    	selectRemove();
+    	shrink();
+     	selectRemove();
     }
     
     /* Add self to selected cards vector if selected*/
