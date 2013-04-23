@@ -5,6 +5,8 @@ import gui.TableWindow;
 
 import java.util.Vector;
 
+import javax.swing.SwingUtilities;
+
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.slidinglayout.SLConfig;
 import aurelienribon.slidinglayout.SLPanel;
@@ -62,7 +64,7 @@ public class SetTable{
 	}
 	
 	/* Selecting operations */
-	public static void addSelected(SetCard setCard){
+	public static void addSelected(final SetCard setCard){
 		if (selectedCards.size() == 2){
 			selectedCards.add(setCard);
 			if(isSet()){
@@ -71,7 +73,12 @@ public class SetTable{
 			else{
 				MainClient.sendMessage("X");
 				// TODO: Notify player of incorrect selection
-				clearSelected();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						clearSelected();
+					};
+				});
 			}
 		}
 		else if (selectedCards.size() < 2 ){
@@ -82,6 +89,8 @@ public class SetTable{
 			selectedCards.add(setCard);
 		}
 	}
+			
+			
 	
 	public static void rmSelected(SetCard setCard){
 		selectedCards.remove(setCard);

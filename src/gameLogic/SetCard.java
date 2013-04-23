@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
@@ -101,11 +102,21 @@ public class SetCard extends JPanel{
 			public void mouseReleased(MouseEvent e) {
 				if (clickEnabled) {
 					if(selected){
-						selectRemove();
-						shrink();
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								selectRemove();
+								shrink();
+							}
+						});
 					} else{
-						selectAdd();
-						grow();
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								selectAdd();
+								grow();
+							}
+						});
 					}	
 				}
 			}
@@ -271,10 +282,6 @@ public class SetCard extends JPanel{
 	}   
     
 }
-
-
-
-
 
 //
 ///*
