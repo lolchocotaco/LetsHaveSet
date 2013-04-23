@@ -64,7 +64,7 @@ public class SetTable{
 	}
 	
 	/* Selecting operations */
-	public static void addSelected(final SetCard setCard){
+	public static void addSelected(SetCard setCard){
 		if (selectedCards.size() == 2){
 			selectedCards.add(setCard);
 			if(isSet()){
