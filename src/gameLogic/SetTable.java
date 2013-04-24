@@ -26,12 +26,14 @@ public class SetTable{
 
 	private static Vector<SetCard> onTable = null;
 	public static  Vector<SetCard> selectedCards = null;
+	private Vector<Integer> tableHoles = null;
 	public SLPanel tableView = null;
 	private static TweenManager SLtweenManager = null;
 	
 	public SetTable() {
 		onTable = new Vector<SetCard>(15);
 		selectedCards = new Vector<SetCard>(3);
+		tableHoles = new Vector<Integer>();
 		tableView = new SLPanel();
 		SLtweenManager = SLAnimator.createTweenManager();
 		tableView.setTweenManager(SLtweenManager);
@@ -56,13 +58,14 @@ public class SetTable{
 	 * Sets the appropriate action for associated grid location. 
 	 */
 	public SLConfig defaultLayout(){
+		int numColumns = onTable.size() / 3;
 		SLConfig mainCfg = new SLConfig(tableView)
 		.gap(20, 20)
-		.row(150).row(150).row(150).col(100).col(100).col(100).col(100).col(100);
+		.row(150).row(150).row(150).col(100).col(100).col(100).col(100).col(100).col(100).col(100);
 //		.row(1f).row(1f).row(1f).col(1f).col(1f).col(1f).col(1f);
-		for(int r = 0; r<3;r++){
-			for(int c = 0;c<4; c++ ){
-				mainCfg.place(r,c,onTable.elementAt(r*4+c));
+		for(int r = 0; r < 3; r++){
+			for(int c = 0; c < numColumns; c++){
+				mainCfg.place(r,c,onTable.elementAt(c*3+r));
 			}
 		}
 		return mainCfg;
@@ -106,14 +109,41 @@ public class SetTable{
 			
 	public void setMade(int C1, int C2, int C3) {
 		boolean clearSelect = false;
-		Iterator<SetCard> it = onTable.iterator();
-		while(it.hasNext()) {
-			SetCard SC = it.next();
-			int cardNum = SC.getCardNum();
-			if((cardNum == C1)||(cardNum == C2)||(cardNum == C3)) {
-				if(SC.isSelected()) clearSelect = true;
-				onTable.removeElement(SC);
+		boolean checkingCards = true;
+		int startSize = onTable.size() - 1;
+		int offset = 3;
+		
+		while(checkingCards) {
+			checkingCards = false;
+			for(int i = 0; i < onTable.size(); i++) {
+				SetCard SC = onTable.get(i);
+				int cardNum = SC.getCardNum();
+				if((cardNum == C1)||(cardNum == C2)||(cardNum == C3)) {
+					if(SC.isSelected()) {
+						clearSelect = true;
+					}
+					SC.setVisible(false);
+					if((i <= (startSize - offset))||(startSize < 12)) {
+						tableHoles.add(0, i);
+						offset++; // Removing cards before the last column offsets their index by 1
+					}
+					onTable.removeElementAt(i);
+					checkingCards = true; // Keep checking
+					break;
+				}
 			}
+		}
+		if(startSize > 12) {
+			while(!tableHoles.isEmpty()) {
+				int last = onTable.size() - 1;
+				SetCard SC = onTable.remove(last);
+				onTable.add(tableHoles.remove(0), SC);
+			}
+			tableView.removeAll();
+			tableView.updateUI();
+			tableView.repaint();
+			tableView.revalidate();
+			tableView.initialize(defaultLayout());
 		}
 		if(clearSelect) {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -127,9 +157,27 @@ public class SetTable{
 	}
 	
 	public void newCards(int C1, int C2, int C3) {
-		onTable.add(new SetCard(C1));
-		onTable.add(new SetCard(C2));
-		onTable.add(new SetCard(C3));
+		if(!tableHoles.isEmpty()) {
+			onTable.insertElementAt(new SetCard(C1), tableHoles.remove(0));
+		} else {
+			onTable.add(new SetCard(C1));
+		}
+		if(!tableHoles.isEmpty()) {
+			onTable.insertElementAt(new SetCard(C2), tableHoles.remove(0));
+		} else {
+			onTable.add(new SetCard(C2));
+		}
+		if(!tableHoles.isEmpty()) {
+			onTable.insertElementAt(new SetCard(C3), tableHoles.remove(0));
+		} else {
+			onTable.add(new SetCard(C3));
+		}
+
+		tableView.removeAll();
+		tableView.updateUI();
+		tableView.repaint();
+		tableView.revalidate();
+		tableView.initialize(defaultLayout());
 	}
 	
 	public static void rmSelected(SetCard setCard){
@@ -141,6 +189,38 @@ public class SetTable{
 		while(selectedCards.size()!= 0 ){
 			selectedCards.elementAt(0).unSelect();		
 		}
+	}
+	
+	public static void cheat() {
+		for(int i = 0; i < onTable.size(); i++) {
+			int i4 = onTable.get(i).getCardNum();
+			int i1 = i4%3; i4/=3;
+			int i2 = i4%3; i4/=3;
+			int i3 = i4%3; i4/=3;
+			for(int j = i+1; j < onTable.size(); j++) {
+				int j4 = onTable.get(j).getCardNum();
+				int j1 = j4%3; j4/=3;
+				int j2 = j4%3; j4/=3;
+				int j3 = j4%3; j4/=3;
+				for(int k = j+1; k < onTable.size(); k++) {
+					int k4 = onTable.get(k).getCardNum();
+					int k1 = k4%3; k4/=3;
+					int k2 = k4%3; k4/=3;
+					int k3 = k4%3; k4/=3;
+					if((((i1+j1+k1) % 3) == 0) && (((i2+j2+k2) % 3) == 0) && (((i3+j3+k3) % 3) == 0) && (((i4+j4+k4) % 3) == 0)) {
+						/*
+						onTable.get(i).cheat();
+						onTable.get(j).cheat();
+						onTable.get(k).cheat();
+						*/
+						MainClient.sendMessage("S;" + onTable.get(i).getCardNum() + ";" + onTable.get(j).getCardNum() + ";" + onTable.get(k).getCardNum());
+						return;
+					}
+					
+				}
+			}
+		}
+		System.out.println("No sets!");
 	}
 
 	public static boolean isSet(){

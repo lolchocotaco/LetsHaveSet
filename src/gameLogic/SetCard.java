@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import setServer.Message;
+
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -178,6 +180,31 @@ public class SetCard extends JPanel{
     }
     public void selectRemove(){
     	SetTable.rmSelected(this);
+    }
+    
+    public void cheat() {
+    	Thread cheatThread = new Thread() {
+			public void run() {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						showBorder();
+					}
+				});
+		    	
+		    	try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) { }
+		    	
+		    	SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						hideBorder();
+					}
+				});
+			}
+		};
+		cheatThread.start();
     }
    
 	private void showBorder() {

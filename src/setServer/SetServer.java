@@ -142,12 +142,17 @@ public class SetServer {
 				}
 			}
 			
-			return newCards();
+			if(onTable.size() < 12) {
+				return newCards();
+			} else {
+				int[] x = {-1, -1, -1};
+				return x;
+			}
 		}
 		
 		public int[] newCards() {
 			if(deck.size() == 0) {
-				int[] out = {-1};
+				int[] out = {1, -1, -1};
 				return out;
 			} else {
 				onTable.add(deck.get(0));
@@ -451,26 +456,30 @@ public class SetServer {
 							sendToTable(outMessages, tableS, "S;" + splitM[1] + ";" + splitM[2] + ";" + splitM[3]);
 							tableS.players.put(inM.clientID, tableS.players.get(inM.clientID) + 1);
 							sendToTable(outMessages, tableS, tableS.playerString(userMap));
-							if(newCards[0] >= 0) { // There is new cards
-								Thread sendNewCardsThread = new Thread() {
-									public void run() {
-									    try {
-									    	Thread.sleep(2000);
-										} catch (InterruptedException e) {
-											// Do nothing
+							if(newCards[0] >= 0) { // Table is 12 or less
+								if(newCards[1] >= 0) { // There is new cards
+									Thread sendNewCardsThread = new Thread() {
+										public void run() {
+										    try {
+										    	Thread.sleep(1000);
+											} catch (InterruptedException e) {
+												// Do nothing
+											}
+										    try {
+												inMessages.put(new Message(inM.clientID, "H"));
+											} catch (InterruptedException e) {
+												System.err.println("Error in Set Checking Thread!");
+											}
+										    sendToTable(outMessages, tableS, "N;" + newCards[0] + ";" + newCards[1] + ";" + newCards[2]);
 										}
-									    try {
-											inMessages.put(new Message(inM.clientID, "H"));
-										} catch (InterruptedException e) {
-											System.err.println("Error in Set Checking Thread!");
-										}
-									    sendToTable(outMessages, tableS, "N;" + newCards[0] + ";" + newCards[1] + ";" + newCards[2]);
-									}
-								};
-								sendNewCardsThread.start();
-							} else if(tableS.noMoreSets()) { // GAME OVER!!!
-								sendToTable(outMessages, tableS, "G");
-								tableS.numGoPressed = 0;
+									};
+									sendNewCardsThread.start();
+								} else if(tableS.noMoreSets()) { // GAME OVER!!!
+									sendToTable(outMessages, tableS, "G");
+									tableS.numGoPressed = 0;
+								}
+							} else {
+								inMessages.put(new Message(inM.clientID, "H"));
 							}
 							
 						} // else ignore message
@@ -482,12 +491,12 @@ public class SetServer {
 						final Table tableH = tableMap.get(userH.currentTable);
 						if(tableH.noMoreSets()) {
 							final int[] newCards = tableH.newCards();
-							if(newCards[0] >= 0) {
+							if(newCards[1] >= 0) {
 								sendToTable(outMessages, tableH, "O");
 								Thread sendNewCardsThread = new Thread() {
 									public void run() {
 									    try {
-									    	Thread.sleep(2000);
+									    	Thread.sleep(1000);
 										} catch (InterruptedException e) {
 											// Do nothing
 										}

@@ -63,7 +63,7 @@ public class TableWindow {
 		frmTable = new JFrame();
 		frmTable.setResizable(false);
 		frmTable.setTitle("Table View");
-		frmTable.setBounds(100, 100, 800, 600);
+		frmTable.setBounds(100, 100, 1050, 600);
 		frmTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmTable.getContentPane().setLayout(null);
 		
@@ -72,7 +72,7 @@ public class TableWindow {
 		lblStartGame.setBounds(50, 145, 750, 150);
 		
 		JButton btnExit = new JButton("EXIT TABLE");
-		btnExit.setBounds(634, 470, 130, 60);
+		btnExit.setBounds(884, 470, 130, 60);
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				MainClient.sendMessage("E");
@@ -83,12 +83,12 @@ public class TableWindow {
 
 		setTable.tableView.setBorder(BorderFactory.createBevelBorder(1));
 		setTable.tableView.add(lblStartGame);
-		setTable.tableView.setBounds(10, 10, 600, 550);
+		setTable.tableView.setBounds(10, 10, 850, 550);
 		setTable.tableView.setLayout(null);
 		frmTable.getContentPane().add(setTable.tableView);
 		
 		tablePanel = new JPanel();
-		tablePanel.setBounds(634, 11, 150, 175);
+		tablePanel.setBounds(873, 11, 150, 175);
 		frmTable.getContentPane().add(tablePanel);
 		
 		playerList = new JTable();
@@ -124,8 +124,17 @@ public class TableWindow {
 				}
 			}
 		});
-		btnReady.setBounds(634, 436, 130, 23);
+		btnReady.setBounds(884, 436, 130, 23);
 		frmTable.getContentPane().add(btnReady);
+		
+		JButton btnCheat = new JButton("CHEAT");
+		btnCheat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SetTable.cheat();
+			}
+		});
+		btnCheat.setBounds(917, 402, 65, 23);
+		frmTable.getContentPane().add(btnCheat);
 		
 		GUIThread guiThread = new GUIThread(guiMessages);
 		guiThread.start();
@@ -181,7 +190,7 @@ public class TableWindow {
 	
 	public void youMadeASet() {
 		// TODO
-		JOptionPane.showMessageDialog(frmTable, "You made a set! Nice!\nIsn't this window distracting?");
+		// JOptionPane.showMessageDialog(frmTable, "You made a set! Nice!\nIsn't this window distracting?");
 	}
 	
 	public static void sendSet( int C1, int C2, int C3){
@@ -213,6 +222,4 @@ public class TableWindow {
 		initialize();
 		frmTable.setVisible(true);
 	}
-
-
 }
