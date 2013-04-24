@@ -3,9 +3,12 @@ package gameLogic;
 import gui.MainClient;
 import gui.TableWindow;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.SwingUtilities;
+
+import setServer.Message;
 
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.slidinglayout.SLConfig;
@@ -32,6 +35,8 @@ public class SetTable{
 		tableView = new SLPanel();
 		SLtweenManager = SLAnimator.createTweenManager();
 		tableView.setTweenManager(SLtweenManager);
+		
+		// TODO Listener: Space clears selections
 	}
 	
 
@@ -67,18 +72,27 @@ public class SetTable{
 	public static void addSelected(SetCard setCard){
 		if (selectedCards.size() == 2){
 			selectedCards.add(setCard);
+			SetCard.disableClick();
 			if(isSet()){
 				TableWindow.sendSet(selectedCards.elementAt(0).getCardNum(), selectedCards.elementAt(1).getCardNum(),selectedCards.elementAt(2).getCardNum());
-			}
-			else{
+			} else {
 				MainClient.sendMessage("X");
-				// TODO: Notify player of incorrect selection
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
+				Thread clearCardsThread = new Thread() {
 					public void run() {
-						clearSelected();
-					};
-				});
+						try {
+							Thread.sleep(250); // THIS MAY BE A PROBLEM
+						} catch (InterruptedException e) { }
+
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								clearSelected();
+								SetCard.enableClick();
+							};
+						});
+					}
+				};
+				clearCardsThread.start();
 			}
 		}
 		else if (selectedCards.size() < 2 ){
@@ -90,7 +104,33 @@ public class SetTable{
 		}
 	}
 			
-			
+	public void setMade(int C1, int C2, int C3) {
+		boolean clearSelect = false;
+		Iterator<SetCard> it = onTable.iterator();
+		while(it.hasNext()) {
+			SetCard SC = it.next();
+			int cardNum = SC.getCardNum();
+			if((cardNum == C1)||(cardNum == C2)||(cardNum == C3)) {
+				if(SC.isSelected()) clearSelect = true;
+				onTable.removeElement(SC);
+			}
+		}
+		if(clearSelect) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					clearSelected();
+					SetCard.enableClick();
+				};
+			});
+		}
+	}
+	
+	public void newCards(int C1, int C2, int C3) {
+		onTable.add(new SetCard(C1));
+		onTable.add(new SetCard(C2));
+		onTable.add(new SetCard(C3));
+	}
 	
 	public static void rmSelected(SetCard setCard){
 		selectedCards.remove(setCard);
@@ -99,7 +139,6 @@ public class SetTable{
 	public static void clearSelected(){
 //		for(int i = 0; i<selectedCards.size(); i++){
 		while(selectedCards.size()!= 0 ){
-			System.out.println(selectedCards.elementAt(0).toString());
 			selectedCards.elementAt(0).unSelect();		
 		}
 	}
@@ -136,20 +175,22 @@ public class SetTable{
 	}
 	
 	
-	/*Disables actions*/
+	/*
+	//Disables actions
 	@SuppressWarnings("unused")
 	private void disableActions() {
 		for(int i = 0; i<onTable.size(); i++){
 			onTable.elementAt(i).disableClick();
 		}
 	}
-	/*Enables Actions*/
+	//Enables Actions
 	@SuppressWarnings("unused")
 	private void enableActions(){
 		for(int i = 0; i<onTable.size(); i++){
 			onTable.elementAt(i).disableClick();
 		}
 	}
+	*/
 
 	
 }

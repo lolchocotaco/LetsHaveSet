@@ -31,15 +31,17 @@ public class SetCard extends JPanel{
 	private static final Color BG_COLOR = new Color(0x3B5998);
 	private static final Color BORDER_COLOR = new Color(0x000000);
 	private static final float baseScale = 1f;
-	private static final float bigScale = 1.1f;
+	private static final float bigScale = 1.05f;
 	private int borderThickness = 2;
 	private int height = 150;
 	private int width = 100;
+	private int growHeight = 8;
+	private int growWidth = 5;
 	private float scaleXY = baseScale;
 	private float opacity = 100;
 	private boolean hover = false;
 	private boolean hoverEnabled = true;
-	private boolean clickEnabled = true;
+	private static boolean clickEnabled = true;
 //	private Runnable selectAdd, selectRemove;
 	private final JTextArea cardInfo = new JTextArea();
 	private static TweenManager tweenManager = null;
@@ -113,8 +115,8 @@ public class SetCard extends JPanel{
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
 							public void run() {
-								selectAdd();
 								grow();
+								selectAdd();
 							}
 						});
 					}	
@@ -129,6 +131,9 @@ public class SetCard extends JPanel{
     public int getCardNum() {
 		return (27*color + 9*number + 3*shape + shade);
 	}
+    public boolean isSelected() {
+    	return selected;
+    }
     
 
     /*      getFunctions     */
@@ -158,8 +163,8 @@ public class SetCard extends JPanel{
     
 	public void enableHover() {hoverEnabled = true; if (hover) showBorder();}
 	public void disableHover() {hoverEnabled = false;}
-	public void enableClick() {clickEnabled = true;}
-	public void disableClick(){clickEnabled = false;}
+	public static void enableClick() {clickEnabled = true;}
+	public static void disableClick(){clickEnabled = false;}
 
     public void unSelect(){
      	hideBorder();
@@ -195,9 +200,10 @@ public class SetCard extends JPanel{
 		disableClick();
 		scaleXY = bigScale;
 		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
-					.targetRelative((1-scaleXY)*width/2, (1-scaleXY)*height/2, (scaleXY-1)*width, (scaleXY-1)*height)
-					.ease(Quad.OUT) 
-					.start(tweenManager);
+				//.targetRelative((1-scaleXY)*width/2, (1-scaleXY)*height/2, (scaleXY-1)*width, (scaleXY-1)*height)
+				.targetRelative(-growWidth, -growHeight, growWidth*2, growHeight*2)
+				.ease(Quad.OUT) 
+				.start(tweenManager);
 		enableClick();
 	}
 	
@@ -205,9 +211,10 @@ public class SetCard extends JPanel{
 		selected = false;
 		disableClick();
 		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
-			.targetRelative(-(1-scaleXY)*width/2, -(1-scaleXY)*height/2, -(scaleXY-1)*width, -(scaleXY-1)*height)
-			.ease(Quad.OUT)
-			.start(tweenManager);
+				//.targetRelative(-(1-scaleXY)*width/2, -(1-scaleXY)*height/2, -(scaleXY-1)*width, -(scaleXY-1)*height)
+				.targetRelative(growWidth, growHeight, -growWidth*2, -growHeight*2)
+				.ease(Quad.OUT)
+				.start(tweenManager);
 		scaleXY = baseScale;
 		enableClick();
 	}	

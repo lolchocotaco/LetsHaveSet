@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -145,36 +146,42 @@ public class TableWindow {
 	}
 
 	//Parses incoming message and adds cards to the board
-	public void tableCards(String[] splitLine) { // splitLine: T;12;00;01;02;10;11;12;20;21;22;100;101;102
-		lblStartGame.setText("Enjoy your game! 3");
-		try {
-			Thread.sleep(700);
-			lblStartGame.setText("Enjoy your game! 2");
-			Thread.sleep(700);
-			lblStartGame.setText("Enjoy your game! 1");
-			Thread.sleep(600);
-		} catch (InterruptedException e) {
-			//do nothing
-		}
-		lblStartGame.setVisible(false);
-		int cardNum = 0;
-		for( int i =0; i< Integer.parseInt(splitLine[1]); i++){
-			cardNum = Integer.parseInt(splitLine[i+2]);
-			setTable.addToTable(cardNum);
-		}
-		setTable.tableView.removeAll();
-		setTable.tableView.updateUI();
-		setTable.tableView.repaint();
-		setTable.tableView.revalidate();
-		setTable.tableView.initialize(setTable.defaultLayout());			
+	public void tableCards(final String[] splitLine) { // splitLine: T;12;00;01;02;10;11;12;20;21;22;100;101;102
+		Thread startGameThread = new Thread() {
+			public void run() {
+				lblStartGame.setText("Enjoy your game! 3");
+				try {
+					Thread.sleep(700);
+					lblStartGame.setText("Enjoy your game! 2");
+					Thread.sleep(700);
+					lblStartGame.setText("Enjoy your game! 1");
+					Thread.sleep(600);
+				} catch (InterruptedException e) {
+					//do nothing
+				}
+				lblStartGame.setVisible(false);
+				int cardNum = 0;
+				for( int i =0; i< Integer.parseInt(splitLine[1]); i++){
+					cardNum = Integer.parseInt(splitLine[i+2]);
+					setTable.addToTable(cardNum);
+				}
+				setTable.tableView.removeAll();
+				setTable.tableView.updateUI();
+				setTable.tableView.repaint();
+				setTable.tableView.revalidate();
+				setTable.tableView.initialize(setTable.defaultLayout());
+			}
+		};			
+		startGameThread.start();
 	}
 
 	public void setMade(int C1, int C2, int C3) {
-		//TODO
+		setTable.setMade(C1, C2, C3);
 	}
 	
 	public void youMadeASet() {
 		// TODO
+		JOptionPane.showMessageDialog(frmTable, "You made a set! Nice!\nIsn't this window distracting?");
 	}
 	
 	public static void sendSet( int C1, int C2, int C3){
@@ -182,15 +189,17 @@ public class TableWindow {
 	}
 
 	public void newCards(int C1, int C2, int C3) {
-		//TODO 
+		setTable.newCards(C1, C2, C3);
 	}
 
 	public void noSets() {
-		// TODO 
+		// TODO
+		JOptionPane.showMessageDialog(frmTable, "No more sets, bro!");
 	}
 
 	public void gameOver() {
 		// TODO 
+		JOptionPane.showMessageDialog(frmTable, "Game Over, bro!");
 	}
 	
 	
