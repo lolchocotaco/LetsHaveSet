@@ -18,6 +18,7 @@ public class MainClient {
 		
 		try {
 //			clientSocket = new Socket("sable10.ee.cooper.edu", 5342);
+			// TODO : CHANGE BACK TO NORMAL ADDRESS
 			clientSocket = new Socket("127.0.0.1",5342);
 			out = new DataOutputStream(clientSocket.getOutputStream());
 		} catch (UnknownHostException e) {
@@ -67,7 +68,7 @@ public class MainClient {
 							if(splitLine.length != 5) {System.err.println("Message Length Error!"); break;}
 							lobbyWindow.updateTable(splitLine[1], splitLine[2], splitLine[3], splitLine[4]);
 							break;
-						case 'F': // Table is didVoteFull: F
+						case 'F': // Table is Full: F
 							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
 							lobbyWindow.tableIsFull();
 							break;
@@ -83,7 +84,7 @@ public class MainClient {
 								lobbyWindow.frmLobby.setVisible(true);
 							}
 							break;
-						case 'P': // PlayersdidVotedidVote at Table: P;3;4;Nico;Sameer;Vasily
+						case 'P': // Players at Table: P;3;4;Nico;0;Sameer;3;Vasily;12
 							if(splitLine.length < 4) {System.err.println("Message Length Error!"); break;}
 							int numPlayers = Integer.parseInt(splitLine[1]);
 							if(splitLine.length != 3+2*numPlayers) {System.err.println("Message Length Error!"); break;}
@@ -101,6 +102,10 @@ public class MainClient {
 						case 'S': // Set made:  S;03;21;76
 							if(splitLine.length != 4) {System.err.println("Message Length Error!"); break;}
 							tableWindow.setMade(Integer.parseInt(splitLine[1]), Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
+							break;
+						case 'D': // Docked point!: D
+							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
+							tableWindow.youScrewedUp();
 							break;
 						case 'Y': // You made a set!: Y
 							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
@@ -123,9 +128,13 @@ public class MainClient {
 								lobbyWindow.frmLobby.setVisible(true);
 							}
 							break;
-						case 'C': //Chat: C;Username;Message
+						case 'C': // Lobby Chat: C;Username;Message
 							if(splitLine.length != 3) {System.err.println("Message Length Error!"); break;}
 							lobbyWindow.newChat(splitLine[1], splitLine[2]);
+							break;
+						case 'Q': // Table Chat: Q;Username;Message
+							if(splitLine.length != 3) {System.err.println("Message Length Error!"); break;}
+							tableWindow.newChat(splitLine[1], splitLine[2]);
 							break;
 					}
 				} catch (IOException e) {

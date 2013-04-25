@@ -34,183 +34,6 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 public class SetServer {
-	
-	public static class User {
-		public String username;
-		public int numWins;
-		public int numLosses;
-		public int currentTable;
-		
-		public User(String username, int numWins, int numLosses, int currentTable) {
-			this.username = username;
-			this.numWins = numWins;
-			this.numLosses = numLosses;
-			this.currentTable = currentTable;
-		}
-	};
-	
-	private static class Table {
-		public String name;
-		public int numPlayers;
-		public int maxPlayers;
-		public Map<Object, Integer> players = null; // userId --> score
-		public int numGoPressed;
-		public List<Card> deck;
-		public List<Card> onTable;
-		
-		public Table(String name, int numPlayers, int maxPlayers) {
-			this.name = name;
-			this.numPlayers = numPlayers;
-			this.maxPlayers = maxPlayers;
-			this.players = new HashMap<Object, Integer>();
-			this.numGoPressed = 0;
-			this.deck = new ArrayList<Card>();
-			this.onTable = new ArrayList<Card>();
-		}
-		
-		public void addPlayer(int userID) {
-			numPlayers++;
-			players.put(userID, 0);
-		}
-		
-		public void removePlayer(int userID) {
-			numPlayers--;
-			players.remove(userID);
-		}
-		
-		public String playerString(Map<Object, User> userMap) {
-			String out = "P;" + numPlayers + ";" + maxPlayers;
-			Iterator<Entry<Object, Integer> > it = players.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry<Object, Integer> entry = (Map.Entry<Object, Integer>) it.next();
-				int userID = (Integer) entry.getKey();
-				String username = userMap.get(userID).username;
-				int score = (Integer) entry.getValue();
-				out += ";" + username + ";" + score;
-			}
-			return out;
-		}
-		
-		public void resetScores() {
-			Iterator<Entry<Object, Integer> > it = players.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry<Object, Integer> entry = (Map.Entry<Object, Integer>) it.next();
-				entry.setValue(0);
-			}
-		}
-		
-		public void initializeDeck() {
-			for(int i = 0; i<81; i++) {
-				deck.add(new Card(i));
-			}
-			Collections.sort(deck);
-			for(int i = 0; i<12; i++) {
-				onTable.add(deck.get(0));
-				deck.remove(0);
-			}
-		}
-		
-		public String tableString() {
-			String out = "T;" + onTable.size();
-			Iterator<Card> it = onTable.iterator();
-			while(it.hasNext()) {
-				out += ";" + it.next().cardNum;
-			}
-			return out;
-		}
-		
-		public boolean setExists(int C1, int C2, int C3) {
-			boolean b1 = false;
-			boolean b2 = false;
-			boolean b3 = false;
-			Iterator<Card> it = onTable.iterator();
-			while(it.hasNext()) {
-				int C = it.next().cardNum;
-				if(C == C1) b1 = true;
-				if(C == C2) b2 = true;
-				if(C == C3) b3 = true;
-			}
-			return (b1 && b2 && b3);
-		}
-		
-		public int[] removeSet(int C1, int C2, int C3) { // returns {-1} if there is no more cards, {C1, C2, C3} if 3 new cards
-			for(int i = 0; i < onTable.size(); i++) {
-				int C = onTable.get(i).cardNum;
-				if((C == C1)||(C == C2)||(C == C3)) {
-					onTable.remove(i);
-					i--; // Otherwise it will skip indices
-				}
-			}
-			
-			if(onTable.size() < 12) {
-				return newCards();
-			} else {
-				int[] x = {-1, -1, -1};
-				return x;
-			}
-		}
-		
-		public int[] newCards() {
-			if(deck.size() == 0) {
-				int[] out = {1, -1, -1};
-				return out;
-			} else {
-				onTable.add(deck.get(0));
-				onTable.add(deck.get(1));
-				onTable.add(deck.get(2));
-				int[] out = {deck.get(0).cardNum, deck.get(1).cardNum, deck.get(2).cardNum};
-				deck.remove(0); deck.remove(0); deck.remove(0);
-				return out;
-			}
-		}
-		
-		public boolean noMoreSets() {
-			for(int i = 0; i < onTable.size(); i++) {
-				int i4 = onTable.get(i).cardNum;
-				int i1 = i4%3; i4/=3;
-				int i2 = i4%3; i4/=3;
-				int i3 = i4%3; i4/=3;
-				for(int j = i+1; j < onTable.size(); j++) {
-					int j4 = onTable.get(j).cardNum;
-					int j1 = j4%3; j4/=3;
-					int j2 = j4%3; j4/=3;
-					int j3 = j4%3; j4/=3;
-					for(int k = j+1; k < onTable.size(); k++) {
-						int k4 = onTable.get(k).cardNum;
-						int k1 = k4%3; k4/=3;
-						int k2 = k4%3; k4/=3;
-						int k3 = k4%3; k4/=3;
-						if((((i1+j1+k1) % 3) == 0) && (((i2+j2+k2) % 3) == 0) && (((i3+j3+k3) % 3) == 0) && (((i4+j4+k4) % 3) == 0)) {
-							return false;
-						}
-						
-					}
-				}
-			}
-			
-			return true;
-		}
-		
-	}
-	
-	public static class Card implements Comparable<Card>{
-		public double index;
-		public int cardNum;
-		public Card(int cardNum) {
-			this.index = Math.random();
-			this.cardNum = cardNum;
-		}
-		
-		@Override
-		public int compareTo(Card otherCard) {
-			if (this.index == otherCard.index)
-		        return 0;
-		    else if (this.index > otherCard.index)
-		        return 1;
-		    else
-		        return -1;
-		}
-	}
 
 	public static void main(String[] args) throws SQLException {
 		
@@ -475,8 +298,7 @@ public class SetServer {
 									};
 									sendNewCardsThread.start();
 								} else if(tableS.noMoreSets()) { // GAME OVER!!!
-									sendToTable(outMessages, tableS, "G");
-									tableS.numGoPressed = 0;
+									gameOver(outMessages, userMap, tableS);
 								}
 							} else {
 								inMessages.put(new Message(inM.clientID, "H"));
@@ -510,28 +332,58 @@ public class SetServer {
 								};
 								sendNewCardsThread.start();
 							} else {
-								sendToTable(outMessages, tableH, "G"); // GAME OVER!!!
-								tableH.numGoPressed = 0;
+								gameOver(outMessages, userMap, tableH);
 							}
 						}
 						break;
 					case 'X': // Mistake made: X
 						if(splitM.length != 1) {System.err.println("Message Length Error!"); break;}
+						outMessages.put(new Message(inM.clientID, "D")); // Reflect mistake back to MainClient
 						User userX = userMap.get(inM.clientID);
 						Table tableX = tableMap.get(userX.currentTable);
 						tableX.players.put(inM.clientID, tableX.players.get(inM.clientID) - 1);
 						sendToTable(outMessages, tableX, tableX.playerString(userMap));
 						break;
-					case 'C': //Chat sent: C;Message
+					case 'C': // Chat sent: C;Message
 						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}					
 						User userC = userMap.get(inM.clientID);
 						outMessages.put(new Message(-1, "C;" + userC.username + ";" + splitM[1]));
+						break;
+					case 'Q': // Table Chat: Q;Message
+						if(splitM.length != 2) {System.err.println("Message Length Error!"); break;}					
+						User userQ = userMap.get(inM.clientID);
+						Table tableQ = tableMap.get(userQ.currentTable);
+						sendToTable(outMessages, tableQ, "Q;" + userQ.username + ";" + splitM[1]);
 						break;
 				}
 			} catch (InterruptedException e) {
 				// Do nothing?
 			}
 		}
+		
+	}
+	
+	private static void gameOver(BlockingQueue<Message> outMessages, Map<Object, User> userMap, Table table) {
+		
+		table.numGoPressed = 0; // Reset table
+		
+		Iterator<Entry<Object, Integer> > it = table.players.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Object, Integer> entry = (Map.Entry<Object, Integer>) it.next();
+			int userID = (Integer) entry.getKey();
+			User curUser = userMap.get(userID);
+			
+			// curUser's score: entry.getValue();
+			// curUser's username: curUser.username;
+			
+			// TODO: UPDATE MYSQL WITH NEW SCORES
+
+		}
+		
+		table.resetScores(); // Resets scores to 0
+		table.initializeDeck(); // Reset cards
+		sendToTable(outMessages, table, "G"); // Tell everyone game over
+		sendToTable(outMessages, table, table.playerString(userMap)); // Update scores to 0
 		
 	}
 	

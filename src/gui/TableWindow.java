@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,12 +19,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import setServer.Message;
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
+import javax.swing.JTextArea;
+import java.awt.Color;
+import javax.swing.JTextField;
 
 public class TableWindow {
 
@@ -31,9 +37,11 @@ public class TableWindow {
 	private JTable playerList;
 	private JPanel tablePanel;
 	private JLabel lblStartGame;
+	private JTextArea chatWindow;
 	private boolean didVote = false;
 	
 	private BlockingQueue<Message> guiMessages = null;
+	private JTextField textField;
 	
 	public TableWindow() {
 		setTable = new SetTable();
@@ -72,7 +80,7 @@ public class TableWindow {
 		lblStartGame.setBounds(50, 145, 750, 150);
 		
 		JButton btnExit = new JButton("EXIT TABLE");
-		btnExit.setBounds(884, 470, 130, 60);
+		btnExit.setBounds(884, 526, 130, 23);
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				MainClient.sendMessage("E");
@@ -124,7 +132,7 @@ public class TableWindow {
 				}
 			}
 		});
-		btnReady.setBounds(884, 436, 130, 23);
+		btnReady.setBounds(884, 502, 130, 23);
 		frmTable.getContentPane().add(btnReady);
 		
 		JButton btnCheat = new JButton("CHEAT");
@@ -133,15 +141,39 @@ public class TableWindow {
 				SetTable.cheat();
 			}
 		});
-		btnCheat.setBounds(917, 402, 65, 23);
+		btnCheat.setBounds(884, 478, 130, 23);
 		frmTable.getContentPane().add(btnCheat);
+		
+		chatWindow = new JTextArea();
+		chatWindow.setForeground(Color.BLUE);
+		chatWindow.setEditable(false);
+		chatWindow.setBounds(873, 197, 150, 234);
+		frmTable.getContentPane().add(chatWindow);
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(873, 437, 150, 30);
+		textField.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+                   sendChat();
+                }
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			@Override
+			public void keyTyped(KeyEvent e) {}
+		});
+		
+		frmTable.getContentPane().add(textField);
 		
 		GUIThread guiThread = new GUIThread(guiMessages);
 		guiThread.start();
 		
 	}
 	
-	public void updatePlayers(String[] splitLine) { // splitLine: P;3;4;Nico;0;Sameer;0;Vasily;0
+	public void updatePlayers(String[] splitLine) { // splitLine: P;3;4;Nico;2;Sameer;3;Vasily;14
 		int numPlayers = Integer.parseInt(splitLine[1]);
 		Object data [][] = new Object[numPlayers][4];
 		for(int i = 0; i<numPlayers; i++){
@@ -155,7 +187,7 @@ public class TableWindow {
 	}
 
 	//Parses incoming message and adds cards to the board
-	public void tableCards(final String[] splitLine) { // splitLine: T;12;00;01;02;10;11;12;20;21;22;100;101;102
+	public void tableCards(final String[] splitLine) { // splitLine: T;12;00;01;02;03;04;05;06;07;08;09;10;11
 		Thread startGameThread = new Thread() {
 			public void run() {
 				lblStartGame.setText("Enjoy your game! 3");
@@ -183,13 +215,31 @@ public class TableWindow {
 		};			
 		startGameThread.start();
 	}
+	
+	public void sendChat() {
+		String txt = textField.getText();
+		if(txt.contains(";")) {
+			JOptionPane.showMessageDialog(frmTable, "Cannot send message with \";\" in it.");
+		} else if(!txt.isEmpty()) {
+			MainClient.sendMessage("Q;" + txt);
+			textField.setText(null);
+		}
+	}
+	
+	public void newChat(String user, String chat) {
+		chatWindow.append(user + ": " + chat + "\n");
+	}
 
 	public void setMade(int C1, int C2, int C3) {
 		setTable.setMade(C1, C2, C3);
 	}
 	
+	public void youScrewedUp() {
+		// TODO : Display a "bad" indicator
+	}
+	
 	public void youMadeASet() {
-		// TODO
+		// TODO : Display a "good" indicator
 		// JOptionPane.showMessageDialog(frmTable, "You made a set! Nice!\nIsn't this window distracting?");
 	}
 	
@@ -202,13 +252,22 @@ public class TableWindow {
 	}
 
 	public void noSets() {
-		// TODO
+		// TODO : Display a "No More Sets" indicator
 		JOptionPane.showMessageDialog(frmTable, "No more sets, bro!");
 	}
 
 	public void gameOver() {
-		// TODO 
+		// TODO : Display a "Game Over" screen
+		
+		setTable.clearCards();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				SetTable.clearSelected();
+			};
+		});
 		JOptionPane.showMessageDialog(frmTable, "Game Over, bro!");
+		
 	}
 	
 	

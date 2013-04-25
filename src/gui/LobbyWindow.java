@@ -107,7 +107,6 @@ public class LobbyWindow {
 		textField.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent evt) {
-				// TODO Auto-generated method stub
 				if(evt.getKeyCode() == KeyEvent.VK_ENTER){
                    sendChat();
                 }

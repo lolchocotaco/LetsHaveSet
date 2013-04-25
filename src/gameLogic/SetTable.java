@@ -180,15 +180,19 @@ public class SetTable{
 		tableView.initialize(defaultLayout());
 	}
 	
-	public static void rmSelected(SetCard setCard){
+	public static void rmSelected(SetCard setCard) {
 		selectedCards.remove(setCard);
 	}
 	
-	public static void clearSelected(){
+	public static void clearSelected() {
 //		for(int i = 0; i<selectedCards.size(); i++){
 		while(selectedCards.size()!= 0 ){
 			selectedCards.elementAt(0).unSelect();		
 		}
+	}
+	
+	public void clearCards() {
+		onTable.clear();
 	}
 	
 	public static void cheat() {
