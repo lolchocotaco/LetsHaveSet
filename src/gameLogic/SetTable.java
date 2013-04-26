@@ -3,12 +3,9 @@ package gameLogic;
 import gui.MainClient;
 import gui.TableWindow;
 
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.SwingUtilities;
-
-import setServer.Message;
 
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.slidinglayout.SLConfig;

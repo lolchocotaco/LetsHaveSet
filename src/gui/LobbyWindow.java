@@ -100,7 +100,10 @@ public class LobbyWindow {
 		chatWindow.setEditable(false);
 		//chatWindow.setEnabled(false);
 		chatWindow.setForeground(Color.blue);
+		chatWindow.setLineWrap(true);
+		chatWindow.setWrapStyleWord(true);
 		scrollPane.setViewportView(chatWindow);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		textField = new JTextField();
 		textField.setBounds(575, 400, 200, 30);
@@ -207,6 +210,7 @@ public class LobbyWindow {
 			JOptionPane.showMessageDialog(frmLobby, "Cannot send message with \";\" in it.");
 		} else if(!txt.isEmpty()) {
 			MainClient.sendMessage("C;" + txt);
+            chatWindow.setCaretPosition(chatWindow.getDocument().getLength());
 			textField.setText(null);
 		}
 	}

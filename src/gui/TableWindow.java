@@ -4,7 +4,6 @@ import gameLogic.SetCard;
 import gameLogic.SetTable;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,10 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -30,6 +26,10 @@ import javax.swing.table.JTableHeader;
 import setServer.Message;
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
+import javax.swing.JTextArea;
+import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.JScrollPane;
 
 public class TableWindow {
 
@@ -43,6 +43,7 @@ public class TableWindow {
 	
 	private BlockingQueue<Message> guiMessages = null;
 	private JTextField textField;
+	private JScrollPane scrollPane;
 	
 	public TableWindow() {
 		setTable = new SetTable();
@@ -145,16 +146,17 @@ public class TableWindow {
 		btnCheat.setBounds(884, 478, 130, 23);
 		frmTable.getContentPane().add(btnCheat);
 		
-		
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(873, 197, 150, 234);
 		frmTable.getContentPane().add(scrollPane);
 		
 		chatWindow = new JTextArea();
+		scrollPane.setViewportView(chatWindow);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		chatWindow.setForeground(Color.BLUE);
 		chatWindow.setEditable(false);
-		scrollPane.setViewportView(chatWindow);
-
+		chatWindow.setLineWrap(true);
+		chatWindow.setWrapStyleWord(true);
 		
 		textField = new JTextField();
 		textField.setColumns(10);
@@ -228,6 +230,7 @@ public class TableWindow {
 			JOptionPane.showMessageDialog(frmTable, "Cannot send message with \";\" in it.");
 		} else if(!txt.isEmpty()) {
 			MainClient.sendMessage("Q;" + txt);
+			chatWindow.setCaretPosition(chatWindow.getDocument().getLength());
 			textField.setText(null);
 		}
 	}
