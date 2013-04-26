@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -363,21 +362,48 @@ public class SetServer {
 		
 	}
 	
-	private static void gameOver(BlockingQueue<Message> outMessages, Map<Object, User> userMap, Table table) {
+	private static void gameOver(BlockingQueue<Message> outMessages, Map<Object, User> userMap, Table table) throws SQLException {
 		
 		table.numGoPressed = 0; // Reset table
 		
 		Iterator<Entry<Object, Integer> > it = table.players.entrySet().iterator();
+		int MaxScore=-50;
+		int TotalPlayers=0;
+		List<String> Winner= new ArrayList<String>();
+		
 		while (it.hasNext()) {
-			Map.Entry<Object, Integer> entry = (Map.Entry<Object, Integer>) it.next();
+			TotalPlayers++;
+			Map.Entry<Object, Integer> entry = (Map.Entry<Object, Integer>) it.next();	
+			if(entry.getValue()==MaxScore){
+				int userID = (Integer) entry.getKey();
+				User curUser = userMap.get(userID);
+				Winner.add(curUser.username);
+			}
+			else if(entry.getValue()>MaxScore){
+				int userID = (Integer) entry.getKey();
+				User curUser = userMap.get(userID);
+				Winner.clear();
+				Winner.add(curUser.username);
+				MaxScore=entry.getValue();
+			}
+		}
+		Iterator<Entry<Object, Integer> > it2 = table.players.entrySet().iterator();
+		double WinnerScore= ((double) (TotalPlayers - Winner.size()))/((double) Winner.size())*10;
+		Connection connection = null;
+		Statement stmt = null;
+		connection = DriverManager.getConnection("jdbc:mysql://199.98.20.119:3306/set","java", "eeonly1");
+		stmt = connection.createStatement();
+		
+		while (it2.hasNext()){
+			Map.Entry<Object, Integer> entry = (Map.Entry<Object, Integer>) it2.next();
 			int userID = (Integer) entry.getKey();
 			User curUser = userMap.get(userID);
-			
-			// curUser's score: entry.getValue();
-			// curUser's username: curUser.username;
-			
-			// TODO: UPDATE MYSQL WITH NEW SCORES
-
+			if(Winner.contains(curUser.username)){
+				stmt.executeUpdate("UPDATE `users` SET `score`=score+"+WinnerScore+" WHERE `username`='"+curUser.username+"';");
+			}
+			else{
+				stmt.executeUpdate("UPDATE `users` SET `score`=score-10 WHERE `username`='"+curUser.username+"';");	
+			}	
 		}
 		
 		table.resetScores(); // Resets scores to 0

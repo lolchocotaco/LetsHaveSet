@@ -4,6 +4,7 @@ import gameLogic.SetCard;
 import gameLogic.SetTable;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +19,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -26,9 +30,6 @@ import javax.swing.table.JTableHeader;
 import setServer.Message;
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
-import javax.swing.JTextArea;
-import java.awt.Color;
-import javax.swing.JTextField;
 
 public class TableWindow {
 
@@ -144,11 +145,16 @@ public class TableWindow {
 		btnCheat.setBounds(884, 478, 130, 23);
 		frmTable.getContentPane().add(btnCheat);
 		
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(873, 197, 150, 234);
+		frmTable.getContentPane().add(scrollPane);
+		
 		chatWindow = new JTextArea();
 		chatWindow.setForeground(Color.BLUE);
 		chatWindow.setEditable(false);
-		chatWindow.setBounds(873, 197, 150, 234);
-		frmTable.getContentPane().add(chatWindow);
+		scrollPane.setViewportView(chatWindow);
+
 		
 		textField = new JTextField();
 		textField.setColumns(10);

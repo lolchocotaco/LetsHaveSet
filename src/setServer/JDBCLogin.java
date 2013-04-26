@@ -42,7 +42,6 @@ public class JDBCLogin {
 	}
 	Connection connection = null;
 	Statement stmt = null;
-	//Statement stmt2 = null;
 	ResultSet usertable = null;
  
 	try {
