@@ -85,6 +85,7 @@ public class SetCard extends JPanel{
 		cardInfo.setEnabled(false);
 		cardInfo.setBackground(null);
 		cardInfo.setForeground(FG_COLOR);
+		cardInfo.setVisible(false);
 		add(cardInfo);
 		/////////////
 		
@@ -254,7 +255,8 @@ public class SetCard extends JPanel{
 		super.paintComponent(g);
 
 		Graphics2D gg = (Graphics2D) g;
-
+		
+		//For border
 		int w = getWidth();
 		int h = getHeight();
 		
@@ -264,6 +266,40 @@ public class SetCard extends JPanel{
 		gg.fillRect(0, 0, w-1, t);
 		gg.fillRect(0, h-1-t, w-1, t);
 		gg.fillRect(w-1-t, 0, t, h-1);
+		
+		//For Picture
+		int xpoints [] = new int [4];
+		int ypoints [] = new int [4];
+		
+		int bgWidth = w-t;
+		int bgHeight = h-t;
+		
+		int count = this.number+1;
+		for (int i = 0; i < count; i++) {
+		    switch (this.shape) {
+		    case 0: //Diamond
+			
+				xpoints[0] = (int) (bgWidth * 0.2);
+				xpoints[1] = (int) (bgWidth * 0.5);
+				xpoints[2] = (int) (bgWidth * 0.8);
+				xpoints[3] = (int) (bgWidth * 0.5);
+				
+				ypoints[0] = (int) (bgHeight * (i + .5) / count);
+				ypoints[1] = (int) (bgHeight * (i + .5) / count - bgHeight / 10);
+				ypoints[2] = (int) (bgHeight * (i + .5) / count);
+				ypoints[3] = (int) (bgHeight * (i + .5) / count + bgHeight / 10);
+				
+				gg.fillPolygon (xpoints, ypoints, 4);
+				break;
+		    case 1: //Oval
+				gg.fillOval ((int) (bgWidth * .2), (int) (bgHeight * (i + .5) / count - bgHeight / 9), (int) (bgWidth * .6), (int) (bgHeight / 6));
+				break;
+		    case 2: //Squiggle
+				break;
+				
+		    }
+		}
+				
 	}
     
     private float getOpacity(){
@@ -386,5 +422,4 @@ public class SetCard extends JPanel{
 //         return -1;
 //}
     
-
 
