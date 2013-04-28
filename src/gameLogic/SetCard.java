@@ -1,5 +1,6 @@
 package gameLogic;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -10,8 +11,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-
-import setServer.Message;
 
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
@@ -40,6 +39,7 @@ public class SetCard extends JPanel{
 	private int growHeight = 8;
 	private int growWidth = 5;
 	private float scaleXY = baseScale;
+	private int stripeWidth = 3;
 	private float opacity = 100;
 	private boolean hover = false;
 	private boolean hoverEnabled = true;
@@ -47,6 +47,7 @@ public class SetCard extends JPanel{
 //	private Runnable selectAdd, selectRemove;
 	private final JTextArea cardInfo = new JTextArea();
 	private static TweenManager tweenManager = null;
+	private static final int colorVal [] = {0xFF0000, 0x00FF00, 0x0000FF};
 	
 	
 	
@@ -281,13 +282,17 @@ public class SetCard extends JPanel{
 		gg.fillRect(0, h-1-t, w-1, t);
 		gg.fillRect(w-1-t, 0, t, h-1);
 		
-		//For Picture
+		
+		
+		//For picture
 		int xpoints [] = new int [4];
 		int ypoints [] = new int [4];
 		
+		Color fillColor = new Color(colorVal[this.color]);
+		
 		int bgWidth = w-t;
 		int bgHeight = h-t;
-		
+		gg.setColor(BG_COLOR);
 		int count = this.number+1;
 		for (int i = 0; i < count; i++) {
 		    switch (this.shape) {
@@ -302,19 +307,70 @@ public class SetCard extends JPanel{
 				ypoints[1] = (int) (bgHeight * (i + .5) / count - bgHeight / 10);
 				ypoints[2] = (int) (bgHeight * (i + .5) / count);
 				ypoints[3] = (int) (bgHeight * (i + .5) / count + bgHeight / 10);
+
+				if(shade != 0){
+					gg.setColor(fillColor);
+					gg.fillPolygon (xpoints, ypoints, 4);	
+					if(shade ==1){
+						gg.setColor(BG_COLOR);
+						shadeCard(gg,i,count,bgWidth,bgHeight);
+					}
+				}
+			
 				
-				gg.fillPolygon (xpoints, ypoints, 4);
+				gg.setColor(fillColor);
+				for (int k = 0; k < 3; k++) {
+				    gg.drawPolygon (xpoints, ypoints, 4);
+				    for (int j = 0; j < 4; j++) {
+				    	ypoints[j] ++;
+				    }
+				}
+				
 				break;
 		    case 1: //Oval
-				gg.fillOval ((int) (bgWidth * .2), (int) (bgHeight * (i + .5) / count - bgHeight / 9), (int) (bgWidth * .6), (int) (bgHeight / 6));
+		      				
+		    	if(shade != 0){
+					gg.setColor(fillColor);
+					gg.fillOval ((int) (bgWidth * .2), (int) (bgHeight * (i + .5) / count - bgHeight / 9), (int) (bgWidth * .6), (int) (bgHeight / 6));
+					if(shade ==1){
+						gg.setColor(BG_COLOR);
+						shadeCard(gg,i,count,bgWidth,bgHeight);
+					}
+		    	}
+		    	
+				g.setColor (fillColor);
+				for (int k = 0; k < 3; k++) {
+				    gg.drawOval ((int) (w * .2),(int) (bgHeight * (i + .5) / count - bgHeight / 9) + k,(int) (bgWidth * .6), (int) (bgHeight / 6));
+				}
 				break;
-		    case 2: //Squiggle
-				break;
+		    case 2: //Squiggle OR BOX
+		    	if(shade != 0){
+			    	gg.setColor(fillColor);
+			    	gg.fillRect((int)(bgWidth*0.2),(int) (bgHeight * (i + .5) / count-10), (int) (bgWidth*0.6), 20);
+			    	if (shade ==1){
+			    		gg.setColor(BG_COLOR);
+						shadeCard(gg,i,count,bgWidth,bgHeight);
+			    	}
+		    	}
+		    	g.setColor (fillColor);
+				for (int k = 0; k < 3; k++) {
+					gg.drawRect((int)(bgWidth*0.2),(int) (bgHeight * (i + .5) / count-10), (int) (bgWidth*0.6), 20);
+					gg.setStroke(new BasicStroke(2.0f));
+				}
+		    	break;
 				
 		    }
 		}
 				
 	}
+    
+    
+    private void shadeCard(Graphics2D gg,int shapeNum,int count, int w, int h){
+    	for (int x = (int) (w * 0.2); x < w * 0.8; x += stripeWidth * 2) {
+			for (int j = 0; j < stripeWidth; j ++)
+			    gg.drawLine (x + j, (int) (h * (shapeNum + .5) / count - h / 10),x + j,(int) (h * (shapeNum + .5) / count + h / 10));
+		    }
+    }
     
     /*Animation Accessors*/
 	public static class Accessor extends SLAnimator.ComponentAccessor {
