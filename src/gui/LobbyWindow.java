@@ -82,7 +82,6 @@ public class LobbyWindow {
 		});
 		btnNewButton.setBounds(340, 386, 100, 44);
 		frmLobby.getContentPane().add(btnNewButton);
-		
 		JButton btnNewButton_1 = new JButton("Join Table");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -91,7 +90,7 @@ public class LobbyWindow {
 		});
 		btnNewButton_1.setBounds(450, 386, 100, 44);
 		frmLobby.getContentPane().add(btnNewButton_1);
-		
+				
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(575, 50, 200, 350);
 		frmLobby.getContentPane().add(scrollPane);

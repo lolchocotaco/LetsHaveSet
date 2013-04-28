@@ -2,15 +2,15 @@ package gui;
 
 import gameLogic.SetCard;
 import gameLogic.SetTable;
+import gui.ImgPanel.imgAccessor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,18 +18,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-import setServer.Message;
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
-import javax.swing.JTextArea;
-import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.JScrollPane;
+import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Quad;
 
 public class TableWindow {
 
@@ -37,37 +37,23 @@ public class TableWindow {
 	private SetTable setTable = null;
 	private JTable playerList;
 	private JPanel tablePanel;
+	private JPanel imgPanel;
 	private JLabel lblStartGame;
 	private JTextArea chatWindow;
 	private boolean didVote = false;
-	
-	private BlockingQueue<Message> guiMessages = null;
 	private JTextField textField;
 	private JScrollPane scrollPane;
+	private static TweenManager resultTweens = null;
 	
 	public TableWindow() {
 		setTable = new SetTable();
-		guiMessages = new LinkedBlockingQueue<Message>();
+		resultTweens = new TweenManager();
 		Tween.registerAccessor(SetCard.class, new SetCard.Accessor());
+		Tween.registerAccessor(ImgPanel.class, new ImgPanel.imgAccessor());
 		SLAnimator.start();
 		initialize();
 	}
-	
-	public class GUIThread extends Thread {
-		
-		BlockingQueue<Message> guiMessages = null;
-		
-		public GUIThread(BlockingQueue<Message> guiMessages) {
-			super("GUIThread");
-			this.guiMessages = guiMessages;
-		}
-		
-		public void run() {
-			
-		}
-	}
-	
-	@SuppressWarnings("serial")
+		@SuppressWarnings("serial")
 	private void initialize() {
 		
 		frmTable = new JFrame();
@@ -76,7 +62,7 @@ public class TableWindow {
 		frmTable.setBounds(100, 100, 1050, 600);
 		frmTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmTable.getContentPane().setLayout(null);
-		
+				
 		lblStartGame = new JLabel("Click Ready!");
 		lblStartGame.setFont(new Font("Sans", Font.BOLD, 36));
 		lblStartGame.setBounds(50, 145, 750, 150);
@@ -176,9 +162,6 @@ public class TableWindow {
 		
 		frmTable.getContentPane().add(textField);
 		
-		GUIThread guiThread = new GUIThread(guiMessages);
-		guiThread.start();
-		
 	}
 	
 	public void updatePlayers(String[] splitLine) { // splitLine: P;3;4;Nico;2;Sameer;3;Vasily;14
@@ -245,11 +228,27 @@ public class TableWindow {
 	
 	public void youScrewedUp() {
 		// TODO : Display a "bad" indicator
+		// Not working
+		
+		imgPanel = new ImgPanel(0);
+		imgPanel.setBounds(440,270,0,0);
+		frmTable.getContentPane().add(imgPanel);
+		Tween.to(imgPanel, imgAccessor.SCALE, 2f)
+			.targetRelative(-225,-225,450,450)
+			.ease(Quad.OUT)
+			.start(resultTweens);
 	}
 	
 	public void youMadeASet() {
 		// TODO : Display a "good" indicator
 		// JOptionPane.showMessageDialog(frmTable, "You made a set! Nice!\nIsn't this window distracting?");
+		imgPanel = new ImgPanel(1);
+		imgPanel.setBounds(440,270,0,0);
+		frmTable.getContentPane().add(imgPanel);
+		Tween.to(imgPanel, imgAccessor.SCALE, 2f)
+			.targetRelative(-225,-225,450,450)
+			.ease(Quad.OUT)
+			.start(resultTweens);
 	}
 	
 	public static void sendSet( int C1, int C2, int C3){

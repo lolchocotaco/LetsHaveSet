@@ -235,6 +235,20 @@ public class SetCard extends JPanel{
 		enableClick();
 	}
 	
+	
+	public void shrinkForever() {
+		selected = false;
+		disableClick();
+		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
+				//.targetRelative(-(1-scaleXY)*width/2, -(1-scaleXY)*height/2, -(scaleXY-1)*width, -(scaleXY-1)*height)
+				.targetRelative(growWidth, growHeight, 0, 0)
+				.ease(Quad.OUT)
+				.start(tweenManager);
+		scaleXY = baseScale;
+		enableClick();
+	}   
+	
+	
 	private void shrink(){
 		selected = false;
 		disableClick();
@@ -302,17 +316,9 @@ public class SetCard extends JPanel{
 				
 	}
     
-    private float getOpacity(){
-    	return opacity;
-    }
-    private void setOpacity(float newVal){
-    	opacity = newVal;
-    }
-   
     /*Animation Accessors*/
 	public static class Accessor extends SLAnimator.ComponentAccessor {
 		public static final int BORDER_THICKNESS = 100;
-		public static final int OPACITY = 101;
 
 		@Override
 		public int getValues(Component target, int tweenType, float[] returnValues) {
@@ -324,10 +330,7 @@ public class SetCard extends JPanel{
 			switch (tweenType) {
 				case BORDER_THICKNESS: 
 					returnValues[0] = tp.borderThickness; 
-					return 1;
-				case OPACITY:
-					returnValues[0] = tp.getOpacity();
-					return 1;					
+					return 1;		
 				default: return -1;
 			}
 		}
@@ -343,13 +346,13 @@ public class SetCard extends JPanel{
 					tp.borderThickness = Math.round(newValues[0]);
 					tp.repaint();
 					break;
-				case OPACITY:
-					tp.setOpacity(newValues[0]);
 				default: assert false;
 					
 			}
 		}
-	}   
+	}
+
+
     
 }
 
