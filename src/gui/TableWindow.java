@@ -22,7 +22,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
@@ -44,10 +43,11 @@ public class TableWindow {
 	private JTextField textField;
 	private JScrollPane scrollPane;
 	private static TweenManager resultTweens = null;
+	private JButton btnReady = null;
 	
 	public TableWindow() {
 		setTable = new SetTable();
-		resultTweens = new TweenManager();
+		resultTweens = SLAnimator.createTweenManager();
 		Tween.registerAccessor(SetCard.class, new SetCard.Accessor());
 		Tween.registerAccessor(ImgPanel.class, new ImgPanel.imgAccessor());
 		SLAnimator.start();
@@ -62,10 +62,6 @@ public class TableWindow {
 		frmTable.setBounds(100, 100, 1050, 600);
 		frmTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmTable.getContentPane().setLayout(null);
-				
-		lblStartGame = new JLabel("Click Ready!");
-		lblStartGame.setFont(new Font("Sans", Font.BOLD, 36));
-		lblStartGame.setBounds(50, 145, 750, 150);
 		
 		JButton btnExit = new JButton("EXIT TABLE");
 		btnExit.setBounds(884, 526, 130, 23);
@@ -76,12 +72,6 @@ public class TableWindow {
 		});
 		
 		frmTable.getContentPane().add(btnExit);
-
-		setTable.tableView.setBorder(BorderFactory.createBevelBorder(1));
-		setTable.tableView.add(lblStartGame);
-		setTable.tableView.setBounds(10, 10, 850, 550);
-		setTable.tableView.setLayout(null);
-		frmTable.getContentPane().add(setTable.tableView);
 		
 		tablePanel = new JPanel();
 		tablePanel.setBounds(873, 11, 150, 175);
@@ -108,7 +98,7 @@ public class TableWindow {
 		tablePanel.add(playerList,BorderLayout.CENTER);
 		tablePanel.add(tableHeader, BorderLayout.NORTH);
 		
-		final JButton btnReady = new JButton("Ready!");
+		btnReady = new JButton("Ready!");
 		btnReady.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(!didVote){
@@ -162,6 +152,28 @@ public class TableWindow {
 		
 		frmTable.getContentPane().add(textField);
 		
+	}
+		
+	public void tableReset() {
+		setTable.tableView.removeAll();
+		setTable.tableView.repaint();
+				
+		btnReady.setEnabled(true);
+		btnReady.setText("Ready");
+		
+		didVote = false;
+		
+		lblStartGame = new JLabel("Click Ready!");
+		lblStartGame.setFont(new Font("Sans", Font.BOLD, 36));
+		lblStartGame.setBounds(50, 145, 750, 150);
+		
+		setTable = new SetTable();
+			
+		setTable.tableView.setBorder(BorderFactory.createBevelBorder(1));
+		setTable.tableView.add(lblStartGame);
+		setTable.tableView.setBounds(10, 10, 850, 550);
+		setTable.tableView.setLayout(null);
+		frmTable.getContentPane().add(setTable.tableView);
 	}
 	
 	public void updatePlayers(String[] splitLine) { // splitLine: P;3;4;Nico;2;Sameer;3;Vasily;14
@@ -231,8 +243,10 @@ public class TableWindow {
 		// Not working
 		
 		imgPanel = new ImgPanel(0);
-		imgPanel.setBounds(440,270,0,0);
+		imgPanel.setBounds(440,270,1,1);
+//		imgPanel.setBounds(205,65,450,450);
 		frmTable.getContentPane().add(imgPanel);
+		imgPanel.repaint();
 		Tween.to(imgPanel, imgAccessor.SCALE, 2f)
 			.targetRelative(-225,-225,450,450)
 			.ease(Quad.OUT)
@@ -266,14 +280,10 @@ public class TableWindow {
 
 	public void gameOver() {
 		// TODO : Display a "Game Over" screen
+		// setTable.clearCards();
 		
-		setTable.clearCards();
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				SetTable.clearSelected();
-			};
-		});
+		tableReset();
+
 		JOptionPane.showMessageDialog(frmTable, "Game Over, bro!");
 		
 	}
@@ -284,9 +294,9 @@ public class TableWindow {
 	}
 	
 	public void showTable(){
-		setTable = new SetTable();
 		didVote = false;
 		initialize();
+		tableReset();
 		frmTable.setVisible(true);
 	}
 }

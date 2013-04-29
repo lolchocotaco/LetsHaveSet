@@ -122,11 +122,6 @@ public class MainClient {
 						case 'G': // Game Over!: G
 							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
 							tableWindow.gameOver();
-							if(tableWindow.frmTable.isVisible())
-							{
-								tableWindow.frmTable.setVisible(false);
-								lobbyWindow.frmLobby.setVisible(true);
-							}
 							break;
 						case 'C': // Lobby Chat: C;Username;Message
 							if(splitLine.length != 3) {System.err.println("Message Length Error!"); break;}
