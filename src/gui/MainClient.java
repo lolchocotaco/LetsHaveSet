@@ -32,6 +32,8 @@ public class MainClient {
 		LoginWindow loginWindow = new LoginWindow();
 		LobbyWindow lobbyWindow = new LobbyWindow();
 		TableWindow tableWindow = new TableWindow();
+		//boolean isAdmin  = false;
+
 		//AppWindow appWindow = new AppWindow(clientSocket);
 		
 		loginWindow.frmLogin.setVisible(true);
@@ -54,13 +56,17 @@ public class MainClient {
 							break;
 						case 'I': // Table Information: I;3;12;Hello;2;4;13;Test;1;2;14;TheBestTable;3;4
 							if(splitLine.length < 2) {System.err.println("Message Length Error!"); break;}
-							int numTables = Integer.parseInt(splitLine[1]);
-							if(splitLine.length != (2 + 4*numTables)) {System.err.println("Message Length Error!"); break;}
+							int numTables = Integer.parseInt(splitLine[2]);
+							if(splitLine.length != (3 + 4*numTables)) {System.err.println("Message Length Error!"); break;}
+							//System.out.println(splitLine[1]);
+							if(splitLine[1].equals("true")){
+								TableWindow.isAdmin=true;
+							}
 							loginWindow.frmLogin.setVisible(false);
 							lobbyWindow.frmLobby.setVisible(true);
 							for(int tableNum = 0; tableNum < numTables; tableNum++)
 							{
-								int ind = 2 + 4*tableNum;
+								int ind = 3 + 4*tableNum;
 								lobbyWindow.addTable(splitLine[ind], splitLine[ind+1], splitLine[ind+2], splitLine[ind+3]);
 							}
 							break;

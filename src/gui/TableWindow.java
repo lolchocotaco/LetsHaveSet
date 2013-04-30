@@ -33,6 +33,7 @@ import aurelienribon.tweenengine.equations.Quad;
 public class TableWindow {
 
 	public JFrame frmTable;
+	public static boolean isAdmin  = false;
 	private SetTable setTable = null;
 	private JTable playerList;
 	private JPanel tablePanel;
@@ -120,7 +121,9 @@ public class TableWindow {
 			}
 		});
 		btnCheat.setBounds(884, 478, 130, 23);
-		frmTable.getContentPane().add(btnCheat);
+		if(isAdmin){
+			frmTable.getContentPane().add(btnCheat);
+		}
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(873, 197, 150, 234);

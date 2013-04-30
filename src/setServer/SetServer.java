@@ -91,9 +91,9 @@ public class SetServer {
 						 else {
 							 stmt.executeUpdate("INSERT INTO users (username, password) VALUES ('"+splitM[1]+"', '"+splitM[2]+"');");	
 							 System.out.println("User created");
-							 User newUser = new User(splitM[1], 0, 0, -1);
+							 User newUser = new User(splitM[1], 0, 0, -1, false);
 							 userMap.put(inM.clientID, newUser);
-							 outMessages.put( new Message(inM.clientID, allTableString(tableMap)) );
+							 outMessages.put( new Message(inM.clientID, "I;false;"+allTableString(tableMap)) );
 						}
 						stmt.close();
 						connection.close();
@@ -110,31 +110,26 @@ public class SetServer {
 							return;
 						}	
 						stmt = connection.createStatement();
-						boolean loginSuccessful=false;
 						usertable = stmt.executeQuery("SELECT * FROM `users` WHERE `username` =  '"+splitM[1]+"';");
 						if (!usertable.next()){
 							System.out.println("User not found");
 						}
 						else{
-							String passt = null;
-							passt = usertable.getString("password");
-							//System.out.println("User: " + usert + "    Password: "+ passt);
+							String passt = usertable.getString("password");
+							boolean isAdmin=false;
+							int numWins = 0, numLosses = 0;
 							if (splitM[2].equals(passt)){
-								loginSuccessful=true;
+								String accountType = usertable.getString("type");
+								if(accountType.equals("admin")){
+									isAdmin=true;
+								}
+								User newUser = new User(splitM[1], numWins, numLosses, -1, isAdmin);
+								userMap.put(inM.clientID, newUser);
+								outMessages.put( new Message(inM.clientID, "I;"+isAdmin+";"+allTableString(tableMap)) );
 							}
 							else{
+								outMessages.put( new Message(inM.clientID, "X;L") );
 							}	
-						}
-						int numWins = 0, numLosses = 0;
-						//////////////////////////////////////////
-						
-						if(loginSuccessful) {
-							User newUser = new User(splitM[1], numWins, numLosses, -1);
-							userMap.put(inM.clientID, newUser);
-							
-							outMessages.put( new Message(inM.clientID, allTableString(tableMap)) );
-						} else {
-							outMessages.put( new Message(inM.clientID, "X;L") );
 						}
 						stmt.close();
 						connection.close();
@@ -427,7 +422,7 @@ public class SetServer {
 	}
 	
 	private static String allTableString(Map<Object, Table> tableMap) {
-		String out = "I;" + tableMap.size();
+		String out = ""+tableMap.size();
 		Iterator<Entry<Object, Table>> it = tableMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<Object, Table> entry = (Map.Entry<Object, Table>) it.next();
