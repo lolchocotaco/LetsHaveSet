@@ -9,14 +9,16 @@ import javazoom.jl.player.Player;
 public class MP3 {
     private String filename;
     private Player player; 
-    public boolean isPlaying;
+    private boolean isPlaying;
     private final  String audioPath [] = {"sounds/Buzzer.mp3", "sounds/Ding.mp3", "sounds/lobbyMusic.mp3"};
+    private BufferedInputStream bis= null;
+    private FileInputStream fis= null;
     
     // constructor that takes the name of an MP3 file
     public MP3(int type){
     	try{
-         FileInputStream fis     = new FileInputStream(audioPath[type]);
-         BufferedInputStream bis = new BufferedInputStream(fis);
+         fis    = new FileInputStream(audioPath[type]);
+         bis = new BufferedInputStream(fis);
          player = new Player(bis);
          isPlaying= false;
          }catch (Exception e) {
@@ -38,15 +40,22 @@ public class MP3 {
         }.start();
     }
     
+    public boolean isPlaying(){ return isPlaying;}
     
     
     public void loopPlay() {
-    	isPlaying = true;
         // run in new thread to play in background
+    	isPlaying = true;
         new Thread() {
             public void run() {
-                try { 
-                	while(true){player.play(); }
+                try {
+                	player.play();
+                	while(isPlaying){
+                		if(player.isComplete()){
+                			player.close();
+                			player.play();
+                		}
+                	}
                 } catch (Exception e) {}
             }
         }.start();

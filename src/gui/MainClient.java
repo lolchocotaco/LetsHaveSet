@@ -70,6 +70,10 @@ public class MainClient {
 								int ind = 3 + 4*tableNum;
 								lobbyWindow.addTable(splitLine[ind], splitLine[ind+1], splitLine[ind+2], splitLine[ind+3]);
 							}
+							
+							MP3 lobbyMusic = new MP3(2);
+							lobbyMusic.loopPlay();
+						    
 							break;
 						case 'U': // Table Update: U;12;Hello;3;4
 							if(splitLine.length != 5) {System.err.println("Message Length Error!"); break;}

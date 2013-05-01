@@ -182,7 +182,6 @@ public class SetTable{
 	}
 	
 	public static void clearSelected() {
-//		for(int i = 0; i<selectedCards.size(); i++){
 		while(selectedCards.size()!= 0 ){
 			selectedCards.elementAt(0).unSelect();		
 		}
@@ -209,12 +208,10 @@ public class SetTable{
 					int k2 = k4%3; k4/=3;
 					int k3 = k4%3; k4/=3;
 					if((((i1+j1+k1) % 3) == 0) && (((i2+j2+k2) % 3) == 0) && (((i3+j3+k3) % 3) == 0) && (((i4+j4+k4) % 3) == 0)) {
-						/*
 						onTable.get(i).cheat();
 						onTable.get(j).cheat();
 						onTable.get(k).cheat();
-						*/
-						MainClient.sendMessage("S;" + onTable.get(i).getCardNum() + ";" + onTable.get(j).getCardNum() + ";" + onTable.get(k).getCardNum());
+//						MainClient.sendMessage("S;" + onTable.get(i).getCardNum() + ";" + onTable.get(j).getCardNum() + ";" + onTable.get(k).getCardNum());
 						return;
 					}
 					

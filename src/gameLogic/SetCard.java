@@ -15,9 +15,6 @@ import javax.swing.SwingUtilities;
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
-import aurelienribon.tweenengine.equations.Back;
-import aurelienribon.tweenengine.equations.Bounce;
-import aurelienribon.tweenengine.equations.Elastic;
 import aurelienribon.tweenengine.equations.Quad;
 
 /**
@@ -34,20 +31,13 @@ public class SetCard extends JPanel{
 	private static final Color FG_COLOR = new Color(0xFFFFFF);
 	private static final Color BG_COLOR = new Color(0x3B5998);
 	private static final Color BORDER_COLOR = new Color(0x000000);
-	private static final float baseScale = 1f;
-	private static final float bigScale = 1.05f;
 	private int borderThickness = 2;
-	private int height = 150;
-	private int width = 100;
 	private int growHeight = 8;
 	private int growWidth = 5;
-	private float scaleXY = baseScale;
 	private int stripeWidth = 3;
-	private float opacity = 100;
 	private boolean hover = false;
 	private boolean hoverEnabled = true;
 	private static boolean clickEnabled = true;
-//	private Runnable selectAdd, selectRemove;
 	private final JTextArea cardInfo = new JTextArea();
 	private static TweenManager tweenManager = null;
 	private static final int colorVal [] = {0xFF0000, 0x00FF00, 0x0000FF};
@@ -230,7 +220,6 @@ public class SetCard extends JPanel{
 		selected = true;
 		showBorder();
 		disableClick();
-		scaleXY = bigScale;
 		Tween.to(SetCard.this, Accessor.XYWH, 0.1f)
 				//.targetRelative((1-scaleXY)*width/2, (1-scaleXY)*height/2, (scaleXY-1)*width, (scaleXY-1)*height)
 				.targetRelative(-growWidth, -growHeight, growWidth*2, growHeight*2)
@@ -248,7 +237,6 @@ public class SetCard extends JPanel{
 				.targetRelative(growWidth, growHeight, 0, 0)
 				.ease(Quad.OUT)
 				.start(tweenManager);
-		scaleXY = baseScale;
 		enableClick();
 	}   
 	
@@ -261,7 +249,6 @@ public class SetCard extends JPanel{
 				.targetRelative(growWidth, growHeight, -growWidth*2, -growHeight*2)
 				.ease(Quad.OUT)
 				.start(tweenManager);
-		scaleXY = baseScale;
 		enableClick();
 	}	
 	    

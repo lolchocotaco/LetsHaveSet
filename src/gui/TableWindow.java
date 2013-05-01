@@ -162,6 +162,10 @@ public class TableWindow {
 		frmTable.getContentPane().add(textField);
 		frmTable.setGlassPane(new JPanel());
 		((JPanel)frmTable.getGlassPane()).setOpaque(false);
+		imgPanel = new ImgPanel(0);
+		imgPanel.setBounds(440,270,1,1);
+		imgPanel.setVisible(false);
+		
 	}
 		
 	public void tableReset() {
@@ -250,7 +254,7 @@ public class TableWindow {
 	
 	public void youScrewedUp() {
 		sound = new MP3(0);
-		sound.play();			
+		sound.play();
 		imgPanel = new ImgPanel(0);
 		imgPanel.setBounds(440,270,1,1);
 		imgPanel.setOpaque(false);
