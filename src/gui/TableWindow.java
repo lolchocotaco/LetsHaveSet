@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.print.attribute.standard.Media;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -50,6 +49,7 @@ public class TableWindow {
 	private static TweenManager resultTweens = null;
 	private JButton btnReady = null;
 	private JButton btnExit = null;
+	private MP3 sound = null;
 	
 	public TableWindow() {
 		setTable = new SetTable();
@@ -248,13 +248,9 @@ public class TableWindow {
 		setTable.setMade(C1, C2, C3);
 	}
 	
-	public void youScrewedUp() {		
-		
-//		String bip = "bip.mp3";
-//		Media hit = new Media(bip);
-//		MediaPlayer mediaPlayer = new MediaPlayer(hit);
-//		mediaPlayer.play();
-//		
+	public void youScrewedUp() {
+		sound = new MP3(0);
+		sound.play();			
 		imgPanel = new ImgPanel(0);
 		imgPanel.setBounds(440,270,1,1);
 		imgPanel.setOpaque(false);
@@ -275,6 +271,8 @@ public class TableWindow {
 	}
 	
 	public void youMadeASet() {
+		sound = new MP3(1);
+		sound.play();
 		imgPanel = new ImgPanel(1);
 		imgPanel.setBounds(440,270,1,1);
 		imgPanel.setOpaque(false);

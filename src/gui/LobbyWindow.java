@@ -29,6 +29,7 @@ public class LobbyWindow {
 	private JTextArea chatWindow;
 	private JTextField tableNameField;
 	private JSpinner spinner;
+	MP3 lobbyMusic = null;
 	
 	public LobbyWindow() {
 		initialize();
@@ -139,8 +140,10 @@ public class LobbyWindow {
 		
 		JLabel lblTablePlayers = new JLabel("Table Players");
 		lblTablePlayers.setBounds(232, 387, 100, 14);
-		frmLobby.getContentPane().add(lblTablePlayers);
+		frmLobby.getContentPane().add(lblTablePlayers);		
 		
+//		lobbyMusic = new MP3(2);
+//		lobbyMusic.play();
 	}
 	
 	private void createGame() {

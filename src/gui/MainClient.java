@@ -13,6 +13,7 @@ public class MainClient {
 	
 	static Socket clientSocket = null;
 	static DataOutputStream out = null;
+
 	
 	public static void main(String[] args) {
 		
