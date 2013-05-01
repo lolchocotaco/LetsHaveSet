@@ -3,7 +3,6 @@ package gui;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -13,16 +12,16 @@ import aurelienribon.slidinglayout.SLAnimator;
 
 @SuppressWarnings("serial")
 public class ImgPanel extends JPanel{
-	private static final String checkPath = "images/Check.png";
-	private static final String xPath = "images/bigX.png";
+	private static final String checkPath = "/images/Check.png";
+	private static final String xPath = "/images/bigX.png";
 	private BufferedImage dispImage = null;
 	
 	public ImgPanel(int type){
 		try {
 			if(type ==1){
-				dispImage = ImageIO.read(new File(checkPath));
+				dispImage = ImageIO.read(getClass().getResource(checkPath));
 			}else {
-				dispImage = ImageIO.read(new File(xPath));
+				dispImage = ImageIO.read(getClass().getResource(xPath));
 			}
 		} catch (IOException e) {
 			// Shouldn't have a problem
