@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.print.attribute.standard.Media;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,14 +25,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.text.TableView;
 
 import aurelienribon.slidinglayout.SLAnimator;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
-import aurelienribon.tweenengine.equations.Quad;
+import aurelienribon.tweenengine.equations.Bounce;
+import aurelienribon.tweenengine.equations.Elastic;
 
 public class TableWindow {
 
@@ -48,6 +49,7 @@ public class TableWindow {
 	private JScrollPane scrollPane;
 	private static TweenManager resultTweens = null;
 	private JButton btnReady = null;
+	private JButton btnExit = null;
 	
 	public TableWindow() {
 		setTable = new SetTable();
@@ -67,7 +69,7 @@ public class TableWindow {
 		frmTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmTable.getContentPane().setLayout(null);
 		
-		JButton btnExit = new JButton("EXIT TABLE");
+		btnExit = new JButton("EXIT TABLE");
 		btnExit.setBounds(884, 526, 130, 23);
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -110,6 +112,7 @@ public class TableWindow {
 					didVote = true;
 					btnReady.setEnabled(false);
 					btnReady.setText("Waiting");
+					btnExit.setEnabled(false);
 					lblStartGame.setText("Waiting for Players...");
 				}
 			}
@@ -157,7 +160,8 @@ public class TableWindow {
 		});
 		
 		frmTable.getContentPane().add(textField);
-		
+		frmTable.setGlassPane(new JPanel());
+		((JPanel)frmTable.getGlassPane()).setOpaque(false);
 	}
 		
 	public void tableReset() {
@@ -244,42 +248,47 @@ public class TableWindow {
 		setTable.setMade(C1, C2, C3);
 	}
 	
-	public void youScrewedUp() {
-		// TODO : Display a "bad" indicator
-		// Not working
+	public void youScrewedUp() {		
 		
+//		String bip = "bip.mp3";
+//		Media hit = new Media(bip);
+//		MediaPlayer mediaPlayer = new MediaPlayer(hit);
+//		mediaPlayer.play();
+//		
 		imgPanel = new ImgPanel(0);
 		imgPanel.setBounds(440,270,1,1);
-//		imgPanel.setBounds(205,65,450,450);
-		frmTable.getContentPane().add(imgPanel);
-		imgPanel.repaint();
+		imgPanel.setOpaque(false);
+		((JPanel)frmTable.getGlassPane()).add(imgPanel);
+		frmTable.getGlassPane().setVisible(true);
 		Tween.to(imgPanel, imgAccessor.SCALE, 0.5f)
 			.targetRelative(-225,-225,450,450)
-			.ease(Quad.OUT)
+			.ease(Elastic.OUT)
 			.setCallbackTriggers(TweenCallback.COMPLETE)
 			.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int arg0, BaseTween<?> arg1) {
 					imgPanel.setVisible(false);
+					frmTable.getGlassPane().setVisible(false);
 				}
 			})
 			.start(resultTweens);
 	}
 	
 	public void youMadeASet() {
-		// TODO : Display a "good" indicator
-		// JOptionPane.showMessageDialog(frmTable, "You made a set! Nice!\nIsn't this window distracting?");
 		imgPanel = new ImgPanel(1);
-		imgPanel.setBounds(440,270,0,0);
-		frmTable.getContentPane().add(imgPanel);
-		Tween.to(imgPanel, imgAccessor.SCALE, 0.5f)
+		imgPanel.setBounds(440,270,1,1);
+		imgPanel.setOpaque(false);
+		((JPanel)frmTable.getGlassPane()).add(imgPanel);
+		frmTable.getGlassPane().setVisible(true);
+		Tween.to(imgPanel, imgAccessor.SCALE, 1f)
 			.targetRelative(-225,-225,450,450)
-			.ease(Quad.OUT)
+			.ease(Bounce.OUT)
 			.setCallbackTriggers(TweenCallback.COMPLETE)
 			.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int arg0, BaseTween<?> arg1) {
 					imgPanel.setVisible(false);
+					frmTable.getGlassPane().setVisible(false);
 				}
 			})
 			.start(resultTweens);
@@ -303,7 +312,6 @@ public class TableWindow {
 		// setTable.clearCards();
 		
 		tableReset();
-
 		JOptionPane.showMessageDialog(frmTable, "Game Over, bro!");
 		
 	}

@@ -264,7 +264,6 @@ public class SetServer {
 						if(splitM.length != 4) {System.err.println("Message Length Error!"); break;}
 						// TODO: Validate set; If invalid, ignore; If valid, award points, broadcast changes (lost/new cards)
 						// Also make sure to check for: [No sets possible!] or [Game is over!] 
-						System.out.println(splitM[1]+" " +splitM[2]+ " "+splitM[3]);
 						User userS = userMap.get(inM.clientID);
 						final Table tableS = tableMap.get(userS.currentTable);
 						if(tableS.setExists(Integer.parseInt(splitM[1]), Integer.parseInt(splitM[2]), Integer.parseInt(splitM[3]))) {
