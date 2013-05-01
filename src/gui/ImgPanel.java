@@ -33,9 +33,11 @@ public class ImgPanel extends JPanel{
 	
     @Override
     protected void paintComponent(Graphics g) {
+    	this.removeAll();
         super.paintComponent(g); 
 //        g.drawImage(dispImage, 0, 0, this.getWidth(), this.getHeight(), null);
-        this.add(new JLabel(new ImageIcon(dispImage.getScaledInstance(this.getWidth(), this.getHeight(), 0))));
+//        this.add(new JLabel(new ImageIcon(dispImage.getScaledInstance(this.getWidth(), this.getHeight(), 0))));
+        g.drawImage(dispImage.getScaledInstance(this.getWidth(), this.getHeight(), 0), 0, 0, null);
     }	
     
     
@@ -65,10 +67,10 @@ public class ImgPanel extends JPanel{
 			
 		switch(tweenType){
 			case SCALE:
-			target.setBounds(Math.round(newValue[0]), Math.round(newValue[1]), Math.round(newValue[2]), Math.round(newValue[3]));
-			target.validate();
-			target.repaint();
-			break;
+				target.setBounds(Math.round(newValue[0]), Math.round(newValue[1]), Math.round(newValue[2]), Math.round(newValue[3]));
+				target.validate();
+				target.repaint();
+				break;
 			}
 		}
 	}

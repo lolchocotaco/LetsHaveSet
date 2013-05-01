@@ -24,9 +24,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.text.TableView;
 
 import aurelienribon.slidinglayout.SLAnimator;
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Quad;
 
@@ -250,9 +253,16 @@ public class TableWindow {
 //		imgPanel.setBounds(205,65,450,450);
 		frmTable.getContentPane().add(imgPanel);
 		imgPanel.repaint();
-		Tween.to(imgPanel, imgAccessor.SCALE, 2f)
+		Tween.to(imgPanel, imgAccessor.SCALE, 0.5f)
 			.targetRelative(-225,-225,450,450)
 			.ease(Quad.OUT)
+			.setCallbackTriggers(TweenCallback.COMPLETE)
+			.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int arg0, BaseTween<?> arg1) {
+					imgPanel.setVisible(false);
+				}
+			})
 			.start(resultTweens);
 	}
 	
@@ -262,9 +272,16 @@ public class TableWindow {
 		imgPanel = new ImgPanel(1);
 		imgPanel.setBounds(440,270,0,0);
 		frmTable.getContentPane().add(imgPanel);
-		Tween.to(imgPanel, imgAccessor.SCALE, 2f)
+		Tween.to(imgPanel, imgAccessor.SCALE, 0.5f)
 			.targetRelative(-225,-225,450,450)
 			.ease(Quad.OUT)
+			.setCallbackTriggers(TweenCallback.COMPLETE)
+			.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int arg0, BaseTween<?> arg1) {
+					imgPanel.setVisible(false);
+				}
+			})
 			.start(resultTweens);
 	}
 	
