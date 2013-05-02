@@ -175,6 +175,8 @@ public class TableWindow {
 		btnReady.setEnabled(true);
 		btnReady.setText("Ready");
 		
+		btnExit.setEnabled(true);
+		
 		didVote = false;
 		
 		lblStartGame = new JLabel("Click Ready!");

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import javazoom.jl.player.Player;
 
 public class MP3 {
+	private int type;
     private String filename;
     private Player player; 
     private boolean isPlaying;
@@ -16,14 +17,23 @@ public class MP3 {
     // constructor that takes the name of an MP3 file
     public MP3(int type){
     	try{
-         fis = getClass().getResource(audioPath[type]).openStream();
-         bis = new BufferedInputStream(fis);
-         player = new Player(bis);
-         isPlaying= false;
+    		this.type = type;
+    		loadSong();
+    		isPlaying= false;
          }catch (Exception e) {
              System.out.println("Problem playing file " + filename);
          }
    }
+    private void loadSong() {
+    	 try {
+			fis = getClass().getResource(audioPath[type]).openStream();
+			bis = new BufferedInputStream(fis);
+	        player = new Player(bis);
+		} catch (Exception e) {
+			System.out.println("Problem playing file " + filename);
+		}
+         
+    }
 
     public void close() { if (player != null) player.close(); }
 
@@ -51,11 +61,12 @@ public class MP3 {
                 	player.play();
                 	while(isPlaying){
                 		if(player.isComplete()){
-                			player.close();
+                			loadSong();
                 			player.play();
                 		}
+                		Thread.sleep(500);
                 	}
-                } catch (Exception e) {}
+                } catch (Exception e) {System.err.println("Music loop exception thrown!"); }
             }
         }.start();
     }
