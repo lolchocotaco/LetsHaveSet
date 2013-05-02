@@ -30,6 +30,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Back;
 import aurelienribon.tweenengine.equations.Bounce;
 import aurelienribon.tweenengine.equations.Elastic;
 
@@ -255,6 +256,7 @@ public class TableWindow {
 	}
 	
 	public void youScrewedUp() {
+		//TODO: Fix images showing up on the top
 		sound = new MP3(0);
 		sound.play();
 		imgPanel = new ImgPanel(0);
@@ -262,7 +264,7 @@ public class TableWindow {
 		imgPanel.setOpaque(false);
 		((JPanel)frmTable.getGlassPane()).add(imgPanel);
 		frmTable.getGlassPane().setVisible(true);
-		Tween.to(imgPanel, imgAccessor.SCALE, 0.5f)
+		Tween.to(imgPanel, imgAccessor.SCALE, .75f)
 			.targetRelative(-225,-225,450,450)
 			.ease(Elastic.OUT)
 			.setCallbackTriggers(TweenCallback.COMPLETE)
@@ -307,8 +309,24 @@ public class TableWindow {
 	}
 
 	public void noSets() {
-		// TODO : Display a "No More Sets" indicator
-		JOptionPane.showMessageDialog(frmTable, "No more sets, bro!");
+		//TODO: Get sound for this?
+		imgPanel = new ImgPanel(2);
+		imgPanel.setBounds(440,270,1,1);
+		imgPanel.setOpaque(false);
+		((JPanel)frmTable.getGlassPane()).add(imgPanel);
+		frmTable.getGlassPane().setVisible(true);
+		Tween.to(imgPanel, imgAccessor.SCALE, 1.5f)
+			.targetRelative(-250,-50,498,101)
+			.ease(Back.OUT)
+			.setCallbackTriggers(TweenCallback.COMPLETE)
+			.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int arg0, BaseTween<?> arg1) {
+					imgPanel.setVisible(false);
+					frmTable.getGlassPane().setVisible(false);
+				}
+			})
+			.start(resultTweens);
 	}
 
 	public void gameOver() {

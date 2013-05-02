@@ -12,17 +12,12 @@ import aurelienribon.slidinglayout.SLAnimator;
 
 @SuppressWarnings("serial")
 public class ImgPanel extends JPanel{
-	private static final String checkPath = "/images/Check.png";
-	private static final String xPath = "/images/bigX.png";
+	private static final String imagePath[] = {"/images/bigX.png","/images/Check.png", "/images/NoSets.png"};
 	private BufferedImage dispImage = null;
 	
 	public ImgPanel(int type){
 		try {
-			if(type ==1){
-				dispImage = ImageIO.read(getClass().getResource(checkPath));
-			}else {
-				dispImage = ImageIO.read(getClass().getResource(xPath));
-			}
+			dispImage = ImageIO.read(getClass().getResource(imagePath[type]));
 		} catch (IOException e) {
 			// Shouldn't have a problem
 		}	
