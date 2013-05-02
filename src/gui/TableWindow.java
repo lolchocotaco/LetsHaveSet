@@ -315,7 +315,7 @@ public class TableWindow {
 		imgPanel.setOpaque(false);
 		((JPanel)frmTable.getGlassPane()).add(imgPanel);
 		frmTable.getGlassPane().setVisible(true);
-		Tween.to(imgPanel, imgAccessor.SCALE, 1.5f)
+		Tween.to(imgPanel, imgAccessor.SCALE, 2.5f)
 			.targetRelative(-250,-50,498,101)
 			.ease(Back.OUT)
 			.setCallbackTriggers(TweenCallback.COMPLETE)
