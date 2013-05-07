@@ -9,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import aurelienribon.slidinglayout.SLAnimator;
@@ -28,17 +27,16 @@ public class SetCard extends JPanel{
 	/*
 	 * Panel Properties
 	 */
-	private static final Color FG_COLOR = new Color(0xFFFFFF);
 	private static final Color BG_COLOR = new Color(0x3B5998);
 	private static final Color BORDER_COLOR = new Color(0x000000);
 	private int borderThickness = 2;
+	private int arcWidth = 30;
 	private int growHeight = 8;
 	private int growWidth = 5;
 	private int stripeWidth = 3;
 	private boolean hover = false;
 	private boolean hoverEnabled = true;
 	private static boolean clickEnabled = true;
-	private final JTextArea cardInfo = new JTextArea();
 	private static TweenManager tweenManager = null;
 	private static final int colorVal [] = {0xFF0000, 0x00FF00, 0x0000FF};
 	
@@ -64,6 +62,8 @@ public class SetCard extends JPanel{
     
     //Alternate Constructor
     public SetCard ( int cardNum){
+    	super();
+    	setOpaque(false);
     	tweenManager = SLAnimator.createTweenManager();
     	this.color = getNthDigit(cardNum,3,4);
     	this.number = getNthDigit(cardNum,3,3);
@@ -71,17 +71,6 @@ public class SetCard extends JPanel{
     	this.shade = getNthDigit(cardNum,3,1);
     	selected = false;
     	setBackground(BG_COLOR);
-    	
-    	//Only for testing  //////////////////
-    	String cardString = "Color: " + colorNames[color] + "\nNumber: " + numberNames[number] + "\nShape: " + shapeNames[shape]+ "\nShade: " +shadeNames[shade];
-    	cardInfo.setText(cardString);
-		cardInfo.setEditable(false);
-		cardInfo.setEnabled(false);
-		cardInfo.setBackground(null);
-		cardInfo.setForeground(FG_COLOR);
-		cardInfo.setVisible(false);
-		add(cardInfo);
-		/////////////
 		
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -266,13 +255,14 @@ public class SetCard extends JPanel{
 		int h = getHeight();
 		
 		int t = borderThickness;
+		int arc = arcWidth;
+		gg.setColor(BG_COLOR);
+		gg.fillRoundRect(0, 0, w, h, arc, arc);
 		gg.setColor(BORDER_COLOR);
-		gg.fillRect(0, 0, t, h-1);
-		gg.fillRect(0, 0, w-1, t);
-		gg.fillRect(0, h-1-t, w-1, t);
-		gg.fillRect(w-1-t, 0, t, h-1);
+		gg.setStroke(new BasicStroke(t)); 	//Set border thickness
+		gg.drawRoundRect(t/2, t/2, w-t, h-t, arc, arc);
 		
-		
+		gg.setStroke(new BasicStroke());	//Reset Stroke
 		
 		//For picture
 		int xpoints [] = new int [4];
@@ -280,8 +270,8 @@ public class SetCard extends JPanel{
 		
 		Color fillColor = new Color(colorVal[this.color]);
 		
-		int bgWidth = w-t;
-		int bgHeight = h-t;
+		int bgWidth = w;
+		int bgHeight = h;
 		gg.setColor(BG_COLOR);
 		int count = this.number+1;
 		for (int i = 0; i < count; i++) {
