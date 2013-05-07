@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -27,7 +28,7 @@ public class SetCard extends JPanel{
 	/*
 	 * Panel Properties
 	 */
-	private static final Color BG_COLOR = new Color(0x3B5998);
+	private static final Color BG_COLOR = new Color(0xF0EFE1);
 	private static final Color BORDER_COLOR = new Color(0x000000);
 	private int borderThickness = 2;
 	private int arcWidth = 30;
@@ -249,6 +250,9 @@ public class SetCard extends JPanel{
 		super.paintComponent(g);
 
 		Graphics2D gg = (Graphics2D) g;
+		
+	    gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	    gg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		
 		//For border
 		int w = getWidth();
