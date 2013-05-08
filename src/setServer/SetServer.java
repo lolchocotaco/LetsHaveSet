@@ -257,6 +257,7 @@ public class SetServer {
 							
 							if( tableD != null ) {
 								tableD.removePlayer(inM.clientID);
+								outMessages.put(new Message(-1, "U;" + userD.currentTable + ";" + tableD.name + ";" + tableD.numPlayers + ";" + tableD.maxPlayers + ";" + tableD.status()));
 								if(tableD.numPlayers > 0) {
 									sendToTable(outMessages, tableD, tableD.playerString(userMap));
 									if(tableD.numGoPressed == tableD.maxPlayers) { // Game is playing
@@ -271,7 +272,6 @@ public class SetServer {
 										connectionD.close();
 									} else {
 										sendToTable(outMessages, tableD, "R"); // Table reset
-										outMessages.put(new Message(-1, "U;" + userD.currentTable + ";" + tableD.name + ";" + tableD.numPlayers + ";" + tableD.maxPlayers + ";" + tableD.status()));
 										tableD.numGoPressed = 0;
 									}
 								} else {
