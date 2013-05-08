@@ -27,6 +27,17 @@ public class Table {
 		this.onTable = new ArrayList<Card>();
 	}
 	
+	public String status() {
+		if(numGoPressed == maxPlayers) {
+			return "Playing";
+		}
+		if(numPlayers < maxPlayers) {
+			return "Open";
+		} else {
+			return "Full";
+		}
+	}
+	
 	public void addPlayer(int userID) {
 		numPlayers++;
 		players.put(userID, 0);

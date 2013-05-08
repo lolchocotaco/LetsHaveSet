@@ -168,7 +168,7 @@ public class SetServer {
 						// Give client "Table Made" message
 						outMessages.put( new Message(inM.clientID, newTable.playerString(userMap)) );
 						// Broadcast new table update
-						outMessages.put( new Message(-1, "U;" + numTables + ";" + newTable.name + ";" + newTable.numPlayers + ";" + newTable.maxPlayers) );
+						outMessages.put( new Message(-1, "U;" + numTables + ";" + newTable.name + ";" + newTable.numPlayers + ";" + newTable.maxPlayers + ";" + newTable.status()) );
 						outMessages.put( new Message(-1, "U;" + userT.username + ";" + numTables) );
 						
 						tableMap.put(numTables, newTable);
@@ -189,10 +189,15 @@ public class SetServer {
 						Table tableJ = tableMap.get(userJ.currentTable);
 						if( tableJ != null ) {
 							if(tableJ.numPlayers < tableJ.maxPlayers) {
-								tableJ.addPlayer(inM.clientID);
-								outMessages.put(new Message(-1, "U;" + userJ.currentTable + ";" + tableJ.name + ";" + tableJ.numPlayers + ";" + tableJ.maxPlayers));
-								outMessages.put( new Message(-1, "U;" + userJ.username + ";" + userJ.currentTable) );
-								sendToTable(outMessages, tableJ, tableJ.playerString(userMap));
+								if(tableJ.numGoPressed < tableJ.maxPlayers) { // Game not in progress
+									tableJ.addPlayer(inM.clientID);
+									outMessages.put(new Message(-1, "U;" + userJ.currentTable + ";" + tableJ.name + ";" + tableJ.numPlayers + ";" + tableJ.maxPlayers + ";" + tableJ.status()));
+									outMessages.put( new Message(-1, "U;" + userJ.username + ";" + userJ.currentTable) );
+									sendToTable(outMessages, tableJ, tableJ.playerString(userMap));
+								} else { // Game in progress
+									userJ.currentTable = -1;
+									outMessages.put(new Message(inM.clientID, "H")); // Table is playing
+								}
 							} else {
 								userJ.currentTable = -1;
 								outMessages.put(new Message(inM.clientID, "F")); // Table is full
@@ -219,7 +224,7 @@ public class SetServer {
 						
 						if( tableE != null ) {
 							tableE.removePlayer(inM.clientID);
-							outMessages.put(new Message(-1, "U;" + userE.currentTable + ";" + tableE.name + ";" + tableE.numPlayers + ";" + tableE.maxPlayers));
+							outMessages.put(new Message(-1, "U;" + userE.currentTable + ";" + tableE.name + ";" + tableE.numPlayers + ";" + tableE.maxPlayers + ";" + tableE.status()));
 							outMessages.put( new Message(-1, "U;" + userE.username + ";N/A") );
 							if(tableE.numPlayers > 0) {
 								sendToTable(outMessages, tableE, tableE.playerString(userMap));
@@ -252,22 +257,26 @@ public class SetServer {
 							
 							if( tableD != null ) {
 								tableD.removePlayer(inM.clientID);
-								outMessages.put(new Message(-1, "U;" + userD.currentTable + ";" + tableD.name + ";" + tableD.numPlayers + ";" + tableD.maxPlayers));
 								if(tableD.numPlayers > 0) {
 									sendToTable(outMessages, tableD, tableD.playerString(userMap));
+									if(tableD.numGoPressed == tableD.maxPlayers) { // Game is playing
+										Connection connectionD = null;
+										Statement stmtD = null;
+										connectionD = DriverManager.getConnection("jdbc:mysql://199.98.20.119:3306/set","java", "eeonly1");
+										stmtD = connectionD.createStatement();
+										
+										stmtD.executeUpdate("UPDATE `users` SET `score`=score-10 WHERE `username`='"+userD.username+"';");	
+										
+										stmtD.close();
+										connectionD.close();
+									} else {
+										sendToTable(outMessages, tableD, "R"); // Table reset
+										outMessages.put(new Message(-1, "U;" + userD.currentTable + ";" + tableD.name + ";" + tableD.numPlayers + ";" + tableD.maxPlayers + ";" + tableD.status()));
+										tableD.numGoPressed = 0;
+									}
 								} else {
 									tableMap.remove(userD.currentTable);
 								}
-								
-								Connection connectionD = null;
-								Statement stmtD = null;
-								connectionD = DriverManager.getConnection("jdbc:mysql://199.98.20.119:3306/set","java", "eeonly1");
-								stmtD = connectionD.createStatement();
-								
-								stmtD.executeUpdate("UPDATE `users` SET `score`=score-10 WHERE `username`='"+userD.username+"';");	
-								
-								stmtD.close();
-								connectionD.close();
 								
 							} else {
 								System.err.println("Disconnect Table Error!");
@@ -322,7 +331,7 @@ public class SetServer {
 									};
 									sendNewCardsThread.start();
 								} else if(tableS.noMoreSets()) { // GAME OVER!!!
-									gameOver(outMessages, userMap, tableS);
+									gameOver(outMessages, userMap, userS.currentTable, tableS);
 								}
 							} else {
 								inMessages.put(new Message(inM.clientID, "H"));
@@ -356,7 +365,7 @@ public class SetServer {
 								};
 								sendNewCardsThread.start();
 							} else {
-								gameOver(outMessages, userMap, tableH);
+								gameOver(outMessages, userMap, userH.currentTable, tableH);
 							}
 						}
 						break;
@@ -387,11 +396,11 @@ public class SetServer {
 		
 	}
 	
-	private static void gameOver(BlockingQueue<Message> outMessages, Map<Object, User> userMap, Table table) throws SQLException {
+	private static void gameOver(BlockingQueue<Message> outMessages, Map<Object, User> userMap, int tableNum, Table table) throws SQLException {
+		
 		Iterator<Entry<Object, Integer> > it = table.players.entrySet().iterator();
 		int MaxScore = -12345; // Arbitrary low number
 		int TotalPlayers = table.numGoPressed;
-		table.numGoPressed = 0; // Reset table
 		
 		List<String> Winner= new ArrayList<String>();
 		
@@ -441,11 +450,14 @@ public class SetServer {
 		stmt.close();
 		connection.close();
 		
+		table.numGoPressed = 0; // Reset table
 		table.resetScores(); // Resets scores to 0
 		table.initializeDeck(); // Reset cards
 		// sendToTable(outMessages, table, "G"); // Tell everyone game over
 		sendToTable(outMessages, table, table.playerString(userMap)); // Update scores to 0
-		
+		try {
+			outMessages.put(new Message(-1, "U;" + tableNum + ";" + table.name + ";" + table.numPlayers + ";" + table.maxPlayers + ";" + table.status()));
+		} catch (InterruptedException e1) { }
 	}
 	
 	private static void sendToTable(BlockingQueue<Message> outMessages, Table outTable, String outString) {
@@ -468,7 +480,7 @@ public class SetServer {
 			Map.Entry<Object, Table> entry = (Map.Entry<Object, Table>) it.next();
 			int tableNum = (Integer) entry.getKey();
 			Table curTable = (Table) entry.getValue();
-			out += ";" + tableNum + ";" + curTable.name + ";" + curTable.numPlayers + ";" + curTable.maxPlayers;
+			out += ";" + tableNum + ";" + curTable.name + ";" + curTable.numPlayers + ";" + curTable.maxPlayers + ";" + curTable.status();
 		}
 		return out;
 	}

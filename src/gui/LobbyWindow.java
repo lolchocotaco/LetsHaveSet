@@ -189,13 +189,7 @@ public class LobbyWindow {
 		}
 	}
 	
-	public void addTable(String tableNum, String tableName, String numPlayers, String maxPlayers) {
-		String status;
-		if(Integer.parseInt(numPlayers) < Integer.parseInt(maxPlayers)) {
-			status = "Open";
-		} else {
-			status = "Full";
-		}
+	public void addTable(String tableNum, String tableName, String numPlayers, String maxPlayers, String status) {
 		( (DefaultTableModel) gameList.getModel() ).addRow(new Object[]{tableNum, tableName, numPlayers + "/" + maxPlayers, status});
 	}
 	
@@ -204,7 +198,7 @@ public class LobbyWindow {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void updateTable(String tableNum, String tableName, String numPlayers, String maxPlayers) {
+	public void updateTable(String tableNum, String tableName, String numPlayers, String maxPlayers, String status) {
 		int i = 0;
 		DefaultTableModel TM = ( (DefaultTableModel) gameList.getModel() );
 		Vector<Vector<String> > tableVector = TM.getDataVector();
@@ -214,12 +208,6 @@ public class LobbyWindow {
 	      if(Integer.parseInt(tableNum) == Integer.parseInt(v.elementAt(0))) {
 	    	  TM.removeRow(i);
 	    	  if(Integer.parseInt(numPlayers) > 0) { // If the table still exists
-		    	  String status;
-			  		if(Integer.parseInt(numPlayers) < Integer.parseInt(maxPlayers)) {
-			  			status = "Open";
-			  		} else {
-			  			status = "Full";
-			  		}
 		    	  TM.insertRow(i, new Object[]{tableNum, tableName, numPlayers + "/" + maxPlayers, status});
 	    	  }
 	    	  return;
@@ -227,7 +215,7 @@ public class LobbyWindow {
 	      i++;
 	    }
 	    // If the function has not returned, then the table is new
-	    this.addTable(tableNum, tableName, numPlayers, maxPlayers);
+	    this.addTable(tableNum, tableName, numPlayers, maxPlayers, status);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -277,7 +265,12 @@ public class LobbyWindow {
 	public void alreadyAtTable() {
 		JOptionPane.showMessageDialog(frmLobby, "You are already at a table!");
 	}
+	
+	public void alreadyPlaying() {
+		JOptionPane.showMessageDialog(frmLobby, "Cannot join table: Game in progress!");
+	}
+	
 	public void invalidChar() {
-		JOptionPane.showMessageDialog(frmLobby, "\";\" is not a valid character!");
+		JOptionPane.showMessageDialog(frmLobby, "';' is not a valid character!");
 	}
 }
