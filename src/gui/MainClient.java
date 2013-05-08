@@ -55,29 +55,39 @@ public class MainClient {
 							if(splitLine.length != 2) {System.err.println("Message Length Error!"); break;}
 							loginWindow.loginError(splitLine[1]);
 							break;
-						case 'I': // Table Information: I;3;12;Hello;2;4;13;Test;1;2;14;TheBestTable;3;4
+						case 'I': // Table Information: I;false;3;12;Hello;2;4;13;Test;1;2;14;TheBestTable;3;4;2;Vasily;N/A;Sameer;22
 							if(splitLine.length < 2) {System.err.println("Message Length Error!"); break;}
 							int numTables = Integer.parseInt(splitLine[2]);
-							if(splitLine.length != (3 + 4*numTables)) {System.err.println("Message Length Error!"); break;}
+							int numUsers = Integer.parseInt(splitLine[3+4*numTables]);
+							if(splitLine.length != (4 + 4*numTables + 2*numUsers)) {System.err.println("Message Length Error!"); break;}
 							//System.out.println(splitLine[1]);
 							if(splitLine[1].equals("true")){
 								TableWindow.isAdmin=true;
 							}
 							loginWindow.frmLogin.setVisible(false);
 							lobbyWindow.frmLobby.setVisible(true);
-							for(int tableNum = 0; tableNum < numTables; tableNum++)
-							{
+							for(int tableNum = 0; tableNum < numTables; tableNum++) {
 								int ind = 3 + 4*tableNum;
 								lobbyWindow.addTable(splitLine[ind], splitLine[ind+1], splitLine[ind+2], splitLine[ind+3]);
+							}
+							
+							for(int userNum = 0; userNum < numUsers; userNum++) {
+								int ind = 4 + 4*numTables + 2*userNum;
+								lobbyWindow.addUser(splitLine[ind], splitLine[ind+1]);
 							}
 							
 							MP3 lobbyMusic = new MP3(2);
 							lobbyMusic.loopPlay();
 						    
 							break;
-						case 'U': // Table Update: U;12;Hello;3;4
-							if(splitLine.length != 5) {System.err.println("Message Length Error!"); break;}
-							lobbyWindow.updateTable(splitLine[1], splitLine[2], splitLine[3], splitLine[4]);
+						case 'U': // Table/User Update: U;12;Hello;3;4
+							if(splitLine.length == 5) {
+								lobbyWindow.updateTable(splitLine[1], splitLine[2], splitLine[3], splitLine[4]);
+							} else if(splitLine.length == 3) {
+								lobbyWindow.updateUser(splitLine[1], splitLine[2]);
+							} else {
+								System.err.println("Message Length Error!");
+							}
 							break;
 						case 'F': // Table is Full: F
 							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
@@ -130,9 +140,9 @@ public class MainClient {
 							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
 							tableWindow.noSets();
 							break;
-						case 'G': // Game Over!: G
-							if(splitLine.length != 1) {System.err.println("Message Length Error!"); break;}
-							tableWindow.gameOver();
+						case 'G': // Game Over!: G;1;1000;1010
+							if(splitLine.length != 4) {System.err.println("Message Length Error!"); break;}
+							tableWindow.gameOver(Integer.parseInt(splitLine[1])==1, splitLine[2], splitLine[3]);
 							break;
 						case 'C': // Lobby Chat: C;Username;Message
 							if(splitLine.length != 3) {System.err.println("Message Length Error!"); break;}

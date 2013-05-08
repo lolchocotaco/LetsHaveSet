@@ -29,6 +29,7 @@ public class LobbyWindow {
 	private JTextArea chatWindow;
 	private JTextField tableNameField;
 	private JSpinner spinner;
+	private JTable onlineUsers;
 
 	
 	public LobbyWindow() {
@@ -54,7 +55,7 @@ public class LobbyWindow {
 		gameList.setModel(new DefaultTableModel(
 			new Object[][] {},
 			new String[] {
-				"Table Number", "Table Name", "Players", "Status"
+				"Table #", "Table Name", "Players", "Status"
 			}
 		) {
 			boolean[] columnEditables = new boolean[] {
@@ -65,15 +66,41 @@ public class LobbyWindow {
 			}
 		});
 		gameList.getColumnModel().getColumn(0).setResizable(false);
-		gameList.getColumnModel().getColumn(0).setPreferredWidth(75);
+		gameList.getColumnModel().getColumn(0).setPreferredWidth(50);
 		gameList.getColumnModel().getColumn(1).setResizable(false);
-		gameList.getColumnModel().getColumn(1).setPreferredWidth(150);
+		gameList.getColumnModel().getColumn(1).setPreferredWidth(225);
 		gameList.getColumnModel().getColumn(2).setResizable(false);
-		gameList.getColumnModel().getColumn(2).setPreferredWidth(75);
+		gameList.getColumnModel().getColumn(2).setPreferredWidth(50);
 		gameList.getColumnModel().getColumn(3).setResizable(false);
-		gameList.getColumnModel().getColumn(3).setPreferredWidth(100);
+		gameList.getColumnModel().getColumn(3).setPreferredWidth(75);
 		gameList.setFillsViewportHeight(true);
 		scrollPane_1.setViewportView(gameList);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(575, 50, 200, 150);
+		frmLobby.getContentPane().add(scrollPane_2);
+		
+		onlineUsers = new JTable();
+		onlineUsers.setAutoCreateRowSorter(true);
+		onlineUsers.setModel(new DefaultTableModel(
+				new Object[][] {},
+				new String[] {
+					"Online Users", "Table #"
+				}
+			) {
+				boolean[] columnEditables = new boolean[] {
+					false, false
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+		onlineUsers.getColumnModel().getColumn(0).setResizable(false);
+		onlineUsers.getColumnModel().getColumn(0).setPreferredWidth(125);
+		onlineUsers.getColumnModel().getColumn(1).setResizable(false);
+		onlineUsers.getColumnModel().getColumn(1).setPreferredWidth(75);
+		onlineUsers.setFillsViewportHeight(true);
+		scrollPane_2.setViewportView(onlineUsers);
 		
 		JButton btnNewButton = new JButton("Create Game");
 		btnNewButton.addActionListener(new ActionListener() {
@@ -93,7 +120,7 @@ public class LobbyWindow {
 		frmLobby.getContentPane().add(btnNewButton_1);
 				
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(575, 50, 200, 350);
+		scrollPane.setBounds(575, 215, 200, 185);
 		frmLobby.getContentPane().add(scrollPane);
 		
 		chatWindow = new JTextArea();
@@ -172,6 +199,10 @@ public class LobbyWindow {
 		( (DefaultTableModel) gameList.getModel() ).addRow(new Object[]{tableNum, tableName, numPlayers + "/" + maxPlayers, status});
 	}
 	
+	public void addUser(String userName, String tableNum) {
+		( (DefaultTableModel) onlineUsers.getModel() ).addRow(new Object[]{userName, tableNum});
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void updateTable(String tableNum, String tableName, String numPlayers, String maxPlayers) {
 		int i = 0;
@@ -197,6 +228,27 @@ public class LobbyWindow {
 	    }
 	    // If the function has not returned, then the table is new
 	    this.addTable(tableNum, tableName, numPlayers, maxPlayers);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void updateUser(String userName, String tableNum) {
+		int i = 0;
+		DefaultTableModel TM = ( (DefaultTableModel) onlineUsers.getModel() );
+		Vector<Vector<String> > userVector = TM.getDataVector();
+		Iterator<Vector<String> > it = userVector.iterator();
+	    while(it.hasNext()) {
+	      Vector<String> v = it.next();
+	      if(userName.compareTo(v.elementAt(0)) == 0) {
+	    	  TM.removeRow(i);
+	    	  if(tableNum.compareTo("X") != 0) { // Not a disconnect
+	    		  TM.insertRow(i, new Object[]{userName, tableNum});
+	    	  }
+	    	  return;
+	      }
+	      i++;
+	    }
+	    // If the function has not returned, then the user is new
+	    this.addUser(userName, tableNum);
 	}
 	
 	public void newChat(String user, String chat) {

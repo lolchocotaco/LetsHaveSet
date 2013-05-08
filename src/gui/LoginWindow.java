@@ -201,6 +201,9 @@ public class LoginWindow {
 			case 'R':
 				txtError.setText("Username Already Exists");
 				break;
+			case 'A':
+				txtError.setText("User Already Online");
+				break;
 			default:		
 				break;
 		}

@@ -91,9 +91,10 @@ public class SetServer {
 						 else {
 							 stmt.executeUpdate("INSERT INTO users (username, password) VALUES ('"+splitM[1]+"', '"+splitM[2]+"');");	
 							 System.out.println("User created");
-							 User newUser = new User(splitM[1], 0, 0, -1, false);
+							 outMessages.put( new Message(inM.clientID, "I;false;"+allTableString(tableMap)+";"+allUserString(userMap)) );
+							 User newUser = new User(splitM[1], 1000, -1, false);
 							 userMap.put(inM.clientID, newUser);
-							 outMessages.put( new Message(inM.clientID, "I;false;"+allTableString(tableMap)) );
+							 outMessages.put( new Message(-1, "U;" + splitM[1] + ";N/A") );
 						}
 						stmt.close();
 						connection.close();
@@ -115,21 +116,37 @@ public class SetServer {
 							System.out.println("User not found");
 						}
 						else{
-							String passt = usertable.getString("password");
-							boolean isAdmin=false;
-							int numWins = 0, numLosses = 0;
-							if (splitM[2].equals(passt)){
-								String accountType = usertable.getString("type");
-								if(accountType.equals("admin")){
-									isAdmin=true;
+							boolean alreadyOnline = false;
+							Iterator<Entry<Object, User>> it = userMap.entrySet().iterator();
+							while (it.hasNext()) {
+								Map.Entry<Object, User> entry = (Map.Entry<Object, User>) it.next();
+								User curUser = entry.getValue();
+								if(curUser.username.compareTo(splitM[1]) == 0) {
+									alreadyOnline = true;
+									break;
 								}
-								User newUser = new User(splitM[1], numWins, numLosses, -1, isAdmin);
-								userMap.put(inM.clientID, newUser);
-								outMessages.put( new Message(inM.clientID, "I;"+isAdmin+";"+allTableString(tableMap)) );
 							}
-							else{
-								outMessages.put( new Message(inM.clientID, "X;L") );
-							}	
+							
+							if(alreadyOnline) {
+								outMessages.put( new Message(inM.clientID, "X;A") );
+							} else {
+								String passt = usertable.getString("password");
+								boolean isAdmin=false;
+								if (splitM[2].equals(passt)){
+									String accountType = usertable.getString("type");
+									int userRating = usertable.getInt("score");
+									if(accountType.equals("admin")){
+										isAdmin=true;
+									}
+									outMessages.put( new Message(inM.clientID, "I;"+isAdmin+";"+allTableString(tableMap)+";"+allUserString(userMap)) );
+									User newUser = new User(splitM[1], userRating, -1, isAdmin);
+									userMap.put(inM.clientID, newUser);
+									outMessages.put( new Message(-1, "U;" + splitM[1] + ";N/A") );
+								}
+								else{
+									outMessages.put( new Message(inM.clientID, "X;L") );
+								}	
+							}
 						}
 						stmt.close();
 						connection.close();
@@ -149,9 +166,10 @@ public class SetServer {
 						newTable.addPlayer(inM.clientID);
 						
 						// Give client "Table Made" message
-						outMessages.put(new Message(inM.clientID, newTable.playerString(userMap)));
+						outMessages.put( new Message(inM.clientID, newTable.playerString(userMap)) );
 						// Broadcast new table update
-						outMessages.put(new Message(-1, "U;" + numTables + ";" + newTable.name + ";" + newTable.numPlayers + ";" + newTable.maxPlayers));
+						outMessages.put( new Message(-1, "U;" + numTables + ";" + newTable.name + ";" + newTable.numPlayers + ";" + newTable.maxPlayers) );
+						outMessages.put( new Message(-1, "U;" + userT.username + ";" + numTables) );
 						
 						tableMap.put(numTables, newTable);
 						numTables++;
@@ -173,6 +191,7 @@ public class SetServer {
 							if(tableJ.numPlayers < tableJ.maxPlayers) {
 								tableJ.addPlayer(inM.clientID);
 								outMessages.put(new Message(-1, "U;" + userJ.currentTable + ";" + tableJ.name + ";" + tableJ.numPlayers + ";" + tableJ.maxPlayers));
+								outMessages.put( new Message(-1, "U;" + userJ.username + ";" + userJ.currentTable) );
 								sendToTable(outMessages, tableJ, tableJ.playerString(userMap));
 							} else {
 								userJ.currentTable = -1;
@@ -201,6 +220,7 @@ public class SetServer {
 						if( tableE != null ) {
 							tableE.removePlayer(inM.clientID);
 							outMessages.put(new Message(-1, "U;" + userE.currentTable + ";" + tableE.name + ";" + tableE.numPlayers + ";" + tableE.maxPlayers));
+							outMessages.put( new Message(-1, "U;" + userE.username + ";N/A") );
 							if(tableE.numPlayers > 0) {
 								sendToTable(outMessages, tableE, tableE.playerString(userMap));
 							} else {
@@ -221,6 +241,8 @@ public class SetServer {
 						User userD = userMap.get(inM.clientID);
 						if(userD != null) {
 							
+							outMessages.put( new Message(-1, "U;" + userD.username + ";X") );
+							
 							if(userD.currentTable < 0) { // User not at table
 								userMap.remove(inM.clientID);
 								break;
@@ -236,6 +258,17 @@ public class SetServer {
 								} else {
 									tableMap.remove(userD.currentTable);
 								}
+								
+								Connection connectionD = null;
+								Statement stmtD = null;
+								connectionD = DriverManager.getConnection("jdbc:mysql://199.98.20.119:3306/set","java", "eeonly1");
+								stmtD = connectionD.createStatement();
+								
+								stmtD.executeUpdate("UPDATE `users` SET `score`=score-10 WHERE `username`='"+userD.username+"';");	
+								
+								stmtD.close();
+								connectionD.close();
+								
 							} else {
 								System.err.println("Disconnect Table Error!");
 							}
@@ -262,8 +295,6 @@ public class SetServer {
 						break;
 					case 'S': // Set made: S;Card1;Card2;Card3
 						if(splitM.length != 4) {System.err.println("Message Length Error!"); break;}
-						// TODO: Validate set; If invalid, ignore; If valid, award points, broadcast changes (lost/new cards)
-						// Also make sure to check for: [No sets possible!] or [Game is over!] 
 						User userS = userMap.get(inM.clientID);
 						final Table tableS = tableMap.get(userS.currentTable);
 						if(tableS.setExists(Integer.parseInt(splitM[1]), Integer.parseInt(splitM[2]), Integer.parseInt(splitM[3]))) {
@@ -357,30 +388,29 @@ public class SetServer {
 	}
 	
 	private static void gameOver(BlockingQueue<Message> outMessages, Map<Object, User> userMap, Table table) throws SQLException {
-		
+		Iterator<Entry<Object, Integer> > it = table.players.entrySet().iterator();
+		int MaxScore = -12345; // Arbitrary low number
+		int TotalPlayers = table.numGoPressed;
 		table.numGoPressed = 0; // Reset table
 		
-		Iterator<Entry<Object, Integer> > it = table.players.entrySet().iterator();
-		int MaxScore=-50;
-		int TotalPlayers=0;
 		List<String> Winner= new ArrayList<String>();
 		
 		while (it.hasNext()) {
-			TotalPlayers++;
 			Map.Entry<Object, Integer> entry = (Map.Entry<Object, Integer>) it.next();	
-			if(entry.getValue()==MaxScore){
+			if(entry.getValue() == MaxScore){
 				int userID = (Integer) entry.getKey();
 				User curUser = userMap.get(userID);
 				Winner.add(curUser.username);
 			}
-			else if(entry.getValue()>MaxScore){
+			else if(entry.getValue() > MaxScore){
 				int userID = (Integer) entry.getKey();
 				User curUser = userMap.get(userID);
 				Winner.clear();
 				Winner.add(curUser.username);
-				MaxScore=entry.getValue();
+				MaxScore = entry.getValue();
 			}
 		}
+		
 		Iterator<Entry<Object, Integer> > it2 = table.players.entrySet().iterator();
 		double WinnerScore= ((double) (TotalPlayers - Winner.size()))/((double) Winner.size())*10;
 		Connection connection = null;
@@ -393,16 +423,27 @@ public class SetServer {
 			int userID = (Integer) entry.getKey();
 			User curUser = userMap.get(userID);
 			if(Winner.contains(curUser.username)){
+				try {
+					outMessages.put( new Message(userID, "G;1;" + curUser.rating + ";" + ((int)(curUser.rating + WinnerScore))) );
+				} catch (InterruptedException e) { System.err.println("Game Over Error!"); }
+				curUser.rating += WinnerScore;
 				stmt.executeUpdate("UPDATE `users` SET `score`=score+"+WinnerScore+" WHERE `username`='"+curUser.username+"';");
 			}
 			else{
+				try {
+					outMessages.put( new Message(userID, "G;0;" + curUser.rating + ";" + (curUser.rating - 10)) );
+				} catch (InterruptedException e) { System.err.println("Haxxors!!!"); }
+				curUser.rating -= 10;
 				stmt.executeUpdate("UPDATE `users` SET `score`=score-10 WHERE `username`='"+curUser.username+"';");	
 			}	
 		}
 		
+		stmt.close();
+		connection.close();
+		
 		table.resetScores(); // Resets scores to 0
 		table.initializeDeck(); // Reset cards
-		sendToTable(outMessages, table, "G"); // Tell everyone game over
+		// sendToTable(outMessages, table, "G"); // Tell everyone game over
 		sendToTable(outMessages, table, table.playerString(userMap)); // Update scores to 0
 		
 	}
@@ -421,13 +462,25 @@ public class SetServer {
 	}
 	
 	private static String allTableString(Map<Object, Table> tableMap) {
-		String out = ""+tableMap.size();
+		String out = "" + tableMap.size();
 		Iterator<Entry<Object, Table>> it = tableMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<Object, Table> entry = (Map.Entry<Object, Table>) it.next();
 			int tableNum = (Integer) entry.getKey();
 			Table curTable = (Table) entry.getValue();
 			out += ";" + tableNum + ";" + curTable.name + ";" + curTable.numPlayers + ";" + curTable.maxPlayers;
+		}
+		return out;
+	}
+	
+	private static String allUserString(Map<Object, User> userMap) {
+		String out = "" + userMap.size();
+		Iterator<Entry<Object, User>> it = userMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Object, User> entry = (Map.Entry<Object, User>) it.next();
+			User curUser = (User) entry.getValue();
+			String tableString = "" + ((curUser.currentTable < 0)?("N/A"):(curUser.currentTable));
+			out += ";" + curUser.username + ";" + tableString;
 		}
 		return out;
 	}

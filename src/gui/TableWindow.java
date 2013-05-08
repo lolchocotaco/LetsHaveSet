@@ -329,12 +329,18 @@ public class TableWindow {
 			.start(resultTweens);
 	}
 
-	public void gameOver() {
+	public void gameOver(boolean isWinner, String oldRating, String newRating) {
 		// TODO : Display a "Game Over" screen
 		// setTable.clearCards();
 		
 		tableReset();
-		JOptionPane.showMessageDialog(frmTable, "Game Over, bro!");
+		String winString;
+		if(isWinner) {
+			winString = "You won! Your actions today will make you a legend for centuries to come.";
+		} else {
+			winString = "You did not win! You are a worthless sack of shit!";
+		}
+		JOptionPane.showMessageDialog(frmTable, winString + "\n Old Rating:   " + oldRating + "\n New Rating:   " + newRating);
 		
 	}
 	
