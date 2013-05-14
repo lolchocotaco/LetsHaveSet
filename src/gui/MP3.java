@@ -10,7 +10,7 @@ public class MP3 {
     private String filename;
     private Player player; 
     private boolean isPlaying;
-    private final  String audioPath [] = {"/sounds/Buzzer.mp3", "/sounds/Ding.mp3", "/sounds/lobbyMusic.mp3"};
+    private final  String audioPath [] = {"/sounds/Buzzer.mp3", "/sounds/Ding.mp3", "/sounds/lobbyMusic.mp3","/sounds/waitMusic.mp3","/sounds/gameMusic.mp3"};
     private BufferedInputStream bis= null;
     private InputStream fis= null;
     

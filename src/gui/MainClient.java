@@ -14,6 +14,7 @@ public class MainClient {
 	static Socket clientSocket = null;
 	static DataOutputStream out = null;
 
+
 	
 	public static void main(String[] args) {
 		
@@ -29,6 +30,8 @@ public class MainClient {
 			System.err.println("Error connecting to Server!");
 			System.exit(-1);
 		}
+		
+		MP3 gameMusic = null;
 		
 		LoginWindow loginWindow = new LoginWindow();
 		LobbyWindow lobbyWindow = new LobbyWindow();
@@ -76,8 +79,8 @@ public class MainClient {
 								lobbyWindow.updateUser(splitLine[ind], splitLine[ind+1]);
 							}
 							
-							MP3 lobbyMusic = new MP3(2);
-							lobbyMusic.loopPlay();
+							gameMusic = new MP3(2);
+							gameMusic.loopPlay();
 						    
 							break;
 						case 'U': // Table/User Update: U;12;Hello;3;4
@@ -107,6 +110,10 @@ public class MainClient {
 							{
 								tableWindow.hideTable();
 								lobbyWindow.frmLobby.setVisible(true);
+								
+								gameMusic.close();
+								gameMusic = new MP3(2);
+								gameMusic.loopPlay();
 							}
 							break;
 						case 'P': // Players at Table: P;3;4;Nico;0;Sameer;3;Vasily;12
@@ -117,6 +124,10 @@ public class MainClient {
 							{
 								lobbyWindow.frmLobby.setVisible(false);
 								tableWindow.showTable();
+								
+								gameMusic.close();
+								gameMusic = new MP3(3);
+								gameMusic.loopPlay();						
 							}
 							tableWindow.updatePlayers(splitLine);
 							break;
@@ -127,6 +138,11 @@ public class MainClient {
 						case 'T': // Table Cards:  T;12;01;02;03;04;05;06;07;08;09;10;11;12
 							if(splitLine.length < 1) {System.err.println("Message Length Error!"); break;}
 							tableWindow.tableCards(splitLine);
+							
+							gameMusic.close();
+							gameMusic = new MP3(4);
+							gameMusic.loopPlay();
+							
 							break;
 						case 'S': // Set made:  S;03;21;76
 							if(splitLine.length != 4) {System.err.println("Message Length Error!"); break;}
@@ -150,7 +166,7 @@ public class MainClient {
 							break;
 						case 'G': // Game Over!: G;1;1000;1010
 							if(splitLine.length != 4) {System.err.println("Message Length Error!"); break;}
-							tableWindow.gameOver(Integer.parseInt(splitLine[1])==1, splitLine[2], splitLine[3]);
+							tableWindow.gameOver(Integer.parseInt(splitLine[1])==1, splitLine[2], splitLine[3]);							
 							break;
 						case 'C': // Lobby Chat: C;Username;Message
 							if(splitLine.length != 3) {System.err.println("Message Length Error!"); break;}
